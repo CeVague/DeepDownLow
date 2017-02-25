@@ -84,7 +84,14 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	@Override
 	public void play(String move, String player) {
 		// TODO Auto-generated method stub
-		
+	}
+
+	/************* Méthodes demandée pour la 2eme partie ****************/
+	
+	/** Ilustration de l'utilisation de nos méthodes de manière convaincante
+	 */
+	public static void main(String[] args){
+		// TODO Auto-generated method stub
 	}
 
 	/* ********************* Autres méthodes ***************** */
