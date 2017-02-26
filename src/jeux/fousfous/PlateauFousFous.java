@@ -10,17 +10,16 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 
 	/***************** Constantes *****************/
 
-
-	/*********** Paramètres de classe ************/
-
 	private final static int VIDE = 0;
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
+	/*********** Paramètres de classe ************/
+
 	/** Le joueur que joue "Blanc" */
 	private static Joueur joueurBlanc;
 
-	/** Le joueur que joue "noir" */
+	/** Le joueur que joue "Noir" */
 	private static Joueur joueurNoir;
 
 	/************ Attributs  ************/

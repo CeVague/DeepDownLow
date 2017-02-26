@@ -5,35 +5,38 @@ import iia.jeux.modele.joueur.Joueur;
 
 import java.util.ArrayList;
 
-public class PlateauFousFousBitborad implements PlateauJeu, Partie1 {
+public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 
 	/***************** Constantes *****************/
-
-
-	/*********** Paramètres de classe ************/
 
 	private final static int VIDE = 0;
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
+	private final static long plateauMasque = 0b1010101001010101101010100101010110101010010101011010101001010101L;
+
+	/*********** Paramètres de classe ************/
+	
 	/** Le joueur que joue "Blanc" */
 	private static Joueur joueurBlanc;
 
-	/** Le joueur que joue "noir" */
+	/** Le joueur que joue "Noir" */
 	private static Joueur joueurNoir;
 
 	/************ Attributs  ************/
 
-	private int plateau[][];
+	private long plateauBlanc;
+	private long plateauNoir;
 
 	/************* Constructeurs ****************/
 
-	public PlateauFousFousBitborad() {
-		// TODO Auto-generated method stub
+	public PlateauFousFousBitboard() {
+		plateauBlanc = 0b0101010100000000010101010000000001010101000000000101010100000000L;
+		plateauNoir = 0b0000000010101010000000001010101000000000101010100000000010101010L;
 	}
 
-	public PlateauFousFousBitborad(int depuis[][]) {
+	public PlateauFousFousBitboard(int depuis[][]) {
 		// TODO Auto-generated method stub
 	}
 
