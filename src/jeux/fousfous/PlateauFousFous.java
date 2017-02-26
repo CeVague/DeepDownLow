@@ -120,5 +120,15 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 
 	/********************** Autres méthodes ******************/
 
+	
+	private ArrayList<CoupJeu> listeCoupsMange(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private ArrayList<CoupJeu> listeCoupsMenace(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

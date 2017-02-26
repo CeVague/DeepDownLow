@@ -19,7 +19,8 @@ public class CoupFousFousBitboard implements CoupJeu {
 	}
 	
 	private void setCoord(int[] coord){
-		// TODO Auto-generated method stub
+		avant = coord[0];
+		apres = coord[1];
 	}
 
 	/******** Accesseurs ********/
@@ -39,27 +40,23 @@ public class CoupFousFousBitboard implements CoupJeu {
 	/****** Convertisseurs ******/
 	
 	public static int[] StringToCoord(String coord){
-		// TODO Auto-generated method stub
 		int[] coordFinal = new int[2];
 		
-		coordFinal[0] = coord.codePointAt(0) - 65;
-		coordFinal[0] = coord.codePointAt(1) - 49;
+		coordFinal[0] = (coord.codePointAt(0) - 65) + 8*(coord.codePointAt(1) - 49);
 		
-		coordFinal[1] = coord.codePointAt(3) - 65;
-		coordFinal[1] = coord.codePointAt(4) - 49;
+		coordFinal[1] = (coord.codePointAt(3) - 65) + 8*(coord.codePointAt(4) - 49);
 		
 		return coordFinal;
 	}
 	
 	public static String CoordToString(int[] coord){
-		// TODO Auto-generated method stub
 		String coordFinal = "";
 		
-		coordFinal += (char) (coord[0] + 65);
-		coordFinal += (char) (coord[0] + 49);
+		coordFinal += (char) (coord[0]%8 + 65);
+		coordFinal += (char) (coord[0]/8 + 49);
 		coordFinal += "-";
-		coordFinal += (char) (coord[1] + 65);
-		coordFinal += (char) (coord[1] + 49);
+		coordFinal += (char) (coord[1]%8 + 65);
+		coordFinal += (char) (coord[1]/8 + 49);
 		
 		return coordFinal;
 	}

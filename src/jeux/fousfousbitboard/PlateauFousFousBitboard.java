@@ -26,8 +26,8 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	/************ Attributs  ************/
 
-	private long plateauBlanc;
-	private long plateauNoir;
+	public long plateauBlanc;
+	public long plateauNoir;
 
 	/************* Constructeurs ****************/
 
@@ -36,8 +36,27 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 		plateauNoir = 0b0000000010101010000000001010101000000000101010100000000010101010L;
 	}
 
+	public PlateauFousFousBitboard(long plateauBlanc, long plateauNoir) {
+		this.plateauBlanc = plateauBlanc;
+		this.plateauNoir = plateauNoir;
+	}
+
 	public PlateauFousFousBitboard(int depuis[][]) {
-		// TODO Auto-generated method stub
+		plateauBlanc = 0L;
+		plateauNoir = 0L;
+		
+		for(int i=0;i<8;i++){
+			for(int j=0;j<8;j++){
+				switch(depuis[i][j]){
+					case BLANC : 
+						plateauBlanc |= 0b1000000000000000000000000000000000000000000000000000000000000000L>>>(i+8*j);
+						break;
+					case NOIR :
+						plateauNoir |= 0b1000000000000000000000000000000000000000000000000000000000000000L>>>(i+8*j);
+						break;
+				}
+			}
+		}
 	}
 
 	/************* Gestion des paramètres de classe ******************/
@@ -70,14 +89,12 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean finDePartie() {
-		// TODO Auto-generated method stub
-		return false;
+		return (plateauBlanc==0 || plateauBlanc==0);
 	}
 
 	@Override
 	public PlateauJeu copy() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PlateauFousFousBitboard(this.plateauBlanc, this.plateauNoir);
 	}
 
 	@Override
@@ -123,6 +140,17 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 	}
 
 	/********************** Autres méthodes ******************/
+
+	
+	private ArrayList<CoupJeu> listeCoupsMange(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private ArrayList<CoupJeu> listeCoupsMenace(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }
