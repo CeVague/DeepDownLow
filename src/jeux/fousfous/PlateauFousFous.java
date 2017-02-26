@@ -16,10 +16,10 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 
 	/*********** Paramètres de classe ************/
 
-	/** Le joueur que joue "Blanc" */
+	/** Le joueur que joue "Blanc" **/
 	private static Joueur joueurBlanc;
 
-	/** Le joueur que joue "Noir" */
+	/** Le joueur que joue "Noir" **/
 	private static Joueur joueurNoir;
 
 	/************ Attributs  ************/
@@ -120,6 +120,10 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 
 	/********************** Autres méthodes ******************/
 
+	public String toString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	private ArrayList<CoupJeu> listeCoupsMange(Joueur j) {
 		// TODO Auto-generated method stub
@@ -129,6 +133,16 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	private ArrayList<CoupJeu> listeCoupsMenace(Joueur j) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private boolean peutManger(Joueur j){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	private boolean peutMenacer(Joueur j){
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

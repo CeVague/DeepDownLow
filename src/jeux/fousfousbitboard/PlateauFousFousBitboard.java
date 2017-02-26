@@ -14,14 +14,18 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
-	private final static long plateauMasque = 0b1010101001010101101010100101010110101010010101011010101001010101L;
+	private final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
+	private final static long masqueDiagGauche = 0b1000000100000010000001000000100000010000001000000100000010000000L;
+	private final static long masqueDiagDroite = 0b1000000001000000001000000001000000001000000001000000001000000001L;
+	
+	private final static long un = 0b1000000000000000000000000000000000000000000000000000000000000000L;
 
 	/*********** Paramètres de classe ************/
 	
-	/** Le joueur que joue "Blanc" */
+	/** Le joueur que joue "Blanc" **/
 	private static Joueur joueurBlanc;
 
-	/** Le joueur que joue "Noir" */
+	/** Le joueur que joue "Noir" **/
 	private static Joueur joueurNoir;
 
 	/************ Attributs  ************/
@@ -49,10 +53,10 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 			for(int j=0;j<8;j++){
 				switch(depuis[i][j]){
 					case BLANC : 
-						plateauBlanc |= 0b1000000000000000000000000000000000000000000000000000000000000000L>>>(i+8*j);
+						plateauBlanc |= un>>>(i+8*j);
 						break;
 					case NOIR :
-						plateauNoir |= 0b1000000000000000000000000000000000000000000000000000000000000000L>>>(i+8*j);
+						plateauNoir |= un>>>(i+8*j);
 						break;
 				}
 			}
@@ -84,7 +88,17 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public void joue(Joueur j, CoupJeu c) {
-		// TODO Auto-generated method stub
+		CoupFousFousBitboard cNew = (CoupFousFousBitboard) c;
+		
+		if(j.equals(joueurBlanc)){
+			plateauBlanc ^= un>>>cNew.getAvant();
+			plateauBlanc ^= un>>>cNew.getApres();
+			plateauNoir &= ~(un>>>cNew.getApres());
+		}else{
+			plateauNoir ^= un>>>cNew.getAvant();
+			plateauNoir ^= un>>>cNew.getApres();
+			plateauBlanc &= ~(un>>>cNew.getApres());
+		}
 	}
 
 	@Override
@@ -129,7 +143,17 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public void play(String move, String player) {
-		// TODO Auto-generated method stub
+		CoupFousFousBitboard c = new CoupFousFousBitboard(move);
+		
+		if(player.compareTo("blanc")==0){
+			plateauBlanc ^= un>>>c.getAvant();
+			plateauBlanc ^= un>>>c.getApres();
+			plateauNoir &= ~(un>>>c.getApres());
+		}else{
+			plateauNoir ^= un>>>c.getAvant();
+			plateauNoir ^= un>>>c.getApres();
+			plateauBlanc &= ~(un>>>c.getApres());
+		}
 	}
 
 	/************* Méthodes demandée pour la 2eme partie ****************/
@@ -140,7 +164,26 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 	}
 
 	/********************** Autres méthodes ******************/
-
+	
+	public String toString() {
+		String represente = "";
+		
+		for(int i=0;i<64;i++){
+			
+			if(i%8==0){
+				represente += "\n";
+			}
+			
+			if((plateauBlanc & (un>>>i)) != 0){
+				represente += "b";
+			}else if((plateauNoir & (un>>>i)) != 0){
+				represente += "n";
+			} else{
+				represente += " ";
+			}
+		}
+		return represente;
+	}
 	
 	private ArrayList<CoupJeu> listeCoupsMange(Joueur j) {
 		// TODO Auto-generated method stub
@@ -151,6 +194,15 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	private boolean peutManger(Joueur j){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	private boolean peutMenacer(Joueur j){
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
