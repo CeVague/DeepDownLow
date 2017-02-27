@@ -131,14 +131,30 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean estValide(String move, String player) {
-		// TODO Auto-generated method stub
-		return false;
+		CoupFousFousBitboard c = new CoupFousFousBitboard(move);
+		
+		if(player.compareTo("blanc")==0){
+			return coupValide(joueurBlanc, c);
+		}else{
+			return coupValide(joueurNoir, c);
+		}
 	}
 
 	@Override
 	public String[] mouvementsPossibles(String player) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<CoupJeu> temp;
+		
+		if(player.compareTo("blanc")==0){
+			temp = coupsPossibles(joueurBlanc);
+		}else{
+			temp = coupsPossibles(joueurBlanc);
+		}
+		
+		String[] liste = new String[temp.size()];
+		for(int i=0;i<temp.size();i++){
+			liste[i] = temp.get(i).toString();
+		}
+		return liste;
 	}
 
 	@Override
