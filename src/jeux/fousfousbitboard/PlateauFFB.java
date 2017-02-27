@@ -5,7 +5,7 @@ import iia.jeux.modele.joueur.Joueur;
 
 import java.util.ArrayList;
 
-public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
+public class PlateauFFB implements PlateauJeu, Partie1 {
 
 
 	/***************** Constantes *****************/
@@ -35,17 +35,17 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	/************* Constructeurs ****************/
 
-	public PlateauFousFousBitboard() {
+	public PlateauFFB() {
 		plateauBlanc = 0b0101010100000000010101010000000001010101000000000101010100000000L;
 		plateauNoir = 0b0000000010101010000000001010101000000000101010100000000010101010L;
 	}
 
-	public PlateauFousFousBitboard(long plateauBlanc, long plateauNoir) {
+	public PlateauFFB(long plateauBlanc, long plateauNoir) {
 		this.plateauBlanc = plateauBlanc;
 		this.plateauNoir = plateauNoir;
 	}
 
-	public PlateauFousFousBitboard(int depuis[][]) {
+	public PlateauFFB(int depuis[][]) {
 		plateauBlanc = 0L;
 		plateauNoir = 0L;
 		
@@ -88,7 +88,7 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public void joue(Joueur j, CoupJeu c) {
-		CoupFousFousBitboard cNew = (CoupFousFousBitboard) c;
+		CoupFFB cNew = (CoupFFB) c;
 		
 		if(j.equals(joueurBlanc)){
 			plateauBlanc ^= 1L<<cNew.getAvant();
@@ -108,7 +108,7 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public PlateauJeu copy() {
-		return new PlateauFousFousBitboard(this.plateauBlanc, this.plateauNoir);
+		return new PlateauFFB(this.plateauBlanc, this.plateauNoir);
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean estValide(String move, String player) {
-		CoupFousFousBitboard c = new CoupFousFousBitboard(move);
+		CoupFFB c = new CoupFFB(move);
 		
 		if(player.compareTo("blanc")==0){
 			return coupValide(joueurBlanc, c);
@@ -159,7 +159,7 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 
 	@Override
 	public void play(String move, String player) {
-		CoupFousFousBitboard c = new CoupFousFousBitboard(move);
+		CoupFFB c = new CoupFFB(move);
 		
 		if(player.compareTo("blanc")==0){
 			joue(joueurBlanc, c);
@@ -171,9 +171,9 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 	/************* Méthodes demandée pour la 2eme partie ****************/
 
 	/** Ilustration de l'utilisation de nos méthodes de manière convaincante **/
-	public static void main(String[] args) {
+	//public static void main(String[] args) {
 		// TODO Auto-generated method stub
-	}
+	//}
 
 	/********************** Autres méthodes ******************/
 	
@@ -197,24 +197,57 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 		return represente;
 	}
 	
-	private ArrayList<CoupJeu> listeCoupsMange(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	private ArrayList<CoupJeu> listeCoupsMenace(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	private boolean peutManger(Joueur j){
+	public boolean cheminLibre(Joueur j, CoupFFB c){
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
-	private boolean peutMenacer(Joueur j){
+	public boolean peutManger(Joueur j, CoupFFB c){
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public ArrayList<PionFFB> listerPions(Joueur j){
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// ceux qui peuvent être mangés
+	public ArrayList<CoupFFB> listerMangeable(Joueur j, PionFFB p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// ceux qui peuvent manger
+	public ArrayList<CoupFFB> listerMangeur(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// ceux qui peuvent être menacés
+	public ArrayList<CoupFFB> listerMenacable(Joueur j, PionFFB p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// ceux qui peuvent menacer
+	public ArrayList<CoupFFB> listerMenaceur(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int comptePions(Joueur j){
+		// Tester avec deux var en plus pour compter en continue
+		
+		if(j.equals(joueurBlanc)){
+			return Long.bitCount(plateauBlanc);
+		}else{
+			return Long.bitCount(plateauNoir);
+		}
+	}
 }

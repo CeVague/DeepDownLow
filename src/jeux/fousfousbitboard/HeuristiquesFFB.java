@@ -5,7 +5,7 @@ import iia.jeux.modele.PlateauJeu;
 import iia.jeux.modele.joueur.Joueur;
 
 
-public class HeuristiquesFousFousBitboard {
+public class HeuristiquesFFB {
 
 	public static Heuristique hblanc = new Heuristique() {
 
