@@ -21,6 +21,8 @@ public class PartieFousFousBitboard {
 		System.out.println(temp.toString());
 		temp.joue(new Joueur("gfghf"), new CoupFousFousBitboard("C2-B1"));
 		System.out.println(temp.toString());
+		System.out.println(new CoupFousFousBitboard("C2-B1").getAvant());
+		System.out.println(new CoupFousFousBitboard("C2-B1").getApres());
 		
 		temp = new PlateauFousFousBitboard();
 		

@@ -53,10 +53,10 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 			for(int j=0;j<8;j++){
 				switch(depuis[i][j]){
 					case BLANC : 
-						plateauBlanc |= un>>>(i+8*j);
+						plateauBlanc |= 1L<<(8*i+j);
 						break;
 					case NOIR :
-						plateauNoir |= un>>>(i+8*j);
+						plateauNoir |= 1L<<(8*i+j);
 						break;
 				}
 			}
@@ -91,13 +91,13 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 		CoupFousFousBitboard cNew = (CoupFousFousBitboard) c;
 		
 		if(j.equals(joueurBlanc)){
-			plateauBlanc ^= un>>>cNew.getAvant();
-			plateauBlanc ^= un>>>cNew.getApres();
-			plateauNoir &= ~(un>>>cNew.getApres());
+			plateauBlanc ^= 1L<<cNew.getAvant();
+			plateauBlanc ^= 1L<<cNew.getApres();
+			plateauNoir &= ~(1L<<cNew.getApres());
 		}else{
-			plateauNoir ^= un>>>cNew.getAvant();
-			plateauNoir ^= un>>>cNew.getApres();
-			plateauBlanc &= ~(un>>>cNew.getApres());
+			plateauNoir ^= 1L<<cNew.getAvant();
+			plateauNoir ^= 1L<<cNew.getApres();
+			plateauBlanc &= ~(1L<<cNew.getApres());
 		}
 	}
 
@@ -146,13 +146,9 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 		CoupFousFousBitboard c = new CoupFousFousBitboard(move);
 		
 		if(player.compareTo("blanc")==0){
-			plateauBlanc ^= un>>>c.getAvant();
-			plateauBlanc ^= un>>>c.getApres();
-			plateauNoir &= ~(un>>>c.getApres());
+			joue(joueurBlanc, c);
 		}else{
-			plateauNoir ^= un>>>c.getAvant();
-			plateauNoir ^= un>>>c.getApres();
-			plateauBlanc &= ~(un>>>c.getApres());
+			joue(joueurNoir, c);
 		}
 	}
 
@@ -168,18 +164,18 @@ public class PlateauFousFousBitboard implements PlateauJeu, Partie1 {
 	public String toString() {
 		String represente = "";
 		
-		for(int i=0;i<64;i++){
+		for(int i=63;i>=0;i--){
 			
-			if(i%8==0){
-				represente += "\n";
-			}
-			
-			if((plateauBlanc & (un>>>i)) != 0){
+			if(((plateauBlanc>>>i) & 1L) != 0){
 				represente += "b";
-			}else if((plateauNoir & (un>>>i)) != 0){
+			}else if(((plateauNoir>>>i) & 1L) != 0){
 				represente += "n";
 			} else{
 				represente += " ";
+			}
+			
+			if(i%8==0){
+				represente += "\n";
 			}
 		}
 		return represente;
