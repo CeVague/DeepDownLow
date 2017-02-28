@@ -45,14 +45,14 @@ public class PartieFFB {
 		System.out.println(temp.toString());
 		temp.print();
 		
-		System.out.println(temp.peutManger(jn, new CoupFFB("B1-D3")));
+		System.out.println(temp.cheminLibre(new CoupFFB("B1-D3")));
 		
 		System.out.println(new CoupFFB("C2-B1").getAvant());
 		System.out.println(new CoupFFB("C2-B1").getApres());
 		System.out.println(new CoupFFB("C2-B1").toString());
 		
 		temp = new PlateauFFB();
-		System.out.println(temp.peutManger(jb, new CoupFFB("B1-D3")));
+		System.out.println(temp.cheminLibre(new CoupFFB("B1-D3")));
 		
 		System.out.println(temp.getPlateauBlanc());
 		System.out.println(temp.getPlateauNoir());
@@ -69,10 +69,10 @@ public class PartieFFB {
 		CoupFFB coup1 = new CoupFFB("B1-D3");
 		CoupFFB coup2 = new CoupFFB("F7-B3");
 		
-		for(int i=0;i<2000000000;i++){
-			temp.peutManger(jb, coup1);
-			temp.peutManger(jn, coup2);
-		}
+//		for(int i=0;i<2000000000;i++){
+//			temp.peutManger(jb, coup1);
+//			temp.peutManger(jn, coup2);
+//		}
 		
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;

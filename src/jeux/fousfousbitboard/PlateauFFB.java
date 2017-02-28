@@ -10,12 +10,13 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/***************** Constantes *****************/
 
-	//private final static int VIDE = 0;
+	private final static int VIDE = 0;
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
 	private final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
 	private final static long masqueDiagGauche = 0b0000000100000010000001000000100000010000001000000100000010000001L;
+	private final static long masqueDiagGaucheHaute = 0b1000000100000010000001000000100000010000001000000100000010000000L;
 	private final static long masqueDiagDroit = 0b1000000001000000001000000001000000001000000001000000001000000001L;
 	
 	//private final static long un = 0b1000000000000000000000000000000000000000000000000000000000000000L;
@@ -131,24 +132,14 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean estValide(String move, String player) {
-		CoupFFB c = new CoupFFB(move);
-		
-		if(player.compareTo("blanc")==0){
-			return coupValide(joueurBlanc, c);
-		}else{
-			return coupValide(joueurNoir, c);
-		}
+		return coupValide(retourneJoueur(player), new CoupFFB(move));
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public String[] mouvementsPossibles(String player) {
-		ArrayList<CoupJeu> temp;
-		
-		if(player.compareTo("blanc")==0){
-			temp = coupsPossibles(joueurBlanc);
-		}else{
-			temp = coupsPossibles(joueurBlanc);
-		}
+		ArrayList<CoupJeu> temp = coupsPossibles(retourneJoueur(player));
+		// TODO Auto-generated method stub
 		
 		String[] liste = new String[temp.size()];
 		for(int i=0;i<temp.size();i++){
@@ -159,13 +150,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public void play(String move, String player) {
-		CoupFFB c = new CoupFFB(move);
-		
-		if(player.compareTo("blanc")==0){
-			joue(joueurBlanc, c);
-		}else{
-			joue(joueurNoir, c);
-		}
+		joue(retourneJoueur(player), new CoupFFB(move));
 	}
 
 	/************* Méthodes demandée pour la 2eme partie ****************/
@@ -175,7 +160,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		// TODO Auto-generated method stub
 	//}
 
-	/********************** Autres méthodes ******************/
+	/****************** Accesseurs **********************/
 	
 	public long getPlateauBlanc(){
 		return plateauBlanc;
@@ -184,20 +169,204 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	public long getPlateauNoir(){
 		return plateauNoir;
 	}
+
+	/********************** Autres méthodes ******************/
+	
+	/**
+	 * Permet de savoir si le chemin de Avant à Apres
+	 * est libre de tout obstacles
+	 * @param Avant la position du pion au debut
+	 * @param Apres la position devant être atteinte
+	 * 
+	 * Notes : Le temps d'execution de cette fonction est négligeable (quasi null)
+	 * Notes : Il faut que Avant et Après soint sur la même diagonale
+	 */
+	public boolean cheminLibre(byte Avant, byte Apres){
+		// Il faut que Avant>Apres
+		if(Avant<Apres){
+			byte temp = Avant;
+			Avant = Apres;
+			Apres = temp;
+		}
+		
+		// On choisi le masque correspondant à
+		// la diagonale entre ces deux points
+		long masque;
+		if(Avant%8>Apres%8){
+			masque = masqueDiagDroit;
+		}else {
+			masque = masqueDiagGauche;
+		}
+		// On place le masque au niveau du pion le plus bas (Apres)
+		masque = masque<<Apres;
+
+		// On évite que Apres ne soit compté dans le calcul
+		Apres++;
+		
+		long A = 1L<<Avant;
+		long B = 1L<<Apres;
+
+		return ((A-B) & masque & (plateauNoir | plateauBlanc))==0;
+	}
+	
+	/**
+	 * Permet de savoir si le chemin suivit durant le coup c
+	 * est libre de tout obstacles
+	 * @param c un coup (on le suppose valide)
+	 */
+	public boolean cheminLibre(CoupFFB c){
+		return cheminLibre(c.getAvant(), c.getApres());
+	}	
+	
+
+	/**
+	 * Permet de savoir si le pion d'un joueur est en position
+	 * d'en manger au moins un autre
+	 * @param j le joueur concerné
+	 * @param p le pion concerné
+	 */
+	public boolean peutManger(Joueur j, PionFFB p){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	/**
+	 * Permet de savoir si le pion d'un joueur est en position
+	 * d'en menacer au moins un autre
+	 * @param j le joueur concerné
+	 * @param p le pion concerné
+	 */
+	public boolean peutMenacer(Joueur j, PionFFB p){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	/**
+	 * Liste tous les pions que possede un joueur
+	 * @param j le joueur concerné
+	 * 
+	 * Notes : algo très rapide avec 11000000 appels possibles
+	 * par secondes
+	 */
+	public ArrayList<PionFFB> listerPions(Joueur j){
+		long plateau = retourneTableau(j);
+		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(j));
+		
+		long pion = Long.lowestOneBit(plateau);
+		while(pion != 0){
+			listeCoups.add(new PionFFB(Long.numberOfTrailingZeros(plateau)));
+			
+			plateau &= ~pion;
+			pion = Long.lowestOneBit(plateau);
+		}
+		return listeCoups;
+	}
+
+	/**
+	 * Liste tous les coups qui peuvent être joués avec un des pions
+	 * @param j le joueur qui veux joueur
+	 * @param p le pion qui doit être joué
+	 */
+	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Liste tous les coups qui permettent à un pion d'en manger un autre
+	 * @param j le joueur qui veux joueur
+	 * @param p le pion qui veux manger les autres
+	 */
+	public ArrayList<CoupFFB> listerMangeable(Joueur j, PionFFB p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Liste tous les pions d'un joueur pouvant manger
+	 * @param j le joueur qui veux joueur
+	 */
+	public ArrayList<PionFFB> listerMangeur(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Liste tous les pions qu'un pion peut menacer
+	 * @param j le joueur qui veux joueur
+	 * @param p le pion qui veux menacer (on suppose qu'il ne peut pas manger)
+	 */
+	public ArrayList<CoupFFB> listerMenacable(Joueur j, PionFFB p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Liste tous les pions d'un joueur pouvant menacer les autres
+	 * @param j le joueur qui veux joueur
+	 */
+	public ArrayList<PionFFB> listerMenaceur(Joueur j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Retourne ne nombre de pions encore en jeu d'un joueur
+	 * @param j le joueur concerné
+	 */
+	public int comptePions(Joueur j){
+		return Long.bitCount(retourneTableau(j));
+	}
+	
+
+
+	/********************** Aides et compactage ******************/
 	
 	public long retourneTableau(Joueur j){
-		if(j.equals(joueurBlanc)){
+		if(j.equals(joueurNoir)){
+			return plateauNoir;
+		}else{
+			return plateauBlanc;
+		}
+	}
+	
+	public long retourneTableau(String j){
+		if(j.compareTo("noir")==0){
+			return plateauNoir;
+		}else{
+			return plateauBlanc;
+		}
+	}
+	
+	public long retourneTableauEnnemi(Joueur j){
+		if(j.equals(joueurNoir)){
 			return plateauBlanc;
 		}else{
 			return plateauNoir;
 		}
 	}
 	
-	public long retourneTableau(String j){
-		if(j.compareTo("blanc")==0){
+	public long retourneTableauEnnemi(String j){
+		if(j.compareTo("noir")==0){
 			return plateauBlanc;
 		}else{
 			return plateauNoir;
+		}
+	}
+	
+	public Joueur retourneJoueur(String player){
+		if(player.compareTo("noir")==0){
+			return joueurNoir;
+		}else{
+			return joueurBlanc;
+		}
+	}
+	
+	public Joueur retourneJoueurEnnemi(String player){
+		if(player.compareTo("noir")==0){
+			return joueurBlanc;
+		}else{
+			return joueurNoir;
 		}
 	}
 	
@@ -244,110 +413,5 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 			}
 		}
 		System.out.print("\n └─┴─┴─┴─┴─┴─┴─┴─┘\n");
-	}
-	
-	// On considère qu'on nous donne bien un coup en diagonal valide
-	// Temps d'execution négligeable
-	public boolean cheminLibre(Joueur j, CoupFFB c){
-		
-		// On charge les endroits où on veut aller
-		// Avec A>B
-		long A = c.getAvant();
-		long B = c.getApres();
-		if(A<B){
-			A = c.getApres();
-			B = c.getAvant();
-		}
-		
-		// Choisi le masque correspondant à
-		// la diagonale entre les deux points
-		long masque = masqueDiagGauche;
-		if(A%8>B%8){
-			masque = masqueDiagDroit;
-		}
-		// Place le masque au niveau de B
-		masque = masque<<B;
-
-		B++;
-		
-		A = 1L<<A;
-		B = 1L<<B;
-
-		return ((A-B) & masque & (plateauNoir | plateauBlanc))==0;
-	}
-	
-	public boolean peutManger(Joueur j, CoupFFB c){
-		if(cheminLibre(j, c)){
-			// Emplacement du pion à manger
-			long temp = 1L<<c.getApres();
-			
-			// Verifie si il y a un pion adverse
-			// a cet endroit
-			if(j.equals(joueurBlanc)){
-				return (temp & plateauNoir) != 0;
-			}else{
-				return (temp & plateauBlanc) != 0;
-			}
-		}else{
-			// Emplacement du pion à manger
-			long temp = 1L<<c.getApres();
-			
-			// Verifie si il y a un pion adverse
-			// a cet endroit
-			if(j.equals(joueurBlanc)){
-				return (temp & plateauNoir) != 0;
-			}else{
-				return (temp & plateauBlanc) != 0;
-			}
-		}
-	}
-	
-	// 12000000 appels possibles par secondes
-	public ArrayList<PionFFB> listerPions(Joueur j){
-		long plateau = retourneTableau(j);
-		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(j));
-		
-		long pion = Long.lowestOneBit(plateau);
-		while(pion != 0){
-			listeCoups.add(new PionFFB(Long.numberOfTrailingZeros(plateau)));
-			
-			plateau &= ~pion;
-			pion = Long.lowestOneBit(plateau);
-		}
-		return listeCoups;
-	}
-
-	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// ceux qui peuvent être mangés
-	public ArrayList<CoupFFB> listerMangeable(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// ceux qui peuvent manger
-	public ArrayList<CoupFFB> listerMangeur(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// ceux qui peuvent être menacés
-	public ArrayList<CoupFFB> listerMenacable(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// ceux qui peuvent menacer
-	public ArrayList<CoupFFB> listerMenaceur(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int comptePions(Joueur j){
-		// Tester avec deux var en plus pour compter en continue
-		return Long.bitCount(retourneTableau(j));
 	}
 }

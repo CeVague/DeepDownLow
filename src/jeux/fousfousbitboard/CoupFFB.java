@@ -100,7 +100,7 @@ public class CoupFFB implements CoupJeu {
 
 	/*
 	 * Permet de vérifier si le coup actuel est possible
-	 * (valeurs dans le tableau et diagonale)
+	 * (vérifie si Avant et Apres sont sur la même diagonale)
 	 */
 	public boolean coupValide(){
 		return (Math.abs(avant%8 - apres%8) == Math.abs(avant/8 - apres/8)) && (avant != apres);
