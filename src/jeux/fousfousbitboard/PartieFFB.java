@@ -65,20 +65,20 @@ public class PartieFFB {
 		temp.print();
 		
 		
-//		long startTime = System.currentTimeMillis();
-//		PionFFB pion1 = new PionFFB("B1-D3");
-//		PionFFB pion2 = new PionFFB("F7-B3");
-//		CoupFFB coup1 = new CoupFFB("B1-D3");
-//		CoupFFB coup2 = new CoupFFB("F7-B3");
-//		
-//		for(int i=0;i<2000000000;i++){
-//			temp.listerMangeable(jb, pion1);
-//			temp.listerMangeable(jn, pion2);
-//		}
-//		
-//		long stopTime = System.currentTimeMillis();
-//		long elapsedTime = stopTime - startTime;
-//		System.out.println(elapsedTime);
+		long startTime = System.currentTimeMillis();
+		PionFFB pion1 = new PionFFB("B1-D3");
+		PionFFB pion2 = new PionFFB("F7-B3");
+		CoupFFB coup1 = new CoupFFB("B1-D3");
+		CoupFFB coup2 = new CoupFFB("F7-B3");
+		
+		for(int i=0;i<2000000000;i++){
+			temp.listerMangeable(jb, pion1);
+			temp.listerMangeable(jn, pion2);
+		}
+		
+		long stopTime = System.currentTimeMillis();
+		long elapsedTime = stopTime - startTime;
+		System.out.println(elapsedTime);
 		
 
 //		temp.print();
