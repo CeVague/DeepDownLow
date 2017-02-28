@@ -178,8 +178,9 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param Avant la position du pion au debut
 	 * @param Apres la position devant être atteinte
 	 * 
-	 * Notes : Le temps d'execution de cette fonction est négligeable (quasi null)
 	 * Notes : Il faut que Avant et Après soint sur la même diagonale
+	 * 
+	 * Vitesse : trop rapide
 	 */
 	public boolean cheminLibre(byte Avant, byte Apres){
 		// Il faut que Avant>Apres
@@ -213,6 +214,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * Permet de savoir si le chemin suivit durant le coup c
 	 * est libre de tout obstacles
 	 * @param c un coup (on le suppose valide)
+	 * 
+	 * Vitesse : trop rapide
 	 */
 	public boolean cheminLibre(CoupFFB c){
 		return cheminLibre(c.getAvant(), c.getApres());
@@ -224,10 +227,42 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * d'en manger au moins un autre
 	 * @param j le joueur concerné
 	 * @param p le pion concerné
+	 * 
+	 * Vitesse : trop rapide
 	 */
 	public boolean peutManger(Joueur j, PionFFB p){
-		// TODO Auto-generated method stub
-		return false;
+		long plateauNous = retournePlateau(j);
+		long plateauEux = retournePlateauEnnemi(j);
+		
+
+		byte pion = p.getPion();
+		byte antepion = (byte) (63 - p.getPion());
+		
+		
+		plateauNous &= ~(1L<<pion);
+		
+		plateauEux &= ~(1L<<pion); // A enlever une fois les tests fait
+		
+		long diagGaucheHautNous = plateauNous & (masqueDiagGauche<<pion);
+		long diagGaucheHautEux = plateauEux & (masqueDiagGauche<<pion);
+		
+		long diagGaucheBasNous = plateauNous & (masqueDiagGaucheHaute>>>antepion);
+		long diagGaucheBasEux = plateauEux & (masqueDiagGaucheHaute>>>antepion);
+		
+		long diagDroiteHautNous = plateauNous & (masqueDiagDroit<<pion);
+		long diagDroiteHautEux = plateauEux & (masqueDiagDroit<<pion);
+
+		long diagDroiteBasNous = plateauNous & (masqueDiagDroit>>>antepion);
+		long diagDroiteBasEux = plateauEux & (masqueDiagDroit>>>antepion);
+		
+		if(		diagGaucheBasNous<diagGaucheBasEux
+				|| diagDroiteBasNous<diagDroiteBasEux
+				|| Long.reverse(diagGaucheHautNous)<Long.reverse(diagGaucheHautEux)
+				|| Long.reverse(diagDroiteHautNous)<Long.reverse(diagDroiteHautEux)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	/**
@@ -245,11 +280,10 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * Liste tous les pions que possede un joueur
 	 * @param j le joueur concerné
 	 * 
-	 * Notes : algo très rapide avec 11000000 appels possibles
-	 * par secondes
+	 * Vitesse : 11.000.000 fois par secondes
 	 */
 	public ArrayList<PionFFB> listerPions(Joueur j){
-		long plateau = retourneTableau(j);
+		long plateau = retournePlateau(j);
 		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(j));
 		
 		long pion = Long.lowestOneBit(plateau);
@@ -276,10 +310,57 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * Liste tous les coups qui permettent à un pion d'en manger un autre
 	 * @param j le joueur qui veux joueur
 	 * @param p le pion qui veux manger les autres
+	 * 
+	 * Vitesse : 160.000.000 fois par secondes
 	 */
 	public ArrayList<CoupFFB> listerMangeable(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
-		return null;
+		long plateauNous = retournePlateau(j);
+		long plateauEux = retournePlateauEnnemi(j);
+		
+
+		byte pion = p.getPion();
+		byte antepion = (byte) (63 - pion);
+		
+		
+		plateauNous &= ~(1L<<pion);
+		
+		plateauEux &= ~(1L<<pion); // A enlever une fois les tests fait
+		
+		
+		ArrayList<CoupFFB> listeDesCoups = new ArrayList<CoupFFB>(4);
+		
+
+		long diagGaucheBasNous = plateauNous & (masqueDiagGaucheHaute>>>antepion);
+		long diagGaucheBasEux = plateauEux & (masqueDiagGaucheHaute>>>antepion);
+		if(diagGaucheBasNous<diagGaucheBasEux){
+			//System.out.println(PionFFB.CoordToString((byte) (63-Long.numberOfLeadingZeros(diagGaucheBasEux))));
+			listeDesCoups.add(new CoupFFB(pion, (byte) (63-Long.numberOfLeadingZeros(diagGaucheBasEux)) ));
+		}
+		
+
+		long diagDroiteBasNous = plateauNous & (masqueDiagDroit>>>antepion);
+		long diagDroiteBasEux = plateauEux & (masqueDiagDroit>>>antepion);
+		if(diagDroiteBasNous<diagDroiteBasEux){
+			// System.out.println(PionFFB.CoordToString((byte) (63-Long.numberOfLeadingZeros(diagDroiteBasEux))));
+			listeDesCoups.add(new CoupFFB(pion, (byte) (63-Long.numberOfLeadingZeros(diagDroiteBasEux)) ));
+		}
+
+		
+		long diagGaucheHautNous = plateauNous & (masqueDiagGauche<<pion);
+		long diagGaucheHautEux = plateauEux & (masqueDiagGauche<<pion);
+		if(Long.reverse(diagGaucheHautNous)<Long.reverse(diagGaucheHautEux)){
+			// System.out.println(PionFFB.CoordToString((byte) Long.numberOfTrailingZeros(diagGaucheHautEux)));
+			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(diagGaucheHautEux) ));
+		}
+
+		long diagDroiteHautNous = plateauNous & (masqueDiagDroit<<pion);
+		long diagDroiteHautEux = plateauEux & (masqueDiagDroit<<pion);
+		if(Long.reverse(diagDroiteHautNous)<Long.reverse(diagDroiteHautEux)){
+			// System.out.println(PionFFB.CoordToString((byte) Long.numberOfTrailingZeros(diagDroiteHautEux)));
+			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(diagDroiteHautEux) ));
+		}
+
+		return listeDesCoups;
 	}
 
 	/**
@@ -315,14 +396,14 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param j le joueur concerné
 	 */
 	public int comptePions(Joueur j){
-		return Long.bitCount(retourneTableau(j));
+		return Long.bitCount(retournePlateau(j));
 	}
 	
 
 
 	/********************** Aides et compactage ******************/
 	
-	public long retourneTableau(Joueur j){
+	public long retournePlateau(Joueur j){
 		if(j.equals(joueurNoir)){
 			return plateauNoir;
 		}else{
@@ -330,7 +411,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 	}
 	
-	public long retourneTableau(String j){
+	public long retournePlateau(String j){
 		if(j.compareTo("noir")==0){
 			return plateauNoir;
 		}else{
@@ -338,7 +419,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 	}
 	
-	public long retourneTableauEnnemi(Joueur j){
+	public long retournePlateauEnnemi(Joueur j){
 		if(j.equals(joueurNoir)){
 			return plateauBlanc;
 		}else{
@@ -346,7 +427,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 	}
 	
-	public long retourneTableauEnnemi(String j){
+	public long retournePlateauEnnemi(String j){
 		if(j.compareTo("noir")==0){
 			return plateauBlanc;
 		}else{
@@ -381,6 +462,24 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 				represente += "n";
 			} else{
 				represente += " ";
+			}
+			
+			if(i%8==0){
+				represente += "\n";
+			}
+		}
+		return represente;
+	}
+	
+	public String toString(long tableau) {
+		String represente = "";
+		
+		for(int i=63;i>=0;i--){
+			
+			if(((tableau>>>i) & 1L) != 0){
+				represente += "0";
+			} else{
+				represente += "O";
 			}
 			
 			if(i%8==0){

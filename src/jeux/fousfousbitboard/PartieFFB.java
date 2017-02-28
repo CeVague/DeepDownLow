@@ -65,22 +65,38 @@ public class PartieFFB {
 		temp.print();
 		
 		
-		long startTime = System.currentTimeMillis();
-		CoupFFB coup1 = new CoupFFB("B1-D3");
-		CoupFFB coup2 = new CoupFFB("F7-B3");
-		
+//		long startTime = System.currentTimeMillis();
+//		PionFFB pion1 = new PionFFB("B1-D3");
+//		PionFFB pion2 = new PionFFB("F7-B3");
+//		CoupFFB coup1 = new CoupFFB("B1-D3");
+//		CoupFFB coup2 = new CoupFFB("F7-B3");
+//		
 //		for(int i=0;i<2000000000;i++){
-//			temp.peutManger(jb, coup1);
-//			temp.peutManger(jn, coup2);
+//			temp.listerMangeable(jb, pion1);
+//			temp.listerMangeable(jn, pion2);
 //		}
+//		
+//		long stopTime = System.currentTimeMillis();
+//		long elapsedTime = stopTime - startTime;
+//		System.out.println(elapsedTime);
 		
-		long stopTime = System.currentTimeMillis();
-		long elapsedTime = stopTime - startTime;
-		System.out.println(elapsedTime);
-		
-		
-		
-		
+
+//		temp.print();
+//		temp.joue(jb, new CoupFFB("D1-C2"));
+//		temp.print();
+//
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("B1")) + " true false B1");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("A2")) + " true A2");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("D3")) + " true false D3");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("E4")) + " true E4");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("D5")) + " false D5");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("G8")) + " true G8");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("H5")) + " false H5");
+//		System.out.println(temp.listerMangeable(jn, new PionFFB("A8")) + " true A8");
+//		temp.joue(jn, new CoupFFB("G6-H7"));
+//		temp.joue(jn, new CoupFFB("E8-F7"));
+//		temp.print();
+//		System.out.println(temp.peutManger(jn, new PionFFB("G8")));
 		
 //		for(PionFFB t : temp.listerPions(jb)){
 //			System.out.println(t.toString());
