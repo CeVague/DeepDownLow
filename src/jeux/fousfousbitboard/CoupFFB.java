@@ -96,5 +96,14 @@ public class CoupFFB implements CoupJeu {
 		return coordFinal;
 	}
 
+	/******* Vérificateur *******/
+
+	/*
+	 * Permet de vérifier si le coup actuel est possible
+	 * (valeurs dans le tableau et diagonale)
+	 */
+	public boolean coupValide(){
+		return (Math.abs(avant%8 - apres%8) == Math.abs(avant/8 - apres/8)) && (avant != apres);
+	}
 }
 

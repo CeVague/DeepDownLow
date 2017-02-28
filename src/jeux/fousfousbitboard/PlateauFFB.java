@@ -10,15 +10,15 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/***************** Constantes *****************/
 
-	private final static int VIDE = 0;
+	//private final static int VIDE = 0;
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
 	private final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
-	private final static long masqueDiagGauche = 0b1000000100000010000001000000100000010000001000000100000010000000L;
-	private final static long masqueDiagDroite = 0b1000000001000000001000000001000000001000000001000000001000000001L;
+	private final static long masqueDiagGauche = 0b0000000100000010000001000000100000010000001000000100000010000001L;
+	private final static long masqueDiagDroit = 0b1000000001000000001000000001000000001000000001000000001000000001L;
 	
-	private final static long un = 0b1000000000000000000000000000000000000000000000000000000000000000L;
+	//private final static long un = 0b1000000000000000000000000000000000000000000000000000000000000000L;
 
 	/*********** Paramètres de classe ************/
 	
@@ -30,8 +30,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/************ Attributs  ************/
 
-	public long plateauBlanc;
-	public long plateauNoir;
+	private long plateauBlanc;
+	private long plateauNoir;
 
 	/************* Constructeurs ****************/
 
@@ -177,6 +177,30 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/********************** Autres méthodes ******************/
 	
+	public long getPlateauBlanc(){
+		return plateauBlanc;
+	}
+	
+	public long getPlateauNoir(){
+		return plateauNoir;
+	}
+	
+	public long retourneTableau(Joueur j){
+		if(j.equals(joueurBlanc)){
+			return plateauBlanc;
+		}else{
+			return plateauNoir;
+		}
+	}
+	
+	public long retourneTableau(String j){
+		if(j.compareTo("blanc")==0){
+			return plateauBlanc;
+		}else{
+			return plateauNoir;
+		}
+	}
+	
 	public String toString() {
 		String represente = "";
 		
@@ -197,19 +221,100 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		return represente;
 	}
 	
+	
+	public void print() {
+		System.out.println("  A B C D E F G H");
+		System.out.println(" ┌─┬─┬─┬─┬─┬─┬─┬─┐");
+		for(int i=63;i>=0;i--){
+			
+			if(i%8==7){
+				System.out.print((8 - i/8) + "│");
+			}
+			
+			if(((plateauBlanc>>>i) & 1L) != 0){
+				System.out.print("b│");
+			}else if(((plateauNoir>>>i) & 1L) != 0){
+				System.out.print("n│");
+			} else{
+				System.out.print(" │");
+			}
+			
+			if(i%8==0 && i!=0){
+				System.out.print("\n ├─┼─┼─┼─┼─┼─┼─┼─┤\n");
+			}
+		}
+		System.out.print("\n └─┴─┴─┴─┴─┴─┴─┴─┘\n");
+	}
+	
+	// On considère qu'on nous donne bien un coup en diagonal valide
+	// Temps d'execution négligeable
 	public boolean cheminLibre(Joueur j, CoupFFB c){
-		// TODO Auto-generated method stub
-		return false;
+		
+		// On charge les endroits où on veut aller
+		// Avec A>B
+		long A = c.getAvant();
+		long B = c.getApres();
+		if(A<B){
+			A = c.getApres();
+			B = c.getAvant();
+		}
+		
+		// Choisi le masque correspondant à
+		// la diagonale entre les deux points
+		long masque = masqueDiagGauche;
+		if(A%8>B%8){
+			masque = masqueDiagDroit;
+		}
+		// Place le masque au niveau de B
+		masque = masque<<B;
+
+		B++;
+		
+		A = 1L<<A;
+		B = 1L<<B;
+
+		return ((A-B) & masque & (plateauNoir | plateauBlanc))==0;
 	}
 	
 	public boolean peutManger(Joueur j, CoupFFB c){
-		// TODO Auto-generated method stub
-		return false;
+		if(cheminLibre(j, c)){
+			// Emplacement du pion à manger
+			long temp = 1L<<c.getApres();
+			
+			// Verifie si il y a un pion adverse
+			// a cet endroit
+			if(j.equals(joueurBlanc)){
+				return (temp & plateauNoir) != 0;
+			}else{
+				return (temp & plateauBlanc) != 0;
+			}
+		}else{
+			// Emplacement du pion à manger
+			long temp = 1L<<c.getApres();
+			
+			// Verifie si il y a un pion adverse
+			// a cet endroit
+			if(j.equals(joueurBlanc)){
+				return (temp & plateauNoir) != 0;
+			}else{
+				return (temp & plateauBlanc) != 0;
+			}
+		}
 	}
 	
+	// 12000000 appels possibles par secondes
 	public ArrayList<PionFFB> listerPions(Joueur j){
-		// TODO Auto-generated method stub
-		return null;
+		long plateau = retourneTableau(j);
+		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(j));
+		
+		long pion = Long.lowestOneBit(plateau);
+		while(pion != 0){
+			listeCoups.add(new PionFFB(Long.numberOfTrailingZeros(plateau)));
+			
+			plateau &= ~pion;
+			pion = Long.lowestOneBit(plateau);
+		}
+		return listeCoups;
 	}
 
 	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
@@ -243,11 +348,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	public int comptePions(Joueur j){
 		// Tester avec deux var en plus pour compter en continue
-		
-		if(j.equals(joueurBlanc)){
-			return Long.bitCount(plateauBlanc);
-		}else{
-			return Long.bitCount(plateauNoir);
-		}
+		return Long.bitCount(retourneTableau(j));
 	}
 }

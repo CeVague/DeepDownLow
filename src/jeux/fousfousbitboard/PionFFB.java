@@ -18,6 +18,10 @@ public class PionFFB implements CoupJeu {
 		this.pion = StringToCoord(coord);
 	}
 	
+	public PionFFB(int pion) {
+		this.pion = (byte) pion;
+	}
+	
 	public PionFFB(byte pion) {
 		this.pion = pion;
 	}
