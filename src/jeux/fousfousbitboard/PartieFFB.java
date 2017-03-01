@@ -23,62 +23,89 @@ public class PartieFFB {
 			{1,0,1,0,1,0,1,0}});
 
 
+		temp = new PlateauFFB(new int[][]{{0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0},
+			{0,1,0,0,0,1,0,0},
+			{1,0,0,0,2,0,0,0},
+			{0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0},
+			{0,0,2,0,0,0,0,0}});
+		
 		Joueur jb = new Joueur("blanc");
 		Joueur jn = new Joueur("noir");
 		PlateauFFB.setJoueurs(jb, jn);
 		
+		temp.print();
 		
-		System.out.println(temp.getPlateauBlanc());
-		System.out.println(temp.getPlateauNoir());
-		
-		
-		long tempInt = temp.getPlateauNoir();
+		// Joueur Noir
+		PionFFB F1 = new PionFFB("F1");
+		PionFFB D5 = new PionFFB("D5");
 
-		tempInt = tempInt - ((tempInt >> 1) & 0x5555555555555555L);
-		tempInt = (tempInt & 0x3333333333333333L) + ((tempInt >> 2) & 0x3333333333333333L);
-	     System.out.println( (((tempInt + (tempInt >> 4)) & 0x0F0F0F0F0F0F0F0FL) * 0x0101010101010101L) >> 56);
-	     System.out.println( Long.bitCount(temp.getPlateauNoir()));
+		// Joueur Blanc
+		PionFFB H5 = new PionFFB("H5");
+		PionFFB G6 = new PionFFB("G6");
+		PionFFB C6 = new PionFFB("C6");
 		
-		System.out.println(temp.toString());
-		temp.print();
-		temp.joue(new Joueur("gfghf"), new CoupFFB("C2-B1"));
-		System.out.println(temp.toString());
-		temp.print();
 		
-		System.out.println(temp.cheminLibre(new CoupFFB("B1-D3")));
+		System.out.println( temp.peutMenacer(jb, H5) );
+		System.out.println( temp.listerMenacable(jb, H5) );
 		
-		System.out.println(new CoupFFB("C2-B1").getAvant());
-		System.out.println(new CoupFFB("C2-B1").getApres());
-		System.out.println(new CoupFFB("C2-B1").toString());
-		
-		temp = new PlateauFFB();
-		System.out.println(temp.cheminLibre(new CoupFFB("B1-D3")));
-		
-		System.out.println(temp.getPlateauBlanc());
-		System.out.println(temp.getPlateauNoir());
+//		System.out.println(temp.getPlateauBlanc());
+//		System.out.println(temp.getPlateauNoir());
+//		
+//		
+//		long tempInt = temp.getPlateauNoir();
+//
+//		tempInt = tempInt - ((tempInt >> 1) & 0x5555555555555555L);
+//		tempInt = (tempInt & 0x3333333333333333L) + ((tempInt >> 2) & 0x3333333333333333L);
+//	     System.out.println( (((tempInt + (tempInt >> 4)) & 0x0F0F0F0F0F0F0F0FL) * 0x0101010101010101L) >> 56);
+//	     System.out.println( Long.bitCount(temp.getPlateauNoir()));
+//		
+//		System.out.println(temp.toString());
+//		temp.print();
+//		temp.joue(new Joueur("gfghf"), new CoupFFB("C2-B1"));
+//		System.out.println(temp.toString());
+//		temp.print();
+//		
+//		System.out.println(temp.cheminLibre(new CoupFFB("B1-D3")));
+//		
+//		System.out.println(new CoupFFB("C2-B1").getAvant());
+//		System.out.println(new CoupFFB("C2-B1").getApres());
+//		System.out.println(new CoupFFB("C2-B1").toString());
+//		
+//		temp = new PlateauFFB();
+//		System.out.println(temp.cheminLibre(new CoupFFB("B1-D3")));
+//		
+//		System.out.println(temp.getPlateauBlanc());
+//		System.out.println(temp.getPlateauNoir());
 		
 		
 
 		// temp.play("C2-B1", "noir");
 		// temp.play("A8-B7", "noir");
 		
-		temp.print();
+		// temp.print();
 		
 		
 		long startTime = System.currentTimeMillis();
-		PionFFB pion1 = new PionFFB("B1-D3");
-		PionFFB pion2 = new PionFFB("F7-B3");
-		CoupFFB coup1 = new CoupFFB("B1-D3");
-		CoupFFB coup2 = new CoupFFB("F7-B3");
+//		PionFFB pion1 = new PionFFB("B1-D3");
+//		PionFFB pion2 = new PionFFB("F7-B3");
+//		CoupFFB coup1 = new CoupFFB("B1-D3");
+//		CoupFFB coup2 = new CoupFFB("F7-B3");
 		
-		for(int i=0;i<2000000000;i++){
-			temp.listerMangeable(jb, pion1);
-			temp.listerMangeable(jn, pion2);
-		}
+//		for(int i=0;i<200000000;i++){
+//			temp.listerMenacable(jb, H5);
+//			temp.listerMenacable(jb, G6);
+//			temp.listerMenacable(jb, C6);
+//			temp.listerMenacable(jn, H5);
+//			temp.listerMenacable(jn, G6);
+//			temp.listerMenacable(jn, C6);
+//		}
 		
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;
-		System.out.println(elapsedTime);
+//		System.out.println(elapsedTime);
 		
 
 //		temp.print();

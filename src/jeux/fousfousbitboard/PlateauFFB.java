@@ -249,7 +249,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 */
 	public boolean peutManger(Joueur j, PionFFB p) {
 		long plateauNous = retournePlateau(j);
-		long plateauEux = retournePlateauEnnemi(j);
+		long plateauEux = retournePlateauAdverse(j);
 
 
 		byte pion = p.getPion();
@@ -286,9 +286,56 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * d'en menacer au moins un autre
 	 * @param j le joueur concerné
 	 * @param p le pion concerné
+	 * 
+	 * Vitesse : 50.000.000 fois par secondes
 	 */
 	public boolean peutMenacer(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
+		long plateauObstacles = plateauBlanc | plateauNoir | masquePlateau;
+		long adverse = retournePlateauAdverse(j);
+		
+		long masqueH, masqueB, min, max;
+//		long apercu = 0L;
+		
+		int curseur;
+
+		curseur = p.getPion();
+		plateauObstacles &= ~(1L<<curseur);
+
+		
+		for(int incr : new int[]{7, 9}){
+			if(incr==7){
+				masqueH = masqueDiagDroit;
+				masqueB = masqueDiagDroit;
+			}else{
+				masqueH = masqueDiagGaucheHaute;
+				masqueB = masqueDiagGauche;
+			}
+			curseur = p.getPion();
+			
+			
+			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+				curseur -= incr;
+			}
+			curseur += incr;
+			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+
+				min = Long.highestOneBit( plateauObstacles & ( masqueH>>>(63-curseur) ) ) & adverse;
+				max = Long.lowestOneBit( plateauObstacles & ( masqueB<<curseur ) ) & adverse;
+				
+				if(min!=0 || max!=0){
+					return true;
+					//System.out.println(PionFFB.CoordToString((byte) curseur));
+				}
+				
+//				apercu |= min;
+//				apercu |= max;
+
+				curseur += incr;
+			}
+		}
+		
+		//System.out.println(toString(apercu));
+		
 		return false;
 	}
 
@@ -331,7 +378,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 */
 	public ArrayList<CoupFFB> listerMangeable(Joueur j, PionFFB p) {
 		long plateauNous = retournePlateau(j);
-		long plateauEux = retournePlateauEnnemi(j);
+		long plateauEux = retournePlateauAdverse(j);
 
 		byte pion = p.getPion();
 		byte nonpion = (byte) (63 - pion);
@@ -339,7 +386,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		plateauNous &= ~(1L << pion);
 
 		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
-
 
 		ArrayList<CoupFFB> listeDesCoups = new ArrayList<CoupFFB>(4);
 
@@ -381,7 +427,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 
 	/**
-	 * Liste tous les pions d'un joueur pouvant manger
+	 * Liste tous les pions d'un joueur pouvant manger les autres
 	 * @param j le joueur qui veux joueur
 	 */
 	public ArrayList<PionFFB> listerMangeur(Joueur j) {
@@ -390,17 +436,60 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 
 	/**
-	 * Liste tous les pions qu'un pion peut menacer
+	 * Liste tous Coups permetant de menacer un autre pion
 	 * @param j le joueur qui veux joueur
 	 * @param p le pion qui veux menacer (on suppose qu'il ne peut pas manger)
+	 * 
+	 * Vitesse : 15.000.000 fois par secondes
 	 */
 	public ArrayList<CoupFFB> listerMenacable(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
-		return null;
+		long plateauObstacles = plateauBlanc | plateauNoir | masquePlateau;
+		long adverse = retournePlateauAdverse(j);
+
+		ArrayList<CoupFFB> listeCoups = new ArrayList<CoupFFB>();
+		
+		long masqueH, masqueB, min, max;
+		
+		int curseur;
+
+		curseur = p.getPion();
+		plateauObstacles &= ~(1L<<curseur);
+
+		
+		for(int incr : new int[]{7, 9}){
+			if(incr==7){
+				masqueH = masqueDiagDroit;
+				masqueB = masqueDiagDroit;
+			}else{
+				masqueH = masqueDiagGaucheHaute;
+				masqueB = masqueDiagGauche;
+			}
+			curseur = p.getPion();
+			
+			
+			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+				curseur -= incr;
+			}
+			curseur += incr;
+			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+
+				min = Long.highestOneBit( plateauObstacles & ( masqueH>>>(63-curseur) ) ) & adverse;
+				max = Long.lowestOneBit( plateauObstacles & ( masqueB<<curseur ) ) & adverse;
+				
+				if(min!=0 || max!=0){
+					listeCoups.add(new CoupFFB(p.getPion(), (byte) curseur));
+				}
+
+				curseur += incr;
+			}
+		}
+		
+		return listeCoups;
 	}
 
 	/**
 	 * Liste tous les pions d'un joueur pouvant menacer les autres
+	 * (ils ne doivent donc pas pouvoir en manger un autre)
 	 * @param j le joueur qui veux joueur
 	 */
 	public ArrayList<PionFFB> listerMenaceur(Joueur j) {
@@ -414,6 +503,14 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 */
 	public int comptePions(Joueur j) {
 		return Long.bitCount(retournePlateau(j));
+	}
+
+	/**
+	 * Retourne ne nombre de pions encore en jeu d'un plateau
+	 * @param plateau le plateau concerné
+	 */
+	public int comptePions(long plateau) {
+		return Long.bitCount(plateau);
 	}
 
 
@@ -435,7 +532,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 	}
 
-	public long retournePlateauEnnemi(Joueur j) {
+	public long retournePlateauAdverse(Joueur j) {
 		if (j.equals(joueurNoir)) {
 			return plateauBlanc;
 		} else {
@@ -443,7 +540,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 	}
 
-	public long retournePlateauEnnemi(String j) {
+	public long retournePlateauAdverse(String j) {
 		if (j.compareTo("noir") == 0) {
 			return plateauBlanc;
 		} else {
@@ -459,7 +556,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 	}
 
-	public Joueur retourneJoueurEnnemi(String player) {
+	public Joueur retourneJoueurAdverse(String player) {
 		if (player.compareTo("noir") == 0) {
 			return joueurBlanc;
 		} else {
@@ -493,9 +590,9 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		for (int i = 63; i >= 0; i--) {
 
 			if (((tableau >>> i) & 1L) != 0) {
-				represente += "0";
+				represente += "●";
 			} else {
-				represente += "O";
+				represente += "○";
 			}
 
 			if (i % 8 == 0) {
