@@ -3,14 +3,25 @@ package jeux.fousfousbitboard;
 import iia.jeux.modele.*;
 import iia.jeux.modele.joueur.Joueur;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+/**
+ * Chaque objets prend 98 octets en mémoire (observé en le sérialisant)
+ * tandit qu'un tableau de byte (seul) en prend 199 (nous somment bien mieux)
+ */
 
 public class PlateauFFB implements PlateauJeu, Partie1 {
 
 
 	/***************** Constantes *****************/
 
-	private final static int VIDE = 0;
+	// private final static int VIDE = 0;
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
@@ -125,39 +136,129 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		CoupFFB cNew = (CoupFFB) c;
 		// Vérifie que le coup est bien une diagonale
 		// et que le chemin est libre
-		if(!cNew.coupValide() || cheminLibre(cNew)){
+		if(!cNew.coupValide() || !cheminLibre(cNew)){
+			System.out.println("1");
 			return false;
 		}
-		// verifier qu'il y a bien les pions aux bons endroits (et pour les bonnes poersonnes)
-		// TODO Auto-generated method stub
-		// Si il mange tout est OK
-		// Si il ne mange pas on vérifie si il peut manger
-			// Si oui erreur
-			// Si non on vérifie qu'il puisse manger dans sa nouvelle position
-		return false;
+
+		// Vérifie si on part bien d'un pion existant
+		if( ((retournePlateau(j)>>>cNew.getAvant()) & 1) == 0){
+			System.out.println("2");
+			return false;
+		}
+
+		// Si on mange un pion adverse le coup est valide
+		if( ((retournePlateauAdverse(j)>>>cNew.getApres()) & 1) != 0){
+			System.out.println("3");
+			return true;
+		}else{ // Si non
+			// Cette position ne doit pas nous permettre de manger
+			if(peutManger(j, new PionFFB(cNew.getAvant()))){
+				System.out.println("4");
+				return false;
+			}
+			
+			// Mais la nouvelle position doit nous le permettre
+			if(peutManger(j, new PionFFB(cNew.getApres()))){
+				System.out.println("5");
+				return true;
+			}else{
+				System.out.println("6");
+				return false;
+			}
+		}
 	}
 
 	/************* Méthodes de l'interface Partie1 ****************/
 
 	@Override
 	public void setFromFile(String fileName) {
-		// TODO Auto-generated method stub
+		plateauBlanc = 0L;
+		plateauNoir = 0L;
+		
+		try{
+			InputStream ips=new FileInputStream(fileName); 
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String ligne;
+			while ((ligne=br.readLine())!=null){
+				if(!ligne.startsWith("%")){
+					ligne = ligne.substring(2, 10);
+					for (int i = 0; i < 8; i++) {
+						if(ligne.charAt(i)=='b' || ligne.charAt(i)=='n' || ligne.charAt(i)=='-'){
+						    plateauBlanc = plateauBlanc<<1;
+						    plateauNoir = plateauNoir<<1;
+						}
+					    
+					    switch (ligne.charAt(i)){
+					    	case 'b' :
+					    		plateauBlanc |= 1;
+					    		break;
+					    	case 'n' :
+					    		plateauNoir |= 1;
+					    		break;
+					    	case '-' :
+							    break;
+					    }
+					}
+				}
+			}
+			br.close(); 
+		}		
+		catch (Exception e){
+			System.out.println(e.toString());
+		}
 	}
 
 	public void saveToFile(String fileName, String version, String notesDeVersion, String commentaire) {
-		// TODO Auto-generated method stub
+		try{
+			File ff=new File(fileName);
+			ff.createNewFile();
+			FileWriter ffw=new FileWriter(ff);
+			ffw.write("% Version : " + version + "\n");
+			if(!notesDeVersion.isEmpty()){
+				ffw.write("% Notes : " + notesDeVersion + "\n");
+			}
+			if(!commentaire.isEmpty()){
+				ffw.write("% " + commentaire + "\n");
+			}
+
+			ffw.write("% ABCDEFGH\n");
+			
+			for (int i = 63; i >= 0; i--) {
+				if (i % 8 == 7) {
+					ffw.write(Integer.toString(8 - i / 8) + " ");
+				}
+				
+				if (((plateauBlanc >>> i) & 1L) != 0) {
+					ffw.write("b");
+				} else if (((plateauNoir >>> i) & 1L) != 0) {
+					ffw.write("n");
+				} else {
+					ffw.write("-");
+				}
+
+				if (i % 8 == 0) {
+					ffw.write(" " + Integer.toString(8 - i / 8) + "\n");
+				}
+			}
+
+			ffw.write("% ABCDEFGH");
+			
+			ffw.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
 	}
 
 	@Override
 	public void saveToFile(String fileName) {
 		saveToFile(fileName, "0.1", "Programme toujours incomplet", "");
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public boolean estValide(String move, String player) {
 		return coupValide(retourneJoueur(player), new CoupFFB(move));
-		// TODO Auto-generated method stub
 	}
 
 	@Override

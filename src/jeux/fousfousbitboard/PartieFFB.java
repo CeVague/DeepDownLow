@@ -1,17 +1,10 @@
 package jeux.fousfousbitboard;
 
-import java.net.MalformedURLException;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
 import iia.jeux.modele.joueur.Joueur;
 
 public class PartieFFB {
 	
-	public static void main(String[] args) throws MalformedURLException {
+	public static void main(String[] args) {
 		
 		PlateauFFB temp = new PlateauFFB(new int[][]{
 			{0,2,0,2,0,2,0,2},
@@ -39,21 +32,24 @@ public class PartieFFB {
 		
 		temp.print();
 		
-		// Joueur Noir
-		PionFFB F1 = new PionFFB("F1");
-		PionFFB D5 = new PionFFB("D5");
-
-		// Joueur Blanc
-		PionFFB H5 = new PionFFB("H5");
-		PionFFB G6 = new PionFFB("G6");
-		PionFFB C6 = new PionFFB("C6");
+//		// Joueur Noir
+//		PionFFB F1 = new PionFFB("F1");
+//		PionFFB D5 = new PionFFB("D5");
+//
+//		// Joueur Blanc
+//		PionFFB H5 = new PionFFB("H5");
+//		PionFFB G6 = new PionFFB("G6");
+//		PionFFB C6 = new PionFFB("C6");
 		
-		
-		System.out.println( temp.peutMenacer(jb, H5) );
-		System.out.println( temp.listerMenacable(jb, H5) );
-		
-		System.out.println( temp.coupsPossibles(jn) );
-		System.out.println( temp.coupsPossibles(jb) );
+//		System.out.println( temp.peutMenacer(jb, H5) );
+//		System.out.println( temp.listerMenacable(jb, H5) );
+//		
+//		System.out.println( temp.coupsPossibles(jn) );
+//		System.out.println( temp.coupsPossibles(jb) );
+//		
+//		temp.saveToFile("test.txt");
+//		temp.setFromFile("ExempleSavePlateau.txt");
+//		temp.print();
 		
 //		System.out.println(temp.getPlateauBlanc());
 //		System.out.println(temp.getPlateauNoir());
@@ -128,7 +124,6 @@ public class PartieFFB {
 //		for(PionFFB t : temp.listerPions(jb)){
 //			System.out.println(t.toString());
 //		}
-		// TODO Auto-generated method stub
 
 
 //        Icon icon = new ImageIcon("DeepDownLow.gif");
