@@ -81,11 +81,18 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 
 	/************* Méthodes de l'interface PlateauJeu ****************/
-
+	/**
+	 * Vitesse : 1.600.000 fois par secondes
+	 */
 	@Override
 	public ArrayList<CoupJeu> coupsPossibles(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
+		 
+		for(PionFFB pion : listerPions(j)){
+			listeCoups.addAll(coupsPossibles(j, pion));
+		}
+
+		return listeCoups;
 	}
 
 	@Override
@@ -121,7 +128,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		if(!cNew.coupValide() || cheminLibre(cNew)){
 			return false;
 		}
-
+		// verifier qu'il y a bien les pions aux bons endroits (et pour les bonnes poersonnes)
 		// TODO Auto-generated method stub
 		// Si il mange tout est OK
 		// Si il ne mange pas on vérifie si il peut manger
@@ -156,7 +163,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	@Override
 	public String[] mouvementsPossibles(String player) {
 		ArrayList<CoupJeu> temp = coupsPossibles(retourneJoueur(player));
-		// TODO Auto-generated method stub
 
 		String[] liste = new String[temp.size()];
 		for (int i = 0; i < temp.size(); i++) {
@@ -343,11 +349,11 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * Liste tous les pions que possede un joueur
 	 * @param j le joueur concerné
 	 * 
-	 * Vitesse : 11.000.000 fois par secondes
+	 * Vitesse : 17.000.000 fois par secondes
 	 */
 	public ArrayList<PionFFB> listerPions(Joueur j) {
 		long plateau = retournePlateau(j);
-		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(j));
+		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(plateau));
 
 		long pion = Long.lowestOneBit(plateau);
 		while (pion != 0) {
@@ -365,8 +371,11 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param p le pion qui doit être joué
 	 */
 	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
-		// TODO Auto-generated method stub
-		return null;
+		if(peutManger(j, p)){
+			return listerMangeable(j, p);
+		}else{
+			return listerMenacable(j, p);
+		}
 	}
 
 	/**
@@ -431,12 +440,19 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param j le joueur qui veux joueur
 	 */
 	public ArrayList<PionFFB> listerMangeur(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<PionFFB> listePions = new ArrayList<PionFFB>();
+		 
+		for(PionFFB pion : listerPions(j)){
+			if(peutManger(j, pion)){
+				listePions.add(pion);
+			}
+		}
+
+		return listePions;
 	}
 
 	/**
-	 * Liste tous Coups permetant de menacer un autre pion
+	 * Liste tous Coups permetant de menacer un pion adverse
 	 * @param j le joueur qui veux joueur
 	 * @param p le pion qui veux menacer (on suppose qu'il ne peut pas manger)
 	 * 
@@ -493,8 +509,15 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param j le joueur qui veux joueur
 	 */
 	public ArrayList<PionFFB> listerMenaceur(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<PionFFB> listePions = new ArrayList<PionFFB>();
+		 
+		for(PionFFB pion : listerPions(j)){
+			if(!peutManger(j, pion) && peutMenacer(j, pion)){
+				listePions.add(pion);
+			}
+		}
+
+		return listePions;
 	}
 
 	/**

@@ -13,7 +13,8 @@ public class PartieFFB {
 	
 	public static void main(String[] args) throws MalformedURLException {
 		
-		PlateauFFB temp = new PlateauFFB(new int[][]{{0,2,0,2,0,2,0,2},
+		PlateauFFB temp = new PlateauFFB(new int[][]{
+			{0,2,0,2,0,2,0,2},
 			{1,0,1,0,1,0,1,0},
 			{0,2,0,2,0,2,0,2},
 			{1,0,1,0,1,0,1,0},
@@ -23,14 +24,14 @@ public class PartieFFB {
 			{1,0,1,0,1,0,1,0}});
 
 
-		temp = new PlateauFFB(new int[][]{{0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0},
-			{0,1,0,0,0,1,0,0},
-			{1,0,0,0,2,0,0,0},
-			{0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0},
-			{0,0,2,0,0,0,0,0}});
+//		temp = new PlateauFFB(new int[][]{{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,1,0,0,0,1,0,0},
+//			{1,0,0,0,2,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,2,0,0,0,0,0}});
 		
 		Joueur jb = new Joueur("blanc");
 		Joueur jn = new Joueur("noir");
@@ -50,6 +51,9 @@ public class PartieFFB {
 		
 		System.out.println( temp.peutMenacer(jb, H5) );
 		System.out.println( temp.listerMenacable(jb, H5) );
+		
+		System.out.println( temp.coupsPossibles(jn) );
+		System.out.println( temp.coupsPossibles(jb) );
 		
 //		System.out.println(temp.getPlateauBlanc());
 //		System.out.println(temp.getPlateauNoir());
@@ -94,17 +98,13 @@ public class PartieFFB {
 //		CoupFFB coup1 = new CoupFFB("B1-D3");
 //		CoupFFB coup2 = new CoupFFB("F7-B3");
 		
-//		for(int i=0;i<200000000;i++){
-//			temp.listerMenacable(jb, H5);
-//			temp.listerMenacable(jb, G6);
-//			temp.listerMenacable(jb, C6);
-//			temp.listerMenacable(jn, H5);
-//			temp.listerMenacable(jn, G6);
-//			temp.listerMenacable(jn, C6);
+//		for(int i=0;i<100000000;i++){
+//			temp.coupsPossibles(jb);
+//			temp.coupsPossibles(jn);
 //		}
-		
-		long stopTime = System.currentTimeMillis();
-		long elapsedTime = stopTime - startTime;
+//		
+//		long stopTime = System.currentTimeMillis();
+//		long elapsedTime = stopTime - startTime;
 //		System.out.println(elapsedTime);
 		
 
