@@ -115,7 +115,18 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean coupValide(Joueur j, CoupJeu c) {
+		CoupFFB cNew = (CoupFFB) c;
+		// Vérifie que le coup est bien une diagonale
+		// et que le chemin est libre
+		if(!cNew.coupValide() || cheminLibre(cNew)){
+			return false;
+		}
+
 		// TODO Auto-generated method stub
+		// Si il mange tout est OK
+		// Si il ne mange pas on vérifie si il peut manger
+			// Si oui erreur
+			// Si non on vérifie qu'il puisse manger dans sa nouvelle position
 		return false;
 	}
 
@@ -126,8 +137,13 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		// TODO Auto-generated method stub
 	}
 
+	public void saveToFile(String fileName, String version, String notesDeVersion, String commentaire) {
+		// TODO Auto-generated method stub
+	}
+
 	@Override
 	public void saveToFile(String fileName) {
+		saveToFile(fileName, "0.1", "Programme toujours incomplet", "");
 		// TODO Auto-generated method stub
 	}
 
@@ -257,8 +273,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		long diagDroiteBasEux = plateauEux & (masqueDiagDroit >>> antepion);
 
 		if (diagGaucheBasNous < diagGaucheBasEux || diagDroiteBasNous < diagDroiteBasEux
-				|| Long.reverse(diagGaucheHautNous) < Long.reverse(diagGaucheHautEux)
-				|| Long.reverse(diagDroiteHautNous) < Long.reverse(diagDroiteHautEux)) {
+				|| Long.numberOfTrailingZeros(diagGaucheHautNous) > Long.numberOfTrailingZeros(diagGaucheHautEux)
+				|| Long.numberOfTrailingZeros(diagDroiteHautNous) > Long.numberOfTrailingZeros(diagDroiteHautEux)) {
 			return true;
 		} else {
 			return false;
@@ -329,18 +345,20 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		long Nous = plateauNous & (masqueDiagGauche << pion);
 		long Eux = plateauEux & (masqueDiagGauche << pion);
-		if (Long.reverse(Nous) < Long.reverse(Eux)) {
+		int tmp = Long.numberOfTrailingZeros(Eux);
+		if (Long.numberOfTrailingZeros(Nous) > tmp) {
 			// System.out.println(PionFFB.CoordToString((byte)
 			// Long.numberOfTrailingZeros(diagGaucheHautEux)));
-			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(Eux)));
+			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
 		}
 
 		Nous = plateauNous & (masqueDiagDroit << pion);
 		Eux = plateauEux & (masqueDiagDroit << pion);
-		if (Long.reverse(Nous) < Long.reverse(Eux)) {
+		tmp = Long.numberOfTrailingZeros(Eux);
+		if (Long.numberOfTrailingZeros(Nous) > tmp) {
 			// System.out.println(PionFFB.CoordToString((byte)
 			// Long.numberOfTrailingZeros(diagDroiteHautEux)));
-			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(Eux)));
+			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
 		}
 
 		Nous = plateauNous & (masqueDiagGaucheHaute >>> nonpion);
