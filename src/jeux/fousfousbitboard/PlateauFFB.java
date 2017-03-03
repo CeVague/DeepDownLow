@@ -29,6 +29,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	private final static long masqueDiagGauche = 0b0000000100000010000001000000100000010000001000000100000010000001L;
 	private final static long masqueDiagGaucheHaute = 0b1000000100000010000001000000100000010000001000000100000010000000L;
 	private final static long masqueDiagDroit = 0b1000000001000000001000000001000000001000000001000000001000000001L;
+	private final static long masqueVert = 0b0000000100000001000000010000000100000001000000010000000100000001L;
 
 	// private final static long un =
 	// 0b1000000000000000000000000000000000000000000000000000000000000000L;
@@ -294,6 +295,31 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		return plateauNoir;
 	}
 
+	/*************** Transformations Symétriques **************/
+
+	public static long symetrieTour360(long plateau){
+		return Long.reverse(plateau);
+	}
+	
+	public static long symetrieDiagDroite(long plateau){
+		long masqueDiag = masqueDiagGauche & ~1;
+		
+		long plateauTmp = 0L;
+
+		plateauTmp |= ( (plateau & masqueVert) * masqueDiag)>>>56;
+		for(int i=1;i<8;i++){
+			plateau = plateau>>>1;
+			plateauTmp = plateauTmp<<8;
+			plateauTmp |= ( (plateau & masqueVert) * masqueDiag)>>>56;
+		}
+		
+		return Long.reverseBytes(plateauTmp);
+	}
+	
+	public static long symetrieDiagGauche(long plateau){
+		return symetrieDiagDroite(symetrieTour360(plateau));
+	}
+	
 	/********************** Autres méthodes ******************/
 
 	/**
@@ -708,7 +734,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		return represente;
 	}
 
-	public String toString(long tableau) {
+	public static String toString(long tableau) {
 		String represente = "";
 
 		for (int i = 63; i >= 0; i--) {
@@ -750,4 +776,5 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 		System.out.print("\n └─┴─┴─┴─┴─┴─┴─┴─┘\n");
 	}
+	
 }

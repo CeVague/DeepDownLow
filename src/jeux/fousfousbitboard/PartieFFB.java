@@ -32,6 +32,12 @@ public class PartieFFB {
 		
 		temp.print();
 		
+		
+//		System.out.println(PlateauFFB.toString(temp.getPlateauNoir()));
+//		System.out.println(PlateauFFB.toString(PlateauFFB.symetrieTour360(temp.getPlateauNoir())));
+//		System.out.println(PlateauFFB.toString(PlateauFFB.symetrieDiagDroite(temp.getPlateauNoir())));
+//		System.out.println(PlateauFFB.toString(PlateauFFB.symetrieDiagGauche(temp.getPlateauNoir())));
+		
 //		// Joueur Noir
 //		PionFFB F1 = new PionFFB("F1");
 //		PionFFB D5 = new PionFFB("D5");
