@@ -124,7 +124,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean finDePartie() {
-		return (plateauBlanc == 0 || plateauBlanc == 0);
+		return (plateauBlanc == 0 || plateauNoir == 0);
 	}
 
 	@Override
@@ -138,33 +138,27 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		// Vérifie que le coup est bien une diagonale
 		// et que le chemin est libre
 		if(!cNew.coupValide() || !cheminLibre(cNew)){
-			System.out.println("1");
 			return false;
 		}
 
 		// Vérifie si on part bien d'un pion existant
 		if( ((retournePlateau(j)>>>cNew.getAvant()) & 1) == 0){
-			System.out.println("2");
 			return false;
 		}
 
 		// Si on mange un pion adverse le coup est valide
 		if( ((retournePlateauAdverse(j)>>>cNew.getApres()) & 1) != 0){
-			System.out.println("3");
 			return true;
 		}else{ // Si non
 			// Cette position ne doit pas nous permettre de manger
 			if(peutManger(j, new PionFFB(cNew.getAvant()))){
-				System.out.println("4");
 				return false;
 			}
 			
 			// Mais la nouvelle position doit nous le permettre
 			if(peutManger(j, new PionFFB(cNew.getApres()))){
-				System.out.println("5");
 				return true;
 			}else{
-				System.out.println("6");
 				return false;
 			}
 		}
@@ -317,7 +311,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 	
 	public static long symetrieDiagGauche(long plateau){
-		return symetrieDiagDroite(symetrieTour360(plateau));
+		return symetrieTour360(symetrieDiagDroite(plateau));
 	}
 	
 	/********************** Autres méthodes ******************/

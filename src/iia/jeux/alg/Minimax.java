@@ -43,7 +43,7 @@ public class Minimax implements AlgoJeu {
 
 	/** Le nombre de feuilles évaluées par l'algorithme
 	 */
-	private int nbfeuilles;
+	private long nbfeuilles;
 
 
 	// -------------------------------------------
@@ -89,6 +89,10 @@ public class Minimax implements AlgoJeu {
 		}
 
 		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
+		
+		if(valMax == Integer.MAX_VALUE){
+			System.out.println("Je suis gagnant à coup sur");
+		}
 
 		return coupMax;
 	}

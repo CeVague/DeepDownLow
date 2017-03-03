@@ -27,15 +27,6 @@ public class PartieDominos {
 	}
 	
 	public static void main(String[] args) {
-
-		int temp = 56872;
-		byte masque = (byte) 127;
-		System.out.println(intToString(masque, 4));
-		System.out.println(intToString(temp, 4));
-		System.out.println(intToString(-temp, 4));
-		System.out.println(Integer.numberOfLeadingZeros((temp & masque)<<(64-8)));
-		System.out.println(Integer.numberOfTrailingZeros((temp & masque)));
-		
 		
 		Joueur jBlanc = new Joueur("Blanc");
 		Joueur jNoir = new Joueur("Noir");
