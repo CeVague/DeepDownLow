@@ -385,27 +385,37 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		plateauNous &= ~(1L << pion);
 
-		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
+//		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
 
-		long diagGaucheHautNous = plateauNous & (masqueDiagGauche << pion);
-		long diagGaucheHautEux = plateauEux & (masqueDiagGauche << pion);
+		long Nous = plateauNous & (masqueDiagGauche << pion);
+		long Eux = plateauEux & (masqueDiagGauche << pion);
 
-		long diagGaucheBasNous = plateauNous & (masqueDiagGaucheHaute >>> antepion);
-		long diagGaucheBasEux = plateauEux & (masqueDiagGaucheHaute >>> antepion);
-
-		long diagDroiteHautNous = plateauNous & (masqueDiagDroit << pion);
-		long diagDroiteHautEux = plateauEux & (masqueDiagDroit << pion);
-
-		long diagDroiteBasNous = plateauNous & (masqueDiagDroit >>> antepion);
-		long diagDroiteBasEux = plateauEux & (masqueDiagDroit >>> antepion);
-
-		if (diagGaucheBasNous < diagGaucheBasEux || diagDroiteBasNous < diagDroiteBasEux
-				|| Long.numberOfTrailingZeros(diagGaucheHautNous) > Long.numberOfTrailingZeros(diagGaucheHautEux)
-				|| Long.numberOfTrailingZeros(diagDroiteHautNous) > Long.numberOfTrailingZeros(diagDroiteHautEux)) {
+		if(Long.numberOfTrailingZeros(Nous) > Long.numberOfTrailingZeros(Eux)){
 			return true;
-		} else {
-			return false;
 		}
+		
+		Nous = plateauNous & (masqueDiagGaucheHaute >>> antepion);
+		Eux = plateauEux & (masqueDiagGaucheHaute >>> antepion);
+
+		if(Nous < Eux){
+			return true;
+		}
+
+		Nous = plateauNous & (masqueDiagDroit << pion);
+		Eux = plateauEux & (masqueDiagDroit << pion);
+
+		if(Long.numberOfTrailingZeros(Nous) > Long.numberOfTrailingZeros(Eux)){
+			return true;
+		}
+
+		Nous = plateauNous & (masqueDiagDroit >>> antepion);
+		Eux = plateauEux & (masqueDiagDroit >>> antepion);
+
+		if(Nous < Eux){
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -421,7 +431,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		long adverse = retournePlateauAdverse(j);
 		
 		long masqueH, masqueB, min, max;
-//		long apercu = 0L;
 		
 		int curseur;
 
@@ -451,17 +460,11 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 				
 				if(min!=0 || max!=0){
 					return true;
-					//System.out.println(PionFFB.CoordToString((byte) curseur));
 				}
-				
-//				apercu |= min;
-//				apercu |= max;
 
 				curseur += incr;
 			}
 		}
-		
-		//System.out.println(toString(apercu));
 		
 		return false;
 	}
@@ -492,8 +495,9 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param p le pion qui doit être joué
 	 */
 	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
-		if(peutManger(j, p)){
-			return listerMangeable(j, p);
+		ArrayList<CoupFFB> tmp = listerMangeable(j, p);
+		if(!tmp.isEmpty()){
+			return tmp;
 		}else{
 			return listerMenacable(j, p);
 		}
@@ -515,41 +519,33 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		plateauNous &= ~(1L << pion);
 
-		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
+//		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
 
 		ArrayList<CoupFFB> listeDesCoups = new ArrayList<CoupFFB>(4);
 
 		long Nous = plateauNous & (masqueDiagGauche << pion);
 		long Eux = plateauEux & (masqueDiagGauche << pion);
-		int tmp = Long.numberOfTrailingZeros(Eux);
-		if (Long.numberOfTrailingZeros(Nous) > tmp) {
-			// System.out.println(PionFFB.CoordToString((byte)
-			// Long.numberOfTrailingZeros(diagGaucheHautEux)));
-			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
+		long tmp = Long.lowestOneBit(Eux);
+		if (Long.lowestOneBit(Nous) > tmp) {
+			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(Eux)));
 		}
 
 		Nous = plateauNous & (masqueDiagDroit << pion);
 		Eux = plateauEux & (masqueDiagDroit << pion);
-		tmp = Long.numberOfTrailingZeros(Eux);
-		if (Long.numberOfTrailingZeros(Nous) > tmp) {
-			// System.out.println(PionFFB.CoordToString((byte)
-			// Long.numberOfTrailingZeros(diagDroiteHautEux)));
-			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
+		tmp = Long.lowestOneBit(Eux);
+		if (Long.lowestOneBit(Nous) > tmp) {
+			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(Eux)));
 		}
 
 		Nous = plateauNous & (masqueDiagGaucheHaute >>> nonpion);
 		Eux = plateauEux & (masqueDiagGaucheHaute >>> nonpion);
 		if (Nous < Eux) {
-			// System.out.println(PionFFB.CoordToString((byte)
-			// (63-Long.numberOfLeadingZeros(diagGaucheBasEux))));
 			listeDesCoups.add(new CoupFFB(pion, (byte) (63 - Long.numberOfLeadingZeros(Eux))));
 		}
 
 		Nous = plateauNous & (masqueDiagDroit >>> nonpion);
 		Eux = plateauEux & (masqueDiagDroit >>> nonpion);
 		if (Nous < Eux) {
-			// System.out.println(PionFFB.CoordToString((byte)
-			// (63-Long.numberOfLeadingZeros(diagDroiteBasEux))));
 			listeDesCoups.add(new CoupFFB(pion, (byte) (63 - Long.numberOfLeadingZeros(Eux))));
 		}
 
