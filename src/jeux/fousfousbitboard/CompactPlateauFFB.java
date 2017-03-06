@@ -4,9 +4,6 @@ package jeux.fousfousbitboard;
  * Classe utilisée pour manipuler (et sauvegarder) une version
  * compacte du plateau de jeu et de savoir si ce plateau est 
  * equivalent à un autre (aux symetries près)
- * 
- * 
- * @warning : rien n'a encore été testé
  */
 public class CompactPlateauFFB {
 
@@ -101,11 +98,13 @@ public class CompactPlateauFFB {
 		}else if(plateau == symetrieTour180(autrePlateau)){
 			return 1;
 		}else{
-			autrePlateau = symetrieDiagDroite(autrePlateau);
+			long blanc = symetrieDiagDroite(getPlateauBlanc());
+			long noir = symetrieDiagDroite(getPlateauNoir());
+			long newPlateau = plateauToCompact(blanc, noir);
 			
-			if(plateau == autrePlateau){
+			if(newPlateau == autrePlateau){
 				return 2;
-			}else if(plateau == symetrieTour180(autrePlateau)){
+			}else if(newPlateau == symetrieTour180(autrePlateau)){
 				return 3;
 			}
 		}
@@ -115,6 +114,14 @@ public class CompactPlateauFFB {
 
 
 	/********************** Aides et compactage ******************/
+	
+	public static long plateauToCompact(long plateauBlanc, long plateauNoir){
+		
+		plateauBlanc |= (plateauNoir & masqueHaut) << 1;
+		plateauBlanc |= (plateauNoir & masqueBas) >>> 1;
+		
+		return plateauBlanc;
+	}
 
 	public static String toString(long plateau) {
 		String represente = "";
