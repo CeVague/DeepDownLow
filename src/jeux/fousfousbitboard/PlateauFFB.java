@@ -291,7 +291,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/*************** Transformations Symétriques **************/
 
-	public static long symetrieTour360(long plateau){
+	public static long symetrieTour180(long plateau){
 		return Long.reverse(plateau);
 	}
 	
@@ -311,10 +311,13 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 	
 	public static long symetrieDiagGauche(long plateau){
-		return symetrieTour360(symetrieDiagDroite(plateau));
+		return symetrieTour180(symetrieDiagDroite(plateau));
 	}
 	
-	/********************** Autres méthodes ******************/
+	/********************** Heuristiques *********************/
+	
+	
+	/********************* Autres méthodes *******************/
 
 	/**
 	 * Permet de savoir si le chemin de Avant à Apres
@@ -654,7 +657,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 
 
-	/********************** Aides et compactage ******************/
+	/********************** Aides et affichage ******************/
 
 	public long retournePlateau(Joueur j) {
 		if (j.equals(joueurNoir)) {
