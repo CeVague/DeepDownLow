@@ -1,11 +1,10 @@
 package jeux.fousfousbitboard;
 
 /**
- * Classe utilisée pour manipuler (et sauvegarder) une version
- * compacte du plateau de jeu et de savoir si ce plateau est 
- * equivalent à un autre (aux symetries près)
+ * Classe utilisée pour savoir très rapidement si ce plateau
+ * est equivalent à un autre (aux symetries près)
  */
-public class CompactPlateauFFB {
+public class PlateauFFBforSearch {
 
 	/***************** Constantes *****************/
 
@@ -17,33 +16,50 @@ public class CompactPlateauFFB {
 	
 	/************ Attributs  ************/
 
-	private long plateau;
+	private long plateauSimple;
+	private long plateauSymetrie;
 
 	/************* Constructeurs ****************/
 
-	public CompactPlateauFFB() {
-		plateau = 0;
+	public PlateauFFBforSearch() {
+		plateauSimple = 0;
+		plateauSymetrie = 0;
 	}
 
-	public CompactPlateauFFB(long plateauBlanc, long plateauNoir) {
-		plateau = plateauBlanc;
+	public PlateauFFBforSearch(long plateauBlanc, long plateauNoir) {
 		
-		plateau |= (plateauNoir & masqueHaut) << 1;
-		plateau |= (plateauNoir & masqueBas) >>> 1;
+		plateauSimple = plateauToCompact(plateauBlanc, plateauNoir);
+		
+		plateauBlanc = symetrieDiagDroite(plateauBlanc);
+		plateauNoir = symetrieDiagDroite(plateauNoir);
+		
+		plateauSymetrie = plateauToCompact(plateauBlanc, plateauNoir);
+	}
+
+	public void setPlateauSimple(long plateauSimple) {
+		this.plateauSimple = plateauSimple;
+	}
+
+	public void setPlateauSymetrie(long plateauSymetrie) {
+		this.plateauSymetrie = plateauSymetrie;
 	}
 
 	/****************** Accesseurs **********************/
 
-	public long getPlateau() {
-		return plateau;
+	public long getPlateauSimple() {
+		return plateauSimple;
+	}
+
+	public long getPlateauSymetrie() {
+		return plateauSymetrie;
 	}
 
 	public long getPlateauBlanc() {
-		return plateau & ~masquePlateau;
+		return plateauSimple & ~masquePlateau;
 	}
 
 	public long getPlateauNoir() {
-		long plateauNoir = plateau & masquePlateau;
+		long plateauNoir = plateauSimple & masquePlateau;
 		
 		long plateauNoirFinal = 0;
 		plateauNoirFinal |= (plateauNoir & masqueHaut) >>> 1;
@@ -77,7 +93,7 @@ public class CompactPlateauFFB {
 		return symetrieTour180(symetrieDiagDroite(plateau));
 	}
 	
-	/********************** Autres méthodes ******************/
+	/********************** Verifier equivalence ******************/
 
 	/**
 	 * Permet de savoir si deux plateaux sont equivalents
@@ -90,27 +106,33 @@ public class CompactPlateauFFB {
 	 * 		3 si identique quand on fait une symetrie diag gauche
 	 * 		-1 si ils ne sont pas identiques
 	 */
-	public int equivalent(CompactPlateauFFB autreCompactPlateau){
-		long autrePlateau = autreCompactPlateau.getPlateau();
+	public int equivalent(PlateauFFBforSearch autreCompactPlateau){
 		
-		if(plateau == autrePlateau){
+		if(plateauSimple == autreCompactPlateau.getPlateauSimple()){
 			return 0;
-		}else if(plateau == symetrieTour180(autrePlateau)){
+		}else if(plateauSimple == symetrieTour180(autreCompactPlateau.getPlateauSimple())){
 			return 1;
-		}else{
-			long blanc = symetrieDiagDroite(getPlateauBlanc());
-			long noir = symetrieDiagDroite(getPlateauNoir());
-			long newPlateau = plateauToCompact(blanc, noir);
-			
-			if(newPlateau == autrePlateau){
-				return 2;
-			}else if(newPlateau == symetrieTour180(autrePlateau)){
-				return 3;
-			}
+		}else if(plateauSimple == autreCompactPlateau.getPlateauSymetrie()){
+			return 2;
+		}else if(plateauSimple == symetrieTour180(autreCompactPlateau.getPlateauSymetrie())){
+			return 3;
 		}
 		
 		return -1;
 	}
+
+    @Override
+    public int hashCode() {
+        return (int) (plateauSimple ^ Long.reverseBytes(plateauSimple));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (!(obj instanceof PlateauFFBforSearch))
+            return false;
+
+       return equivalent((PlateauFFBforSearch) obj) != -1;
+    }
 
 
 	/********************** Aides et compactage ******************/
@@ -146,7 +168,7 @@ public class CompactPlateauFFB {
 
 		for (int i = 63; i >= 0; i--) {
 
-			if (((plateau >>> i) & 1L) != 0) {
+			if (((plateauSimple >>> i) & 1L) != 0) {
 				represente += "●";
 			} else {
 				represente += "○";
@@ -163,7 +185,7 @@ public class CompactPlateauFFB {
 	public void print() {
 		for (int i = 63; i >= 0; i--) {
 
-			if (((plateau >>> i) & 1L) != 0) {
+			if (((plateauSimple >>> i) & 1L) != 0) {
 				System.out.print("●");
 			} else {
 				System.out.print("○");
