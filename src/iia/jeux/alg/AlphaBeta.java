@@ -108,7 +108,7 @@ public class AlphaBeta implements AlgoJeu {
 		
 		
 		
-		// Pool with 4 threads
+		// Pool with 3 threads
 		ExecutorService pool = Executors.newFixedThreadPool(3);
 		CompletionService<Tuple<CoupJeu, Integer>> completion = new ExecutorCompletionService<Tuple<CoupJeu, Integer>>(pool);
 		

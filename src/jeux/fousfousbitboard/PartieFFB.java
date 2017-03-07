@@ -1,5 +1,6 @@
 package jeux.fousfousbitboard;
 
+import java.util.Random;
 import java.util.Scanner;
 
 import iia.jeux.alg.AlgoJeu;
@@ -10,9 +11,30 @@ import iia.jeux.modele.joueur.Joueur;
 
 public class PartieFFB {
 
-	public static void main(String[] args) {
+	static Random rand = new Random();
+	
+	public static int[][] randomPlateau(){
+		int[][] temp = new int[8][8];
+		
+		float tauxRemplis = rand.nextFloat();
+		
+		for(int i=0;i<8;i++){
+			for(int j=0;j<8;j++){
+				if(rand.nextFloat() > tauxRemplis && (i+j)%2!=0){
+					
+					temp[i][j] = rand.nextInt(2) + 1;
+					
+					
+				}
+			}
+		}
+		
+		return temp;
+	}
+	
+	public static void main(String[] args) throws Exception {
 
-		joue(true, false);
+		joue(false, false);
 
 //		PlateauFFB temp = new PlateauFFB(new int[][] {
 //			{ 0, 2, 0, 2, 0, 2, 0, 2 },
@@ -23,26 +45,41 @@ public class PartieFFB {
 //			{ 1, 0, 1, 0, 1, 0, 1, 0 },
 //			{ 0, 2, 0, 2, 0, 2, 0, 2 },
 //			{ 1, 0, 1, 0, 1, 0, 1, 0 } });
-
-
-		// temp = new PlateauFFB(new int[][]{{0,0,0,0,0,0,0,0},
-		// {0,0,0,0,0,0,0,0},
-		// {0,1,0,0,0,1,0,0},
-		// {1,0,0,0,2,0,0,0},
-		// {0,0,0,0,0,0,0,0},
-		// {0,0,0,0,0,0,0,0},
-		// {0,0,0,0,0,0,0,0},
-		// {0,0,2,0,0,0,0,0}});
-
+//		
+//		
+//		temp = new PlateauFFB(new int[][]{
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,1,0,0,0,1,0,0},
+//			{1,0,0,0,2,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,2,0,0,0,0,0}});
+//		
+//		
+//		temp = new PlateauFFB(new int[][]{
+//			{0,0,0,2,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,2,0,1,0,0,0,0},
+//			{0,0,1,0,0,0,1,0},
+//			{0,0,0,0,0,0,0,0},
+//			{1,0,1,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,0,0,0,0,0}});
+//		 
+////		temp = new PlateauFFB(randomPlateau());
+//		
 //		Joueur jb = new Joueur("blanc");
 //		Joueur jn = new Joueur("noir");
 //		PlateauFFB.setJoueurs(jb, jn);
-//
+//		
 //		temp.print();
-
+//
+//		System.out.println(temp.coupsPossibles(jn, new PionFFB("E8")));
 
 		// System.out.println(PlateauFFB.toString(temp.getPlateauNoir()));
-		// System.out.println(PlateauFFB.toString(PlateauFFB.symetrieTour360(temp.getPlateauNoir())));
+		// System.out.println(PlateauFFB.toString(PlateauFFB.symetrieTour180(temp.getPlateauNoir())));
 		// System.out.println(PlateauFFB.toString(PlateauFFB.symetrieDiagDroite(temp.getPlateauNoir())));
 		// System.out.println(PlateauFFB.toString(PlateauFFB.symetrieDiagGauche(temp.getPlateauNoir())));
 
@@ -163,7 +200,7 @@ public class PartieFFB {
 		// f.setVisible(true);
 	}
 
-	public static void joue(boolean jbHumain, boolean jnHumain) {
+	public static void joue(boolean jbHumain, boolean jnHumain) throws Exception {
 
 		Joueur jBlanc = new Joueur("blanc");
 		Joueur jNoir = new Joueur("noir");
@@ -171,8 +208,8 @@ public class PartieFFB {
 		Joueur[] lesJoueurs = new Joueur[] { jBlanc, jNoir };
 
 		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
-		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, 7);
-		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, 7);
+		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, 8);
+		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, 8);
 
 		PlateauFFB plateauCourant = new PlateauFFB();
 
@@ -206,13 +243,13 @@ public class PartieFFB {
 			if ((jnum == 0 && !jbHumain) || (jnum == 1 && !jnHumain)) {
 				long startTime = System.currentTimeMillis();
 
-				int profondeur = (int) (plateauCourant.comptePions(lesJoueurs[jnum]) * -0.5555 + 14.88889);
+//				int profondeur = (int) (plateauCourant.comptePions(lesJoueurs[jnum]) * -0.5555 + 14.88889);
 				
-				if(jnum==0){
-					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, profondeur);
-				}else{
-					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, profondeur);
-				}
+//				if(jnum==0){
+//					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, profondeur);
+//				}else{
+//					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, profondeur);
+//				}
 				
 				coup = (CoupFFB) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 				
@@ -220,7 +257,7 @@ public class PartieFFB {
 				long elapsedTime = stopTime - startTime;
 				tempIAtotal += elapsedTime;
 				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après " + elapsedTime/1000.0 + " secondes de réflexion.");
-				System.out.println("Et en se projetant avec " + profondeur + " coups d'avance.");
+//				System.out.println("Et en se projetant avec " + profondeur + " coups d'avance.");
 			} else {
 				System.out.println("Liste de vos pions :\n" + plateauCourant.listerPions(lesJoueurs[jnum]));
 
@@ -244,6 +281,24 @@ public class PartieFFB {
 
 			plateauCourant.joue(lesJoueurs[jnum], coup);
 			plateauCourant.print();
+			
+			if( !coup.coupValide() ){
+				System.out.println("Coups joué invalide");
+				throw new Exception();
+			}
+			
+			if( (plateauCourant.getPlateauBlanc() & plateauCourant.masquePlateau) != 0 ){
+				System.out.println("Un pion blanc n'a pas bien bougé");
+				throw new Exception();
+			}
+			if( (plateauCourant.getPlateauNoir() & plateauCourant.masquePlateau) != 0 ){
+				System.out.println("Un pion noir à pas bien bougé");
+				throw new Exception();
+			}
+			if( (plateauCourant.getPlateauNoir() & plateauCourant.getPlateauBlanc()) != 0 ){
+				System.out.println("Un pion blanc et un noir sont supperposés");
+				throw new Exception();
+			}
 
 			jnum = (jnum + 1) % 2;
 		}

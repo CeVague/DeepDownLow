@@ -25,7 +25,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
-	private final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
+	public final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
 	private final static long masqueDiagGauche = 0b0000000100000010000001000000100000010000001000000100000010000001L;
 	private final static long masqueDiagGaucheHaute = 0b1000000100000010000001000000100000010000001000000100000010000000L;
 	private final static long masqueDiagDroit = 0b1000000001000000001000000001000000001000000001000000001000000001L;
@@ -316,6 +316,62 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	
 	/********************** Heuristiques *********************/
 	
+	public void testHeuristique(){
+		
+		float voisinDirect = 0;
+		voisinDirect += comptePions((plateauBlanc<<7) & plateauBlanc);
+		voisinDirect += comptePions((plateauBlanc>>>7) & plateauBlanc);
+		voisinDirect += comptePions((plateauBlanc<<9) & plateauBlanc);
+		voisinDirect += comptePions((plateauBlanc>>>9) & plateauBlanc);
+		
+
+		float voisinDirectPrecis = 0;
+		long plateauBlancTemp = plateauBlanc;
+		voisinDirectPrecis += comptePions((plateauBlancTemp<<7) & plateauBlanc);
+		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp>>>7);
+		voisinDirectPrecis += comptePions((plateauBlancTemp>>>7) & plateauBlanc);
+		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp<<7);
+		voisinDirectPrecis += comptePions((plateauBlancTemp<<9) & plateauBlanc);
+		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp>>>9);
+		voisinDirectPrecis += comptePions((plateauBlancTemp>>>9) & plateauBlanc);
+		
+		
+		System.out.println( "voisinDirectPrecis : " + voisinDirectPrecis );
+		System.out.println( "voisinDirect : " + voisinDirect );
+	}
+	
+	public int heuristiqueVoisinDirect(Joueur j, boolean simple){
+		long plateauJoueur = retournePlateau(j);
+		int voisins = 0;
+		
+		// Calcul simple et rapide
+		if(simple){
+			voisins += comptePions((plateauJoueur<<7) & plateauJoueur);
+			voisins += comptePions((plateauJoueur>>>7) & plateauJoueur);
+			voisins += comptePions((plateauJoueur<<9) & plateauJoueur);
+			voisins += comptePions((plateauJoueur>>>9) & plateauJoueur);
+		// Calcul plus complexe donnant moins d'importance aux pions alignés
+		}else{
+			long plateauJoueurTemp = plateauJoueur;
+			
+			voisins += comptePions((plateauJoueurTemp<<7) & plateauJoueur);
+			
+			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp>>>7);
+			voisins += comptePions((plateauJoueurTemp>>>7) & plateauJoueur);
+			
+			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp<<7);
+			voisins += comptePions((plateauJoueurTemp<<9) & plateauJoueur);
+			
+			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp>>>9);
+			voisins += comptePions((plateauJoueurTemp>>>9) & plateauJoueur);
+		}
+		
+		return voisins;
+	}
+	
+	public int heuristiqueNombrePions(Joueur j){
+		return comptePions(retournePlateau(j));
+	}
 	
 	/********************* Autres méthodes *******************/
 
@@ -528,16 +584,16 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		long Nous = plateauNous & (masqueDiagGauche << pion);
 		long Eux = plateauEux & (masqueDiagGauche << pion);
-		long tmp = Long.lowestOneBit(Eux);
-		if (Long.lowestOneBit(Nous) > tmp) {
-			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(Eux)));
+		long tmp = Long.numberOfTrailingZeros(Eux);
+		if (Long.numberOfTrailingZeros(Nous) > tmp) {
+			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
 		}
 
 		Nous = plateauNous & (masqueDiagDroit << pion);
 		Eux = plateauEux & (masqueDiagDroit << pion);
-		tmp = Long.lowestOneBit(Eux);
-		if (Long.lowestOneBit(Nous) > tmp) {
-			listeDesCoups.add(new CoupFFB(pion, (byte) Long.numberOfTrailingZeros(Eux)));
+		tmp = Long.numberOfTrailingZeros(Eux);
+		if (Long.numberOfTrailingZeros(Nous) > tmp) {
+			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
 		}
 
 		Nous = plateauNous & (masqueDiagGaucheHaute >>> nonpion);
@@ -645,7 +701,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param j le joueur concerné
 	 */
 	public int comptePions(Joueur j) {
-		return Long.bitCount(retournePlateau(j));
+		return comptePions(retournePlateau(j));
 	}
 
 	/**
@@ -653,11 +709,23 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param plateau le plateau concerné
 	 */
 	public int comptePions(long plateau) {
+		if(plateau==0){
+			return 0;
+		}
+		
 		return Long.bitCount(plateau);
 	}
 
 
 	/********************** Aides et affichage ******************/
+
+	public Joueur retourneAdversaire(Joueur j) {
+		if (j.equals(joueurNoir)) {
+			return joueurBlanc;
+		} else {
+			return joueurNoir;
+		}
+	}
 
 	public long retournePlateau(Joueur j) {
 		if (j.equals(joueurNoir)) {
