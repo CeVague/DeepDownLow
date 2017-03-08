@@ -3,6 +3,8 @@ package jeux.fousfousbitboard;
 /**
  * Classe utilisée pour savoir très rapidement si ce plateau
  * est equivalent à un autre (aux symetries près)
+ * 
+ * pèse environ 21 octets par objet
  */
 public class PlateauFFBforSearch {
 
@@ -16,8 +18,8 @@ public class PlateauFFBforSearch {
 	
 	/************ Attributs  ************/
 
-	private long plateauSimple;
-	private long plateauSymetrie;
+	private final long plateauSimple;
+	private final long plateauSymetrie;
 
 	/************* Constructeurs ****************/
 
@@ -34,14 +36,6 @@ public class PlateauFFBforSearch {
 		plateauNoir = symetrieDiagDroite(plateauNoir);
 		
 		plateauSymetrie = plateauToCompact(plateauBlanc, plateauNoir);
-	}
-
-	public void setPlateauSimple(long plateauSimple) {
-		this.plateauSimple = plateauSimple;
-	}
-
-	public void setPlateauSymetrie(long plateauSymetrie) {
-		this.plateauSymetrie = plateauSymetrie;
 	}
 
 	/****************** Accesseurs **********************/
@@ -123,7 +117,11 @@ public class PlateauFFBforSearch {
 
     @Override
     public int hashCode() {
-        return (int) (plateauSimple ^ Long.reverseBytes(plateauSimple));
+        return (int) (
+        		plateauSimple
+        		^ Long.reverse(plateauSimple)
+        		^ plateauSymetrie
+        		^ Long.reverse(plateauSymetrie));
     }
 
     @Override

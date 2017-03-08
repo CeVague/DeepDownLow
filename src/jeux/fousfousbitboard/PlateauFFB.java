@@ -12,8 +12,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * Chaque objets prend 98 octets en mémoire (observé en le sérialisant)
- * tandit qu'un tableau de byte (seul) en prend 199 (nous somment bien mieux)
+ * Chaque objets prend 21 octets en mémoire (observé en le sérialisant) tandit
+ * qu'un tableau de byte (seul) en prend 145 (le bitboard est donc très compact)
  */
 
 public class PlateauFFB implements PlateauJeu, Partie1 {
@@ -584,7 +584,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		long Nous = plateauNous & (masqueDiagGauche << pion);
 		long Eux = plateauEux & (masqueDiagGauche << pion);
-		long tmp = Long.numberOfTrailingZeros(Eux);
+		int tmp = Long.numberOfTrailingZeros(Eux);
 		if (Long.numberOfTrailingZeros(Nous) > tmp) {
 			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
 		}

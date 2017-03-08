@@ -25,7 +25,6 @@ public class HeuristiquesFFB {
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
 
-//			return ThreadLocalRandom.current().nextInt(-500, 500 + 1);
 			return (nbPionsMoi - nbPionsAdverse) * 5 + (voisSimpleMoi - voisSimpleAdverse) * 4 + (voisMoi - voisAdverse) * 3;
 		}
 	};
@@ -46,8 +45,15 @@ public class HeuristiquesFFB {
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
 
-//			return ThreadLocalRandom.current().nextInt(-500, 500 + 1);
 			return (nbPionsMoi - nbPionsAdverse) * 5 + (voisSimpleMoi - voisSimpleAdverse) * 4 + (voisMoi - voisAdverse) * 3;
+		}
+	};
+	
+
+	public static Heuristique hrandom = new Heuristique() {
+		
+		public int eval(PlateauJeu p, Joueur j) {
+			return ThreadLocalRandom.current().nextInt(-5000, 5000 + 1);
 		}
 	};
 

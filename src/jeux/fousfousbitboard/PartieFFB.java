@@ -279,6 +279,13 @@ public class PartieFFB {
 				}
 			}
 
+
+			
+			if( !plateauCourant.coupValide(lesJoueurs[jnum], coup) ){
+				System.out.println("Coups joué invalide (test approfondi)");
+				throw new Exception();
+			}
+			
 			plateauCourant.joue(lesJoueurs[jnum], coup);
 			plateauCourant.print();
 			
@@ -287,11 +294,11 @@ public class PartieFFB {
 				throw new Exception();
 			}
 			
-			if( (plateauCourant.getPlateauBlanc() & plateauCourant.masquePlateau) != 0 ){
+			if( (plateauCourant.getPlateauBlanc() & PlateauFFB.masquePlateau) != 0 ){
 				System.out.println("Un pion blanc n'a pas bien bougé");
 				throw new Exception();
 			}
-			if( (plateauCourant.getPlateauNoir() & plateauCourant.masquePlateau) != 0 ){
+			if( (plateauCourant.getPlateauNoir() & PlateauFFB.masquePlateau) != 0 ){
 				System.out.println("Un pion noir à pas bien bougé");
 				throw new Exception();
 			}
