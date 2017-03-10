@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package iia.jeux.alg;
 
 import java.util.ArrayList;
@@ -13,13 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.PlateauJeu;
 import iia.jeux.modele.joueur.Joueur;
-import jeux.fousfousbitboard.CoupFFB;
 
 public class AlphaBeta implements AlgoJeu {
 
@@ -142,7 +135,7 @@ public class AlphaBeta implements AlgoJeu {
 		
 		
 
-		//System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
+		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
 		
 		if(valMax == Integer.MAX_VALUE){
 			System.out.println("Je suis gagnant à coup sur");

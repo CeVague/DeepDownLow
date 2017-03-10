@@ -17,6 +17,8 @@ public class HeuristiquesFFB {
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
 			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int nbMangeMoi = pNew.heuristiqueMangeurs(j);
+			int nbMenaceMoi = pNew.heuristiqueMenaceurs(j);
 
 			
 			Joueur jAdverse = pNew.retourneAdversaire(j);
@@ -24,8 +26,14 @@ public class HeuristiquesFFB {
 			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int nbMangeAdverse = pNew.heuristiqueMangeurs(jAdverse);
+			int nbMenaceAdverse = pNew.heuristiqueMenaceurs(jAdverse);
 
-			return (nbPionsMoi - nbPionsAdverse) * 5 + (voisSimpleMoi - voisSimpleAdverse) * 4 + (voisMoi - voisAdverse) * 3;
+			return (nbPionsMoi - nbPionsAdverse) * 5
+					+ (voisSimpleMoi - voisSimpleAdverse) * 4
+					+ (voisMoi - voisAdverse) * 3
+					+ (nbMangeMoi - nbMangeAdverse) * 2
+					+ (nbMenaceMoi - nbMenaceAdverse) * -2;
 		}
 	};
 
@@ -37,6 +45,8 @@ public class HeuristiquesFFB {
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
 			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int nbMangeMoi = pNew.heuristiqueMangeurs(j);
+			int nbMenaceMoi = pNew.heuristiqueMenaceurs(j);
 
 			
 			Joueur jAdverse = pNew.retourneAdversaire(j);
@@ -44,8 +54,14 @@ public class HeuristiquesFFB {
 			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int nbMangeAdverse = pNew.heuristiqueMangeurs(jAdverse);
+			int nbMenaceAdverse = pNew.heuristiqueMenaceurs(jAdverse);
 
-			return (nbPionsMoi - nbPionsAdverse) * 5 + (voisSimpleMoi - voisSimpleAdverse) * 4 + (voisMoi - voisAdverse) * 3;
+			return (nbPionsMoi - nbPionsAdverse) * 5
+					+ (voisSimpleMoi - voisSimpleAdverse) * 4
+					+ (voisMoi - voisAdverse) * 3
+					+ (nbMangeMoi - nbMangeAdverse) * 2
+					+ (nbMenaceMoi - nbMenaceAdverse) * -2;
 		}
 	};
 	

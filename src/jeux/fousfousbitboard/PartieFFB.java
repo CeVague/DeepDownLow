@@ -5,8 +5,6 @@ import java.util.Scanner;
 
 import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
-import iia.jeux.alg.Minimax;
-import iia.jeux.alg.NegAlphaBeta;
 import iia.jeux.modele.joueur.Joueur;
 
 public class PartieFFB {
@@ -21,10 +19,7 @@ public class PartieFFB {
 		for(int i=0;i<8;i++){
 			for(int j=0;j<8;j++){
 				if(rand.nextFloat() > tauxRemplis && (i+j)%2!=0){
-					
 					temp[i][j] = rand.nextInt(2) + 1;
-					
-					
 				}
 			}
 		}
@@ -208,8 +203,8 @@ public class PartieFFB {
 		Joueur[] lesJoueurs = new Joueur[] { jBlanc, jNoir };
 
 		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
-		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, 8);
-		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, 8);
+		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.hrandom, jBlanc, jNoir, 7);
+		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, 7);
 
 		PlateauFFB plateauCourant = new PlateauFFB();
 
@@ -275,6 +270,8 @@ public class PartieFFB {
 					} else {
 						coup = new CoupFFB(str);
 					}
+					
+					sc.close();
 
 				}
 			}

@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Chaque objets prend 21 octets en mémoire (observé en le sérialisant) tandit
@@ -99,8 +100,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	@Override
 	public ArrayList<CoupJeu> coupsPossibles(Joueur j) {
 		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
-		 
-		for(PionFFB pion : listerPions(j)){
+
+		for (PionFFB pion : listerPions(j)) {
 			listeCoups.addAll(coupsPossibles(j, pion));
 		}
 
@@ -123,11 +124,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	}
 
 	@Override
-	public boolean finDePartie() {
-		return (plateauBlanc == 0 || plateauNoir == 0);
-	}
-
-	@Override
 	public PlateauJeu copy() {
 		return new PlateauFFB(this.plateauBlanc, this.plateauNoir);
 	}
@@ -137,28 +133,22 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		CoupFFB cNew = (CoupFFB) c;
 		// Vérifie que le coup est bien une diagonale
 		// et que le chemin est libre
-		if(!cNew.coupValide() || !cheminLibre(cNew)){
-			return false;
-		}
+		if (!cNew.coupValide() || !cheminLibre(cNew)) { return false; }
 
 		// Vérifie si on part bien d'un pion existant
-		if( ((retournePlateau(j)>>>cNew.getAvant()) & 1) == 0){
-			return false;
-		}
+		if (((retournePlateau(j) >>> cNew.getAvant()) & 1) == 0) { return false; }
 
 		// Si on mange un pion adverse le coup est valide
-		if( ((retournePlateauAdverse(j)>>>cNew.getApres()) & 1) != 0){
+		if (((retournePlateauAdverse(j) >>> cNew.getApres()) & 1) != 0) {
 			return true;
-		}else{ // Si non
-			// Cette position ne doit pas nous permettre de manger
-			if(peutManger(j, new PionFFB(cNew.getAvant()))){
-				return false;
-			}
-			
+		} else { // Si non
+					// Cette position ne doit pas nous permettre de manger
+			if (peutManger(j, new PionFFB(cNew.getAvant()))) { return false; }
+
 			// Mais la nouvelle position doit nous le permettre
-			if(peutManger(j, new PionFFB(cNew.getApres()))){
+			if (peutManger(j, new PionFFB(cNew.getApres()))) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
@@ -170,61 +160,60 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	public void setFromFile(String fileName) {
 		plateauBlanc = 0L;
 		plateauNoir = 0L;
-		
-		try{
-			InputStream ips=new FileInputStream(fileName); 
-			InputStreamReader ipsr=new InputStreamReader(ips);
-			BufferedReader br=new BufferedReader(ipsr);
+
+		try {
+			InputStream ips = new FileInputStream(fileName);
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader br = new BufferedReader(ipsr);
 			String ligne;
-			while ((ligne=br.readLine())!=null){
-				if(!ligne.startsWith("%")){
+			while ((ligne = br.readLine()) != null) {
+				if (!ligne.startsWith("%")) {
 					ligne = ligne.substring(2, 10);
 					for (int i = 0; i < 8; i++) {
-						if(ligne.charAt(i)=='b' || ligne.charAt(i)=='n' || ligne.charAt(i)=='-'){
-						    plateauBlanc = plateauBlanc<<1;
-						    plateauNoir = plateauNoir<<1;
+						if (ligne.charAt(i) == 'b' || ligne.charAt(i) == 'n' || ligne.charAt(i) == '-') {
+							plateauBlanc = plateauBlanc << 1;
+							plateauNoir = plateauNoir << 1;
 						}
-					    
-					    switch (ligne.charAt(i)){
-					    	case 'b' :
-					    		plateauBlanc |= 1;
-					    		break;
-					    	case 'n' :
-					    		plateauNoir |= 1;
-					    		break;
-					    	case '-' :
-							    break;
-					    }
+
+						switch (ligne.charAt(i)) {
+							case 'b':
+								plateauBlanc |= 1;
+								break;
+							case 'n':
+								plateauNoir |= 1;
+								break;
+							case '-':
+								break;
+						}
 					}
 				}
 			}
-			br.close(); 
-		}		
-		catch (Exception e){
+			br.close();
+		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 	}
 
 	public void saveToFile(String fileName, String version, String notesDeVersion, String commentaire) {
-		try{
-			File ff=new File(fileName);
+		try {
+			File ff = new File(fileName);
 			ff.createNewFile();
-			FileWriter ffw=new FileWriter(ff);
+			FileWriter ffw = new FileWriter(ff);
 			ffw.write("% Version : " + version + "\n");
-			if(!notesDeVersion.isEmpty()){
+			if (!notesDeVersion.isEmpty()) {
 				ffw.write("% Notes : " + notesDeVersion + "\n");
 			}
-			if(!commentaire.isEmpty()){
+			if (!commentaire.isEmpty()) {
 				ffw.write("% " + commentaire + "\n");
 			}
 
 			ffw.write("% ABCDEFGH\n");
-			
+
 			for (int i = 63; i >= 0; i--) {
 				if (i % 8 == 7) {
 					ffw.write(Integer.toString(8 - i / 8) + " ");
 				}
-				
+
 				if (((plateauBlanc >>> i) & 1L) != 0) {
 					ffw.write("b");
 				} else if (((plateauNoir >>> i) & 1L) != 0) {
@@ -239,7 +228,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 			}
 
 			ffw.write("% ABCDEFGH");
-			
+
 			ffw.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -248,7 +237,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public void saveToFile(String fileName) {
-		saveToFile(fileName, "0.1", "Programme toujours incomplet", "");
+		saveToFile(fileName, "0.9", "Tout est presque valide", "");
 	}
 
 	@Override
@@ -272,12 +261,60 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		joue(retourneJoueur(player), new CoupFFB(move));
 	}
 
+	@Override
+	public boolean finDePartie() {
+		return (plateauBlanc == 0 || plateauNoir == 0);
+	}
+
 	/************* Méthodes demandée pour la 2eme partie ****************/
 
 	/** Ilustration de l'utilisation de nos méthodes de manière convaincante **/
-	// public static void main(String[] args) {
-	// TODO Auto-generated method stub
-	// }
+	public static void main(String[] args) {
+		// On initialise les joueurs
+		Joueur jBlanc = new Joueur("blanc");
+		Joueur jNoir = new Joueur("noir");
+		PlateauFFB.setJoueurs(jBlanc, jNoir);
+
+		// On initialise un plateau de jeu
+		PlateauFFB plateauDeJeu = new PlateauFFB();
+		System.out.println("Plateau de base (initialisation sans parametres) :");
+		plateauDeJeu.print();
+		
+		// On le met à jour d'après une save sur un txt
+		plateauDeJeu.setFromFile("plateauExemple.txt");
+		System.out.println("\nPlateau chargé depuis le fichier :");
+		plateauDeJeu.print();
+		
+		// On calcule tous les coups jouables par les blancs
+		String[] jePeuxJouer = plateauDeJeu.mouvementsPossibles("blanc");
+
+		System.out.println("\nCoups jouables par les blancs :");
+		System.out.print("[");
+		for(String coup : jePeuxJouer) System.out.print(coup + ";");
+		System.out.print("]\n");
+		
+		// On choisi un coup au hasard
+		String coupChoisi = jePeuxJouer[ThreadLocalRandom.current().nextInt(0, jePeuxJouer.length)];
+		System.out.println("On choisi de jouer " + coupChoisi + "\n");
+		
+		// On vérifie que c'est un coups valide
+		System.out.println("Coup valide pour le joueur blanc ? " + plateauDeJeu.estValide(coupChoisi, "blanc"));
+		System.out.println("Coup valide pour le joueur noir ? " + plateauDeJeu.estValide(coupChoisi, "noir"));
+		
+		// On joue le coup
+		plateauDeJeu.play(coupChoisi, "blanc");
+		System.out.println("\nPlateau une fois le coup " + coupChoisi + " joué :");
+		plateauDeJeu.print();
+		
+		// On vérifie si la partie est terminée
+		System.out.println("\nLa partie est-elle fini ? " + plateauDeJeu.finDePartie());
+		
+		// Et on enregistre ce nouveau plateau dans un txt
+		System.out.print("\nGénération plateau-->fichier txt...");
+		plateauDeJeu.saveToFile("plateauExempleModifie.txt", "0.9", "", "Le coup " + coupChoisi + " a été joué");
+		System.out.println("Fait");
+		System.out.println("Plateau enregistré sous le nom : plateauExempleModifie.txt");
+	}
 
 	/****************** Accesseurs **********************/
 
@@ -291,88 +328,112 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/*************** Transformations Symétriques **************/
 
-	public static long symetrieTour180(long plateau){
+	public static long symetrieTour180(long plateau) {
 		return Long.reverse(plateau);
 	}
-	
-	public static long symetrieDiagDroite(long plateau){
+
+	public static long symetrieDiagDroite(long plateau) {
 		long masqueDiag = masqueDiagGauche & ~1;
-		
+
 		long plateauTmp = 0L;
 
-		plateauTmp |= ( (plateau & masqueVert) * masqueDiag)>>>56;
-		for(int i=1;i<8;i++){
-			plateau = plateau>>>1;
-			plateauTmp = plateauTmp<<8;
-			plateauTmp |= ( (plateau & masqueVert) * masqueDiag)>>>56;
+		plateauTmp |= ((plateau & masqueVert) * masqueDiag) >>> 56;
+		for (int i = 1; i < 8; i++) {
+			plateau = plateau >>> 1;
+			plateauTmp = plateauTmp << 8;
+			plateauTmp |= ((plateau & masqueVert) * masqueDiag) >>> 56;
 		}
-		
+
 		return Long.reverseBytes(plateauTmp);
 	}
-	
-	public static long symetrieDiagGauche(long plateau){
+
+	public static long symetrieDiagGauche(long plateau) {
 		return symetrieTour180(symetrieDiagDroite(plateau));
 	}
-	
+
 	/********************** Heuristiques *********************/
-	
-	public void testHeuristique(){
-		
+
+	public void testHeuristique() {
+
 		float voisinDirect = 0;
-		voisinDirect += comptePions((plateauBlanc<<7) & plateauBlanc);
-		voisinDirect += comptePions((plateauBlanc>>>7) & plateauBlanc);
-		voisinDirect += comptePions((plateauBlanc<<9) & plateauBlanc);
-		voisinDirect += comptePions((plateauBlanc>>>9) & plateauBlanc);
-		
+		voisinDirect += comptePions((plateauBlanc << 7) & plateauBlanc);
+		voisinDirect += comptePions((plateauBlanc >>> 7) & plateauBlanc);
+		voisinDirect += comptePions((plateauBlanc << 9) & plateauBlanc);
+		voisinDirect += comptePions((plateauBlanc >>> 9) & plateauBlanc);
+
 
 		float voisinDirectPrecis = 0;
 		long plateauBlancTemp = plateauBlanc;
-		voisinDirectPrecis += comptePions((plateauBlancTemp<<7) & plateauBlanc);
-		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp>>>7);
-		voisinDirectPrecis += comptePions((plateauBlancTemp>>>7) & plateauBlanc);
-		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp<<7);
-		voisinDirectPrecis += comptePions((plateauBlancTemp<<9) & plateauBlanc);
-		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp>>>9);
-		voisinDirectPrecis += comptePions((plateauBlancTemp>>>9) & plateauBlanc);
-		
-		
-		System.out.println( "voisinDirectPrecis : " + voisinDirectPrecis );
-		System.out.println( "voisinDirect : " + voisinDirect );
+		voisinDirectPrecis += comptePions((plateauBlancTemp << 7) & plateauBlanc);
+		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp >>> 7);
+		voisinDirectPrecis += comptePions((plateauBlancTemp >>> 7) & plateauBlanc);
+		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp << 7);
+		voisinDirectPrecis += comptePions((plateauBlancTemp << 9) & plateauBlanc);
+		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp >>> 9);
+		voisinDirectPrecis += comptePions((plateauBlancTemp >>> 9) & plateauBlanc);
+
+
+		System.out.println("voisinDirectPrecis : " + voisinDirectPrecis);
+		System.out.println("voisinDirect : " + voisinDirect);
 	}
-	
-	public int heuristiqueVoisinDirect(Joueur j, boolean simple){
+
+	public int heuristiqueVoisinDirect(Joueur j, boolean simple) {
 		long plateauJoueur = retournePlateau(j);
 		int voisins = 0;
-		
+
 		// Calcul simple et rapide
-		if(simple){
-			voisins += comptePions((plateauJoueur<<7) & plateauJoueur);
-			voisins += comptePions((plateauJoueur>>>7) & plateauJoueur);
-			voisins += comptePions((plateauJoueur<<9) & plateauJoueur);
-			voisins += comptePions((plateauJoueur>>>9) & plateauJoueur);
-		// Calcul plus complexe donnant moins d'importance aux pions alignés
-		}else{
+		if (simple) {
+			voisins += comptePions((plateauJoueur << 7) & plateauJoueur);
+			voisins += comptePions((plateauJoueur >>> 7) & plateauJoueur);
+			voisins += comptePions((plateauJoueur << 9) & plateauJoueur);
+			voisins += comptePions((plateauJoueur >>> 9) & plateauJoueur);
+			// Calcul plus complexe donnant moins d'importance aux pions alignés
+		} else {
 			long plateauJoueurTemp = plateauJoueur;
-			
-			voisins += comptePions((plateauJoueurTemp<<7) & plateauJoueur);
-			
-			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp>>>7);
-			voisins += comptePions((plateauJoueurTemp>>>7) & plateauJoueur);
-			
-			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp<<7);
-			voisins += comptePions((plateauJoueurTemp<<9) & plateauJoueur);
-			
-			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp>>>9);
-			voisins += comptePions((plateauJoueurTemp>>>9) & plateauJoueur);
+
+			voisins += comptePions((plateauJoueurTemp << 7) & plateauJoueur);
+
+			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp >>> 7);
+			voisins += comptePions((plateauJoueurTemp >>> 7) & plateauJoueur);
+
+			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp << 7);
+			voisins += comptePions((plateauJoueurTemp << 9) & plateauJoueur);
+
+			plateauJoueurTemp = plateauJoueur & ~(plateauJoueurTemp >>> 9);
+			voisins += comptePions((plateauJoueurTemp >>> 9) & plateauJoueur);
 		}
-		
+
 		return voisins;
 	}
-	
-	public int heuristiqueNombrePions(Joueur j){
+
+	public int heuristiqueNombrePions(Joueur j) {
 		return comptePions(retournePlateau(j));
 	}
-	
+
+	public int heuristiqueMangeurs(Joueur j) {
+		int nb = 0;
+
+		for (PionFFB pion : listerPions(j)) {
+			if (peutManger(j, pion)) {
+				nb++;
+			}
+		}
+
+		return nb;
+	}
+
+	public int heuristiqueMenaceurs(Joueur j) {
+		int nb = 0;
+
+		for (PionFFB pion : listerPions(j)) {
+			if (peutMenacer(j, pion)) {
+				nb++;
+			}
+		}
+
+		return nb;
+	}
+
 	/********************* Autres méthodes *******************/
 
 	/**
@@ -444,35 +505,27 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		plateauNous &= ~(1L << pion);
 
-//		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
+		// plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
 
 		long Nous = plateauNous & (masqueDiagGauche << pion);
 		long Eux = plateauEux & (masqueDiagGauche << pion);
 
-		if(Long.numberOfTrailingZeros(Nous) > Long.numberOfTrailingZeros(Eux)){
-			return true;
-		}
-		
+		if (Long.numberOfTrailingZeros(Nous) > Long.numberOfTrailingZeros(Eux)) { return true; }
+
 		Nous = plateauNous & (masqueDiagGaucheHaute >>> antepion);
 		Eux = plateauEux & (masqueDiagGaucheHaute >>> antepion);
 
-		if(Nous < Eux){
-			return true;
-		}
+		if (Nous < Eux) { return true; }
 
 		Nous = plateauNous & (masqueDiagDroit << pion);
 		Eux = plateauEux & (masqueDiagDroit << pion);
 
-		if(Long.numberOfTrailingZeros(Nous) > Long.numberOfTrailingZeros(Eux)){
-			return true;
-		}
+		if (Long.numberOfTrailingZeros(Nous) > Long.numberOfTrailingZeros(Eux)) { return true; }
 
 		Nous = plateauNous & (masqueDiagDroit >>> antepion);
 		Eux = plateauEux & (masqueDiagDroit >>> antepion);
 
-		if(Nous < Eux){
-			return true;
-		}
+		if (Nous < Eux) { return true; }
 
 		return false;
 	}
@@ -488,43 +541,41 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	public boolean peutMenacer(Joueur j, PionFFB p) {
 		long plateauObstacles = plateauBlanc | plateauNoir | masquePlateau;
 		long adverse = retournePlateauAdverse(j);
-		
+
 		long masqueH, masqueB, min, max;
-		
+
 		int curseur;
 
 		curseur = p.getPion();
-		plateauObstacles &= ~(1L<<curseur);
+		plateauObstacles &= ~(1L << curseur);
 
-		
-		for(int incr : new int[]{7, 9}){
-			if(incr==7){
+
+		for (int incr : new int[] { 7, 9 }) {
+			if (incr == 7) {
 				masqueH = masqueDiagDroit;
 				masqueB = masqueDiagDroit;
-			}else{
+			} else {
 				masqueH = masqueDiagGaucheHaute;
 				masqueB = masqueDiagGauche;
 			}
 			curseur = p.getPion();
-			
-			
-			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+
+
+			while (curseur > 0 && curseur < 64 && ((plateauObstacles >>> curseur) & 1) == 0) {
 				curseur -= incr;
 			}
 			curseur += incr;
-			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+			while (curseur > 0 && curseur < 64 && ((plateauObstacles >>> curseur) & 1) == 0) {
 
-				min = Long.highestOneBit( plateauObstacles & ( masqueH>>>(63-curseur) ) ) & adverse;
-				max = Long.lowestOneBit( plateauObstacles & ( masqueB<<curseur ) ) & adverse;
-				
-				if(min!=0 || max!=0){
-					return true;
-				}
+				min = Long.highestOneBit(plateauObstacles & (masqueH >>> (63 - curseur))) & adverse;
+				max = Long.lowestOneBit(plateauObstacles & (masqueB << curseur)) & adverse;
+
+				if (min != 0 || max != 0) { return true; }
 
 				curseur += incr;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -555,9 +606,9 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 */
 	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
 		ArrayList<CoupFFB> tmp = listerMangeable(j, p);
-		if(!tmp.isEmpty()){
+		if (!tmp.isEmpty()) {
 			return tmp;
-		}else{
+		} else {
 			return listerMenacable(j, p);
 		}
 	}
@@ -578,7 +629,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		plateauNous &= ~(1L << pion);
 
-//		plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
+		// plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
 
 		ArrayList<CoupFFB> listeDesCoups = new ArrayList<CoupFFB>(4);
 
@@ -617,9 +668,9 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 */
 	public ArrayList<PionFFB> listerMangeur(Joueur j) {
 		ArrayList<PionFFB> listePions = new ArrayList<PionFFB>();
-		 
-		for(PionFFB pion : listerPions(j)){
-			if(peutManger(j, pion)){
+
+		for (PionFFB pion : listerPions(j)) {
+			if (peutManger(j, pion)) {
 				listePions.add(pion);
 			}
 		}
@@ -639,43 +690,43 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		long adverse = retournePlateauAdverse(j);
 
 		ArrayList<CoupFFB> listeCoups = new ArrayList<CoupFFB>();
-		
+
 		long masqueH, masqueB, min, max;
-		
+
 		int curseur;
 
 		curseur = p.getPion();
-		plateauObstacles &= ~(1L<<curseur);
+		plateauObstacles &= ~(1L << curseur);
 
-		
-		for(int incr : new int[]{7, 9}){
-			if(incr==7){
+
+		for (int incr : new int[] { 7, 9 }) {
+			if (incr == 7) {
 				masqueH = masqueDiagDroit;
 				masqueB = masqueDiagDroit;
-			}else{
+			} else {
 				masqueH = masqueDiagGaucheHaute;
 				masqueB = masqueDiagGauche;
 			}
 			curseur = p.getPion();
-			
-			
-			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+
+
+			while (curseur > 0 && curseur < 64 && ((plateauObstacles >>> curseur) & 1) == 0) {
 				curseur -= incr;
 			}
 			curseur += incr;
-			while(curseur>0 && curseur<64 && ((plateauObstacles>>>curseur) & 1) == 0){
+			while (curseur > 0 && curseur < 64 && ((plateauObstacles >>> curseur) & 1) == 0) {
 
-				min = Long.highestOneBit( plateauObstacles & ( masqueH>>>(63-curseur) ) ) & adverse;
-				max = Long.lowestOneBit( plateauObstacles & ( masqueB<<curseur ) ) & adverse;
-				
-				if(min!=0 || max!=0){
+				min = Long.highestOneBit(plateauObstacles & (masqueH >>> (63 - curseur))) & adverse;
+				max = Long.lowestOneBit(plateauObstacles & (masqueB << curseur)) & adverse;
+
+				if (min != 0 || max != 0) {
 					listeCoups.add(new CoupFFB(p.getPion(), (byte) curseur));
 				}
 
 				curseur += incr;
 			}
 		}
-		
+
 		return listeCoups;
 	}
 
@@ -686,9 +737,9 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 */
 	public ArrayList<PionFFB> listerMenaceur(Joueur j) {
 		ArrayList<PionFFB> listePions = new ArrayList<PionFFB>();
-		 
-		for(PionFFB pion : listerPions(j)){
-			if(!peutManger(j, pion) && peutMenacer(j, pion)){
+
+		for (PionFFB pion : listerPions(j)) {
+			if (!peutManger(j, pion) && peutMenacer(j, pion)) {
 				listePions.add(pion);
 			}
 		}
@@ -709,10 +760,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param plateau le plateau concerné
 	 */
 	public int comptePions(long plateau) {
-		if(plateau==0){
-			return 0;
-		}
-		
+		if (plateau == 0) { return 0; }
+
 		return Long.bitCount(plateau);
 	}
 
@@ -837,5 +886,5 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		}
 		System.out.print("\n └─┴─┴─┴─┴─┴─┴─┴─┘\n");
 	}
-	
+
 }
