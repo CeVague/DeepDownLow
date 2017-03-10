@@ -26,7 +26,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
-	public final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
+	private final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
 	private final static long masqueDiagGauche = 0b0000000100000010000001000000100000010000001000000100000010000001L;
 	private final static long masqueDiagGaucheHaute = 0b1000000100000010000001000000100000010000001000000100000010000000L;
 	private final static long masqueDiagDroit = 0b1000000001000000001000000001000000001000000001000000001000000001L;
@@ -142,7 +142,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		if (((retournePlateauAdverse(j) >>> cNew.getApres()) & 1) != 0) {
 			return true;
 		} else { // Si non
-					// Cette position ne doit pas nous permettre de manger
+						// Cette position ne doit pas nous permettre de manger
 			if (peutManger(j, new PionFFB(cNew.getAvant()))) { return false; }
 
 			// Mais la nouvelle position doit nous le permettre
@@ -189,7 +189,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 				}
 			}
 			br.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			System.out.println(e.toString());
 		}
 	}
@@ -230,7 +231,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 			ffw.write("% ABCDEFGH");
 
 			ffw.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			System.out.println(e.toString());
 		}
 	}
@@ -279,36 +281,37 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		PlateauFFB plateauDeJeu = new PlateauFFB();
 		System.out.println("Plateau de base (initialisation sans parametres) :");
 		plateauDeJeu.print();
-		
+
 		// On le met à jour d'après une save sur un txt
 		plateauDeJeu.setFromFile("plateauExemple.txt");
 		System.out.println("\nPlateau chargé depuis le fichier :");
 		plateauDeJeu.print();
-		
+
 		// On calcule tous les coups jouables par les blancs
 		String[] jePeuxJouer = plateauDeJeu.mouvementsPossibles("blanc");
 
 		System.out.println("\nCoups jouables par les blancs :");
 		System.out.print("[");
-		for(String coup : jePeuxJouer) System.out.print(coup + ";");
+		for (String coup : jePeuxJouer)
+			System.out.print(coup + ";");
 		System.out.print("]\n");
-		
+
 		// On choisi un coup au hasard
 		String coupChoisi = jePeuxJouer[ThreadLocalRandom.current().nextInt(0, jePeuxJouer.length)];
 		System.out.println("On choisi de jouer " + coupChoisi + "\n");
-		
+
 		// On vérifie que c'est un coups valide
 		System.out.println("Coup valide pour le joueur blanc ? " + plateauDeJeu.estValide(coupChoisi, "blanc"));
 		System.out.println("Coup valide pour le joueur noir ? " + plateauDeJeu.estValide(coupChoisi, "noir"));
-		
+
 		// On joue le coup
 		plateauDeJeu.play(coupChoisi, "blanc");
 		System.out.println("\nPlateau une fois le coup " + coupChoisi + " joué :");
 		plateauDeJeu.print();
-		
+
 		// On vérifie si la partie est terminée
 		System.out.println("\nLa partie est-elle fini ? " + plateauDeJeu.finDePartie());
-		
+
 		// Et on enregistre ce nouveau plateau dans un txt
 		System.out.print("\nGénération plateau-->fichier txt...");
 		plateauDeJeu.saveToFile("plateauExempleModifie.txt", "0.9", "", "Le coup " + coupChoisi + " a été joué");
@@ -550,7 +553,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		plateauObstacles &= ~(1L << curseur);
 
 
-		for (int incr : new int[] { 7, 9 }) {
+		for (int incr : new int[]{7, 9}) {
 			if (incr == 7) {
 				masqueH = masqueDiagDroit;
 				masqueB = masqueDiagDroit;
@@ -699,7 +702,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		plateauObstacles &= ~(1L << curseur);
 
 
-		for (int incr : new int[] { 7, 9 }) {
+		for (int incr : new int[]{7, 9}) {
 			if (incr == 7) {
 				masqueH = masqueDiagDroit;
 				masqueB = masqueDiagDroit;

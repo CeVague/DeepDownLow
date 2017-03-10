@@ -10,23 +10,23 @@ import iia.jeux.modele.joueur.Joueur;
 public class PartieFFB {
 
 	static Random rand = new Random();
-	
-	public static int[][] randomPlateau(){
+
+	public static int[][] randomPlateau() {
 		int[][] temp = new int[8][8];
-		
+
 		float tauxRemplis = rand.nextFloat();
-		
-		for(int i=0;i<8;i++){
-			for(int j=0;j<8;j++){
-				if(rand.nextFloat() > tauxRemplis && (i+j)%2!=0){
+
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (rand.nextFloat() > tauxRemplis && (i + j) % 2 != 0) {
 					temp[i][j] = rand.nextInt(2) + 1;
 				}
 			}
 		}
-		
+
 		return temp;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 
 		joue(false, false);
@@ -200,7 +200,7 @@ public class PartieFFB {
 		Joueur jBlanc = new Joueur("blanc");
 		Joueur jNoir = new Joueur("noir");
 
-		Joueur[] lesJoueurs = new Joueur[] { jBlanc, jNoir };
+		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
 
 		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
 		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.hrandom, jBlanc, jNoir, 7);
@@ -225,7 +225,7 @@ public class PartieFFB {
 		System.out.println("Démarage de la partie de Fous-Fous");
 		System.out.println("Etat Initial du plateau de jeu:");
 		plateauCourant.print();
-		
+
 		int tempIAtotal = 0;
 
 		int jnum = 0; // On commence par le joueur Blanc
@@ -234,24 +234,25 @@ public class PartieFFB {
 			System.out.println("C'est au joueur " + lesJoueurs[jnum] + " de jouer.");
 
 			CoupFFB coup = new CoupFFB();
-			
+
 			if ((jnum == 0 && !jbHumain) || (jnum == 1 && !jnHumain)) {
 				long startTime = System.currentTimeMillis();
 
 //				int profondeur = (int) (plateauCourant.comptePions(lesJoueurs[jnum]) * -0.5555 + 14.88889);
-				
+
 //				if(jnum==0){
 //					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, profondeur);
 //				}else{
 //					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, profondeur);
 //				}
-				
+
 				coup = (CoupFFB) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
-				
+
 				long stopTime = System.currentTimeMillis();
 				long elapsedTime = stopTime - startTime;
 				tempIAtotal += elapsedTime;
-				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après " + elapsedTime/1000.0 + " secondes de réflexion.");
+				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après "
+						+ elapsedTime / 1000.0 + " secondes de réflexion.");
 //				System.out.println("Et en se projetant avec " + profondeur + " coups d'avance.");
 			} else {
 				System.out.println("Liste de vos pions :\n" + plateauCourant.listerPions(lesJoueurs[jnum]));
@@ -270,36 +271,35 @@ public class PartieFFB {
 					} else {
 						coup = new CoupFFB(str);
 					}
-					
+
 					sc.close();
 
 				}
 			}
 
 
-			
-			if( !plateauCourant.coupValide(lesJoueurs[jnum], coup) ){
+			if (!plateauCourant.coupValide(lesJoueurs[jnum], coup)) {
 				System.out.println("Coups joué invalide (test approfondi)");
 				throw new Exception();
 			}
-			
+
 			plateauCourant.joue(lesJoueurs[jnum], coup);
 			plateauCourant.print();
-			
-			if( !coup.coupValide() ){
+
+			if (!coup.coupValide()) {
 				System.out.println("Coups joué invalide");
 				throw new Exception();
 			}
-			
-			if( (plateauCourant.getPlateauBlanc() & PlateauFFB.masquePlateau) != 0 ){
+
+			if ((plateauCourant.getPlateauBlanc() & 0b1010101001010101101010100101010110101010010101011010101001010101L) != 0) {
 				System.out.println("Un pion blanc n'a pas bien bougé");
 				throw new Exception();
 			}
-			if( (plateauCourant.getPlateauNoir() & PlateauFFB.masquePlateau) != 0 ){
+			if ((plateauCourant.getPlateauNoir() & 0b1010101001010101101010100101010110101010010101011010101001010101L) != 0) {
 				System.out.println("Un pion noir à pas bien bougé");
 				throw new Exception();
 			}
-			if( (plateauCourant.getPlateauNoir() & plateauCourant.getPlateauBlanc()) != 0 ){
+			if ((plateauCourant.getPlateauNoir() & plateauCourant.getPlateauBlanc()) != 0) {
 				System.out.println("Un pion blanc et un noir sont supperposés");
 				throw new Exception();
 			}
@@ -307,6 +307,6 @@ public class PartieFFB {
 			jnum = (jnum + 1) % 2;
 		}
 		System.out.println("C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
-		System.out.println("Les IA ont passées " + (tempIAtotal/1000.0) + " secondes à réfléchir.");
+		System.out.println("Les IA ont passées " + (tempIAtotal / 1000.0) + " secondes à réfléchir.");
 	}
 }
