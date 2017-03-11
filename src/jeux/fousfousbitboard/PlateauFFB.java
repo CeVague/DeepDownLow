@@ -429,7 +429,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		int nb = 0;
 
 		for (PionFFB pion : listerPions(j)) {
-			if (peutMenacer(j, pion)) {
+			if (!peutManger(j, pion) && peutMenacer(j, pion)) {
 				nb++;
 			}
 		}

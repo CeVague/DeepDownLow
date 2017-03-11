@@ -29,7 +29,7 @@ public class PartieFFB {
 
 	public static void main(String[] args) throws Exception {
 
-		joue(false, false);
+		joue(false, true);
 
 //		PlateauFFB temp = new PlateauFFB(new int[][] {
 //			{ 0, 2, 0, 2, 0, 2, 0, 2 },
@@ -203,8 +203,8 @@ public class PartieFFB {
 		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
 
 		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
-		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.hrandom, jBlanc, jNoir, 7);
-		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, 7);
+		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFFB.htest1, jBlanc, jNoir, 7);
+		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFFB.htest1, jNoir, jBlanc, 7);
 
 		PlateauFFB plateauCourant = new PlateauFFB();
 
@@ -238,13 +238,14 @@ public class PartieFFB {
 			if ((jnum == 0 && !jbHumain) || (jnum == 1 && !jnHumain)) {
 				long startTime = System.currentTimeMillis();
 
-//				int profondeur = (int) (plateauCourant.comptePions(lesJoueurs[jnum]) * -0.5555 + 14.88889);
+				int profondeur = (int) (plateauCourant.comptePions(lesJoueurs[jnum]) * -0.6 + 16);
+				System.out.println("Et en se projetant avec " + profondeur + " coups d'avance.");
 
-//				if(jnum==0){
-//					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, profondeur);
-//				}else{
-//					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, profondeur);
-//				}
+				if(jnum==0){
+					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hblanc, jBlanc, jNoir, profondeur);
+				}else{
+					AlgoJoueur[jnum] = new AlphaBeta(HeuristiquesFFB.hnoir, jNoir, jBlanc, profondeur);
+				}
 
 				coup = (CoupFFB) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 
@@ -253,7 +254,6 @@ public class PartieFFB {
 				tempIAtotal += elapsedTime;
 				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après "
 						+ elapsedTime / 1000.0 + " secondes de réflexion.");
-//				System.out.println("Et en se projetant avec " + profondeur + " coups d'avance.");
 			} else {
 				System.out.println("Liste de vos pions :\n" + plateauCourant.listerPions(lesJoueurs[jnum]));
 
@@ -266,13 +266,10 @@ public class PartieFFB {
 
 					if (str.length() <= 2) {
 						PionFFB pion = new PionFFB(str);
-						System.out
-								.println("Coups jouables :\n" + plateauCourant.coupsPossibles(lesJoueurs[jnum], pion));
+						System.out.println("Coups jouables :\n" + plateauCourant.coupsPossibles(lesJoueurs[jnum], pion));
 					} else {
 						coup = new CoupFFB(str);
 					}
-
-					sc.close();
 
 				}
 			}
