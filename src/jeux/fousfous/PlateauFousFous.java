@@ -5,7 +5,7 @@ import iia.jeux.modele.joueur.Joueur;
 
 import java.util.ArrayList;
 
-public class PlateauFousFous implements PlateauJeu {
+public class PlateauFousFous implements PlateauJeu, Partie1 {
 
 
 	/***************** Constantes *****************/
@@ -14,7 +14,7 @@ public class PlateauFousFous implements PlateauJeu {
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
-	/*********** Paramètres de classe ************/
+	/*********** ParamÃ¨tres de classe ************/
 
 	/** Le joueur que joue "Blanc" **/
 	private static Joueur joueurBlanc;
@@ -53,7 +53,7 @@ public class PlateauFousFous implements PlateauJeu {
 		this.plateau = depuis;
 	}
 
-	/************* Gestion des paramètres de classe ******************/
+	/************* Gestion des paramÃ¨tres de classe ******************/
 
 	public static void setJoueurs(Joueur jb, Joueur jn) {
 		joueurBlanc = jb;
@@ -68,7 +68,7 @@ public class PlateauFousFous implements PlateauJeu {
 		return joueurNoir.equals(jn);
 	}
 
-	/************* Méthodes de l'interface PlateauJeu ****************/
+	/************* Mï¿½thodes de l'interface PlateauJeu ****************/
 	
 	public void affiche(){
 		for(int i = 0; i<8; i ++){
@@ -128,7 +128,7 @@ public class PlateauFousFous implements PlateauJeu {
 		return false;
 	}
 
-	/************* Méthodes de l'interface Partie1 ****************/
+	/************* MÃ©thodes de l'interface Partie1 ****************/
 
 	@Override
 	public void setFromFile(String fileName) {
@@ -157,15 +157,15 @@ public class PlateauFousFous implements PlateauJeu {
 		// TODO Auto-generated method stub
 	}
 
-	/************* Méthodes demandée pour la 2eme partie ****************/
+	/************* MÃ©thodes demandÃ©e pour la 2eme partie ****************/
 
-	/** Ilustration de l'utilisation de nos méthodes de manière convaincante **/
+	/** Ilustration de l'utilisation de nos mÃ©thodes de maniÃ¨re convaincante **/
 	public static void main(String[] args) {
 		PlateauFousFous plateau = new PlateauFousFous();
 		plateau.affiche();
 	}
 
-	/********************** Autres méthodes ******************/
+	/********************** Autres mÃ©thodes ******************/
 
 	public String toString() {
 		// TODO Auto-generated method stub
