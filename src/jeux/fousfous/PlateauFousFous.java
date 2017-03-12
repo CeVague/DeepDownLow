@@ -5,7 +5,7 @@ import iia.jeux.modele.joueur.Joueur;
 
 import java.util.ArrayList;
 
-public class PlateauFousFous implements PlateauJeu, Partie1 {
+public class PlateauFousFous implements PlateauJeu {
 
 
 	/***************** Constantes *****************/
@@ -14,7 +14,7 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
-	/*********** ParamÃ¨tres de classe ************/
+	/*********** Paramètres de classe ************/
 
 	/** Le joueur que joue "Blanc" **/
 	private static Joueur joueurBlanc;
@@ -29,14 +29,31 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	/************* Constructeurs ****************/
 
 	public PlateauFousFous() {
-		// TODO Auto-generated method stub
+		for(int i = 0; i<8; i +=2){
+			for(int j = 1; j<8; j+= 2){
+				this.plateau[i][j]= BLANC;
+			}
+		}
+		
+		for(int i = 1; i<8; i +=2){
+			for(int j = 0; j<8; j+= 2){
+				this.plateau[i][j]= NOIR;
+			}
+		}
+		
+		for(int i = 0; i<8; i +=2){
+			for(int j = 0; j<8; j+= 2){
+				this.plateau[i][j]= VIDE;
+			}
+		}
+		
 	}
 
 	public PlateauFousFous(int depuis[][]) {
-		// TODO Auto-generated method stub
+		this.plateau = depuis;
 	}
 
-	/************* Gestion des paramÃ¨tres de classe ******************/
+	/************* Gestion des paramètres de classe ******************/
 
 	public static void setJoueurs(Joueur jb, Joueur jn) {
 		joueurBlanc = jb;
@@ -51,17 +68,46 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 		return joueurNoir.equals(jn);
 	}
 
-	/************* MÃ©thodes de l'interface PlateauJeu ****************/
-
-	@Override
-	public ArrayList<CoupJeu> coupsPossibles(Joueur j) {
-		// TODO Auto-generated method stub
-		return null;
+	/************* Méthodes de l'interface PlateauJeu ****************/
+	
+	public void affiche(){
+		for(int i = 0; i<8; i ++){
+			for(int j = 0; j<8; j++){
+				System.out.print(getCase(i,j));
+			}
+		}
+	}
+	
+	public int getCase(int i, int j){
+		return this.plateau[i][j];
 	}
 
 	@Override
+	public ArrayList<CoupJeu> coupsPossibles(Joueur jr) {
+		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
+		if(isJoueurBlanc(jr)){
+			for(int i = 0; i<8; i+=2){
+				for(int j = 1; j < 8; j+=2){
+					//A completer
+				}
+			} 
+		} else {
+			for(int i = 1; i<8; i +=2){
+				for(int j = 0; j<8; j+= 2){
+					//A completer
+				}
+			}
+			
+		}
+		return listeCoups;
+	}
+	
+	
+	 
+
+	@Override
 	public void joue(Joueur j, CoupJeu c) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -82,7 +128,7 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 		return false;
 	}
 
-	/************* MÃ©thodes de l'interface Partie1 ****************/
+	/************* Méthodes de l'interface Partie1 ****************/
 
 	@Override
 	public void setFromFile(String fileName) {
@@ -111,14 +157,15 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 		// TODO Auto-generated method stub
 	}
 
-	/************* MÃ©thodes demandÃ©e pour la 2eme partie ****************/
+	/************* Méthodes demandée pour la 2eme partie ****************/
 
-	/** Ilustration de l'utilisation de nos mÃ©thodes de maniÃ¨re convaincante **/
+	/** Ilustration de l'utilisation de nos méthodes de manière convaincante **/
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		PlateauFousFous plateau = new PlateauFousFous();
+		plateau.affiche();
 	}
 
-	/********************** Autres mÃ©thodes ******************/
+	/********************** Autres méthodes ******************/
 
 	public String toString() {
 		// TODO Auto-generated method stub
