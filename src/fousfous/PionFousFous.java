@@ -1,8 +1,8 @@
-package jeux.fousfousbitboard;
+package fousfous;
 
 import iia.jeux.modele.CoupJeu;
 
-public class PionFFB implements CoupJeu {
+public class PionFousFous implements CoupJeu {
 
 	/******** Attributs *********/
 
@@ -10,19 +10,19 @@ public class PionFFB implements CoupJeu {
 
 	/****** Clonstructeur *******/
 
-	public PionFFB() {
+	public PionFousFous() {
 		this.pion = 0;
 	}
 
-	public PionFFB(String coord) {
+	public PionFousFous(String coord) {
 		this.pion = StringToCoord(coord);
 	}
 
-	public PionFFB(int pion) {
+	public PionFousFous(int pion) {
 		this.pion = (byte) pion;
 	}
 
-	public PionFFB(byte pion) {
+	public PionFousFous(byte pion) {
 		this.pion = pion;
 	}
 
@@ -39,16 +39,12 @@ public class PionFFB implements CoupJeu {
 	/****** Convertisseurs ******/
 
 	public static byte StringToCoord(String coord) {
-		// coordFinal[0] = (byte) (520 - coord.codePointAt(0) -
-		// (coord.codePointAt(1)<<3));
 		return (byte) (63 - (coord.codePointAt(0) - 65) - 8 * (coord.codePointAt(1) - 49));
 	}
 
 	public static String CoordToString(byte coord) {
 		String coordFinal = "";
 
-		// coordFinal += (char) (72 - (coord & 7));
-		// coordFinal += (char) (56 - (coord>>>3));
 		coordFinal += (char) (7 - coord % 8 + 65);
 		coordFinal += (char) (7 - coord / 8 + 49);
 

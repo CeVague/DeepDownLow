@@ -1,4 +1,4 @@
-package jeux.fousfousbitboard;
+package fousfous;
 
 import iia.jeux.modele.*;
 import iia.jeux.modele.joueur.Joueur;
@@ -17,12 +17,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * qu'un tableau de byte (seul) en prend 145 (le bitboard est donc très compact)
  */
 
-public class PlateauFFB implements PlateauJeu, Partie1 {
+public class PlateauFousFous implements PlateauJeu, Partie1 {
 
 
 	/***************** Constantes *****************/
 
-	// private final static int VIDE = 0;
 	private final static int BLANC = 1;
 	private final static int NOIR = 2;
 
@@ -31,9 +30,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	private final static long masqueDiagGaucheHaute = 0b1000000100000010000001000000100000010000001000000100000010000000L;
 	private final static long masqueDiagDroit = 0b1000000001000000001000000001000000001000000001000000001000000001L;
 	private final static long masqueVert = 0b0000000100000001000000010000000100000001000000010000000100000001L;
-
-	// private final static long un =
-	// 0b1000000000000000000000000000000000000000000000000000000000000000L;
 
 	/*********** Paramètres de classe ************/
 
@@ -50,17 +46,17 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/************* Constructeurs ****************/
 
-	public PlateauFFB() {
+	public PlateauFousFous() {
 		plateauBlanc = 0b0101010100000000010101010000000001010101000000000101010100000000L;
 		plateauNoir = 0b0000000010101010000000001010101000000000101010100000000010101010L;
 	}
 
-	public PlateauFFB(long plateauBlanc, long plateauNoir) {
+	public PlateauFousFous(long plateauBlanc, long plateauNoir) {
 		this.plateauBlanc = plateauBlanc;
 		this.plateauNoir = plateauNoir;
 	}
 
-	public PlateauFFB(int depuis[][]) {
+	public PlateauFousFous(int depuis[][]) {
 		plateauBlanc = 0L;
 		plateauNoir = 0L;
 
@@ -101,7 +97,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	public ArrayList<CoupJeu> coupsPossibles(Joueur j) {
 		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
 
-		for (PionFFB pion : listerPions(j)) {
+		for (PionFousFous pion : listerPions(j)) {
 			listeCoups.addAll(coupsPossibles(j, pion));
 		}
 
@@ -110,7 +106,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public void joue(Joueur j, CoupJeu c) {
-		CoupFFB cNew = (CoupFFB) c;
+		CoupFousFous cNew = (CoupFousFous) c;
 
 		if (j.equals(joueurBlanc)) {
 			plateauBlanc ^= 1L << cNew.getAvant();
@@ -125,12 +121,12 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public PlateauJeu copy() {
-		return new PlateauFFB(this.plateauBlanc, this.plateauNoir);
+		return new PlateauFousFous(this.plateauBlanc, this.plateauNoir);
 	}
 
 	@Override
 	public boolean coupValide(Joueur j, CoupJeu c) {
-		CoupFFB cNew = (CoupFFB) c;
+		CoupFousFous cNew = (CoupFousFous) c;
 		// Vérifie que le coup est bien une diagonale
 		// et que le chemin est libre
 		if (!cNew.coupValide() || !cheminLibre(cNew)) { return false; }
@@ -143,10 +139,10 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 			return true;
 		} else { // Si non
 						// Cette position ne doit pas nous permettre de manger
-			if (peutManger(j, new PionFFB(cNew.getAvant()))) { return false; }
+			if (peutManger(j, new PionFousFous(cNew.getAvant()))) { return false; }
 
 			// Mais la nouvelle position doit nous le permettre
-			if (peutManger(j, new PionFFB(cNew.getApres()))) {
+			if (peutManger(j, new PionFousFous(cNew.getApres()))) {
 				return true;
 			} else {
 				return false;
@@ -244,7 +240,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public boolean estValide(String move, String player) {
-		return coupValide(retourneJoueur(player), new CoupFFB(move));
+		return coupValide(retourneJoueur(player), new CoupFousFous(move));
 	}
 
 	@Override
@@ -260,7 +256,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	@Override
 	public void play(String move, String player) {
-		joue(retourneJoueur(player), new CoupFFB(move));
+		joue(retourneJoueur(player), new CoupFousFous(move));
 	}
 
 	@Override
@@ -275,10 +271,10 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 		// On initialise les joueurs
 		Joueur jBlanc = new Joueur("blanc");
 		Joueur jNoir = new Joueur("noir");
-		PlateauFFB.setJoueurs(jBlanc, jNoir);
+		PlateauFousFous.setJoueurs(jBlanc, jNoir);
 
 		// On initialise un plateau de jeu
-		PlateauFFB plateauDeJeu = new PlateauFFB();
+		PlateauFousFous plateauDeJeu = new PlateauFousFous();
 		System.out.println("Plateau de base (initialisation sans parametres) :");
 		plateauDeJeu.print();
 
@@ -356,30 +352,6 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 	/********************** Heuristiques *********************/
 
-	public void testHeuristique() {
-
-		float voisinDirect = 0;
-		voisinDirect += comptePions((plateauBlanc << 7) & plateauBlanc);
-		voisinDirect += comptePions((plateauBlanc >>> 7) & plateauBlanc);
-		voisinDirect += comptePions((plateauBlanc << 9) & plateauBlanc);
-		voisinDirect += comptePions((plateauBlanc >>> 9) & plateauBlanc);
-
-
-		float voisinDirectPrecis = 0;
-		long plateauBlancTemp = plateauBlanc;
-		voisinDirectPrecis += comptePions((plateauBlancTemp << 7) & plateauBlanc);
-		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp >>> 7);
-		voisinDirectPrecis += comptePions((plateauBlancTemp >>> 7) & plateauBlanc);
-		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp << 7);
-		voisinDirectPrecis += comptePions((plateauBlancTemp << 9) & plateauBlanc);
-		plateauBlancTemp = plateauBlanc & ~(plateauBlancTemp >>> 9);
-		voisinDirectPrecis += comptePions((plateauBlancTemp >>> 9) & plateauBlanc);
-
-
-		System.out.println("voisinDirectPrecis : " + voisinDirectPrecis);
-		System.out.println("voisinDirect : " + voisinDirect);
-	}
-
 	public int heuristiqueVoisinDirect(Joueur j, boolean simple) {
 		long plateauJoueur = retournePlateau(j);
 		int voisins = 0;
@@ -390,7 +362,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 			voisins += comptePions((plateauJoueur >>> 7) & plateauJoueur);
 			voisins += comptePions((plateauJoueur << 9) & plateauJoueur);
 			voisins += comptePions((plateauJoueur >>> 9) & plateauJoueur);
-			// Calcul plus complexe donnant moins d'importance aux pions alignés
+		// Calcul plus complexe donnant moins d'importance aux pions alignés
 		} else {
 			long plateauJoueurTemp = plateauJoueur;
 
@@ -416,7 +388,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	public int heuristiqueMangeurs(Joueur j) {
 		int nb = 0;
 
-		for (PionFFB pion : listerPions(j)) {
+		for (PionFousFous pion : listerPions(j)) {
 			if (peutManger(j, pion)) {
 				nb++;
 			}
@@ -428,7 +400,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	public int heuristiqueMenaceurs(Joueur j) {
 		int nb = 0;
 
-		for (PionFFB pion : listerPions(j)) {
+		for (PionFousFous pion : listerPions(j)) {
 			if (!peutManger(j, pion) && peutMenacer(j, pion)) {
 				nb++;
 			}
@@ -484,7 +456,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * 
 	 * Vitesse : trop rapide
 	 */
-	public boolean cheminLibre(CoupFFB c) {
+	public boolean cheminLibre(CoupFousFous c) {
 		return cheminLibre(c.getAvant(), c.getApres());
 	}
 
@@ -497,7 +469,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * 
 	 * Vitesse : trop rapide
 	 */
-	public boolean peutManger(Joueur j, PionFFB p) {
+	public boolean peutManger(Joueur j, PionFousFous p) {
 		long plateauNous = retournePlateau(j);
 		long plateauEux = retournePlateauAdverse(j);
 
@@ -541,7 +513,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * 
 	 * Vitesse : 50.000.000 fois par secondes
 	 */
-	public boolean peutMenacer(Joueur j, PionFFB p) {
+	public boolean peutMenacer(Joueur j, PionFousFous p) {
 		long plateauObstacles = plateauBlanc | plateauNoir | masquePlateau;
 		long adverse = retournePlateauAdverse(j);
 
@@ -588,13 +560,13 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * 
 	 * Vitesse : 17.000.000 fois par secondes
 	 */
-	public ArrayList<PionFFB> listerPions(Joueur j) {
+	public ArrayList<PionFousFous> listerPions(Joueur j) {
 		long plateau = retournePlateau(j);
-		ArrayList<PionFFB> listeCoups = new ArrayList<PionFFB>(comptePions(plateau));
+		ArrayList<PionFousFous> listeCoups = new ArrayList<PionFousFous>(comptePions(plateau));
 
 		long pion = Long.lowestOneBit(plateau);
 		while (pion != 0) {
-			listeCoups.add(new PionFFB(Long.numberOfTrailingZeros(plateau)));
+			listeCoups.add(new PionFousFous(Long.numberOfTrailingZeros(plateau)));
 
 			plateau &= ~pion;
 			pion = Long.lowestOneBit(plateau);
@@ -607,8 +579,8 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * @param j le joueur qui veux joueur
 	 * @param p le pion qui doit être joué
 	 */
-	public ArrayList<CoupFFB> coupsPossibles(Joueur j, PionFFB p) {
-		ArrayList<CoupFFB> tmp = listerMangeable(j, p);
+	public ArrayList<CoupFousFous> coupsPossibles(Joueur j, PionFousFous p) {
+		ArrayList<CoupFousFous> tmp = listerMangeable(j, p);
 		if (!tmp.isEmpty()) {
 			return tmp;
 		} else {
@@ -623,7 +595,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * 
 	 * Vitesse : 160.000.000 fois par secondes
 	 */
-	public ArrayList<CoupFFB> listerMangeable(Joueur j, PionFFB p) {
+	public ArrayList<CoupFousFous> listerMangeable(Joueur j, PionFousFous p) {
 		long plateauNous = retournePlateau(j);
 		long plateauEux = retournePlateauAdverse(j);
 
@@ -634,32 +606,32 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 
 		// plateauEux &= ~(1L << pion); // A enlever une fois les tests fait
 
-		ArrayList<CoupFFB> listeDesCoups = new ArrayList<CoupFFB>(4);
+		ArrayList<CoupFousFous> listeDesCoups = new ArrayList<CoupFousFous>(4);
 
 		long Nous = plateauNous & (masqueDiagGauche << pion);
 		long Eux = plateauEux & (masqueDiagGauche << pion);
 		int tmp = Long.numberOfTrailingZeros(Eux);
 		if (Long.numberOfTrailingZeros(Nous) > tmp) {
-			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
+			listeDesCoups.add(new CoupFousFous(pion, (byte) tmp));
 		}
 
 		Nous = plateauNous & (masqueDiagDroit << pion);
 		Eux = plateauEux & (masqueDiagDroit << pion);
 		tmp = Long.numberOfTrailingZeros(Eux);
 		if (Long.numberOfTrailingZeros(Nous) > tmp) {
-			listeDesCoups.add(new CoupFFB(pion, (byte) tmp));
+			listeDesCoups.add(new CoupFousFous(pion, (byte) tmp));
 		}
 
 		Nous = plateauNous & (masqueDiagGaucheHaute >>> nonpion);
 		Eux = plateauEux & (masqueDiagGaucheHaute >>> nonpion);
 		if (Nous < Eux) {
-			listeDesCoups.add(new CoupFFB(pion, (byte) (63 - Long.numberOfLeadingZeros(Eux))));
+			listeDesCoups.add(new CoupFousFous(pion, (byte) (63 - Long.numberOfLeadingZeros(Eux))));
 		}
 
 		Nous = plateauNous & (masqueDiagDroit >>> nonpion);
 		Eux = plateauEux & (masqueDiagDroit >>> nonpion);
 		if (Nous < Eux) {
-			listeDesCoups.add(new CoupFFB(pion, (byte) (63 - Long.numberOfLeadingZeros(Eux))));
+			listeDesCoups.add(new CoupFousFous(pion, (byte) (63 - Long.numberOfLeadingZeros(Eux))));
 		}
 
 		return listeDesCoups;
@@ -669,10 +641,10 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * Liste tous les pions d'un joueur pouvant manger les autres
 	 * @param j le joueur qui veux joueur
 	 */
-	public ArrayList<PionFFB> listerMangeur(Joueur j) {
-		ArrayList<PionFFB> listePions = new ArrayList<PionFFB>();
+	public ArrayList<PionFousFous> listerMangeur(Joueur j) {
+		ArrayList<PionFousFous> listePions = new ArrayList<PionFousFous>();
 
-		for (PionFFB pion : listerPions(j)) {
+		for (PionFousFous pion : listerPions(j)) {
 			if (peutManger(j, pion)) {
 				listePions.add(pion);
 			}
@@ -688,11 +660,11 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * 
 	 * Vitesse : 15.000.000 fois par secondes
 	 */
-	public ArrayList<CoupFFB> listerMenacable(Joueur j, PionFFB p) {
+	public ArrayList<CoupFousFous> listerMenacable(Joueur j, PionFousFous p) {
 		long plateauObstacles = plateauBlanc | plateauNoir | masquePlateau;
 		long adverse = retournePlateauAdverse(j);
 
-		ArrayList<CoupFFB> listeCoups = new ArrayList<CoupFFB>();
+		ArrayList<CoupFousFous> listeCoups = new ArrayList<CoupFousFous>();
 
 		long masqueH, masqueB, min, max;
 
@@ -723,7 +695,7 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 				max = Long.lowestOneBit(plateauObstacles & (masqueB << curseur)) & adverse;
 
 				if (min != 0 || max != 0) {
-					listeCoups.add(new CoupFFB(p.getPion(), (byte) curseur));
+					listeCoups.add(new CoupFousFous(p.getPion(), (byte) curseur));
 				}
 
 				curseur += incr;
@@ -738,10 +710,10 @@ public class PlateauFFB implements PlateauJeu, Partie1 {
 	 * (ils ne doivent donc pas pouvoir en manger un autre)
 	 * @param j le joueur qui veux joueur
 	 */
-	public ArrayList<PionFFB> listerMenaceur(Joueur j) {
-		ArrayList<PionFFB> listePions = new ArrayList<PionFFB>();
+	public ArrayList<PionFousFous> listerMenaceur(Joueur j) {
+		ArrayList<PionFousFous> listePions = new ArrayList<PionFousFous>();
 
-		for (PionFFB pion : listerPions(j)) {
+		for (PionFousFous pion : listerPions(j)) {
 			if (!peutManger(j, pion) && peutMenacer(j, pion)) {
 				listePions.add(pion);
 			}
