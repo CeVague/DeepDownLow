@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package iia.jeux.alg;
 
 import java.util.ArrayList;
@@ -10,7 +6,7 @@ import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.PlateauJeu;
 import iia.jeux.modele.joueur.Joueur;
 
-public class Minimax implements AlgoJeu {
+public class MiniMax implements AlgoJeu {
 
 	/** La profondeur de recherche par défaut
 	 */
@@ -49,11 +45,11 @@ public class Minimax implements AlgoJeu {
 	// -------------------------------------------
 	// Constructeurs
 	// -------------------------------------------
-	public Minimax(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
+	public MiniMax(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
 		this(h, joueurMax, joueurMin, PROFMAXDEFAUT);
 	}
 
-	public Minimax(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
+	public MiniMax(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
 		this.h = h;
 		this.joueurMin = joueurMin;
 		this.joueurMax = joueurMax;
