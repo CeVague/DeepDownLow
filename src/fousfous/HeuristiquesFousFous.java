@@ -89,6 +89,19 @@ public class HeuristiquesFousFous {
 		}
 	};
 	
+
+	public static Heuristique hcompte = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
+			Joueur jAdverse = pNew.retourneAdversaire(j);
+			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
+
+			return (nbPionsMoi - nbPionsAdverse);
+		}
+	};
+	
 	
 	/****** Heuristiques génériques *******/
 

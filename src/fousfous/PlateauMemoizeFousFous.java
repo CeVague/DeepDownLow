@@ -132,13 +132,13 @@ public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous
 	 * 		-1 si ils ne sont pas identiques
 	 */
 	public int equivalent(PlateauMemoizeFousFous autreCompactPlateau) {
-
+		
 		if (plateauSimple == autreCompactPlateau.getPlateauSimple()) {
 			return 0;
-		} else if (plateauSimple == symetrieTour180(autreCompactPlateau.getPlateauSimple())) {
-			return 1;
 		} else if (plateauSimple == autreCompactPlateau.getPlateauSymetrie()) {
 			return 2;
+		} else if (plateauSimple == symetrieTour180(autreCompactPlateau.getPlateauSimple())) {
+			return 1;
 		} else if (plateauSimple == symetrieTour180(autreCompactPlateau.getPlateauSymetrie())) { return 3; }
 
 		return -1;
