@@ -6,7 +6,7 @@ import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.PlateauJeu;
 import iia.jeux.modele.joueur.Joueur;
 
-public class MiniMax implements AlgoJeu {
+public class MinMax implements AlgoJeu {
 
 	/** La profondeur de recherche par défaut
 	 */
@@ -45,11 +45,11 @@ public class MiniMax implements AlgoJeu {
 	// -------------------------------------------
 	// Constructeurs
 	// -------------------------------------------
-	public MiniMax(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
+	public MinMax(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
 		this(h, joueurMax, joueurMin, PROFMAXDEFAUT);
 	}
 
-	public MiniMax(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
+	public MinMax(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
 		this.h = h;
 		this.joueurMin = joueurMin;
 		this.joueurMax = joueurMax;

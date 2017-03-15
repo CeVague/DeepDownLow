@@ -1,18 +1,14 @@
 package fousfous;
 
 /**
- * Classe utilisée pour savoir très rapidement si ce plateau
- * est equivalent à un autre (aux symetries près)
+ * Classe utilisée pour avoir une mémoïzation efficasse :
+ * Le plateau est enregistré de manière compacte et les transformations précalculées
+ * pour permettre de vérifier les égalitées en 4 calculs.
  * 
- * pèse environ 21 octets par objet
+ * Dans PlateauMemoizeFousFous, equal et hashCode travaillent sur les plateaux,
+ * compareTo classe selon les scores
  */
-
-
-/*
- * #TODO Ajouter un score, hériter de Comparator et tester TreeSet
- */
-
-public class PlateauMemoiseFousFous {
+public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous> {
 
 	/***************** Constantes *****************/
 
@@ -26,15 +22,20 @@ public class PlateauMemoiseFousFous {
 
 	private final long plateauSimple;
 	private final long plateauSymetrie;
+	private int score;
 
 	/************* Constructeurs ****************/
 
-	public PlateauMemoiseFousFous() {
+	public PlateauMemoizeFousFous() {
 		plateauSimple = 0;
 		plateauSymetrie = 0;
+		score = 0;
 	}
 
-	public PlateauMemoiseFousFous(long plateauBlanc, long plateauNoir) {
+	public PlateauMemoizeFousFous(PlateauFousFous plateau) {
+
+		long plateauBlanc = plateau.getPlateauBlanc();
+		long plateauNoir = plateau.getPlateauNoir();
 
 		plateauSimple = plateauToCompact(plateauBlanc, plateauNoir);
 
@@ -42,6 +43,30 @@ public class PlateauMemoiseFousFous {
 		plateauNoir = symetrieDiagDroite(plateauNoir);
 
 		plateauSymetrie = plateauToCompact(plateauBlanc, plateauNoir);
+
+		score = 0;
+	}
+
+	public PlateauMemoizeFousFous(long plateauBlanc, long plateauNoir) {
+
+		plateauSimple = plateauToCompact(plateauBlanc, plateauNoir);
+
+		plateauBlanc = symetrieDiagDroite(plateauBlanc);
+		plateauNoir = symetrieDiagDroite(plateauNoir);
+
+		plateauSymetrie = plateauToCompact(plateauBlanc, plateauNoir);
+
+		score = 0;
+	}
+	
+	/********************* Score ************************/
+	
+	public void setScore(int score){
+		this.score = score;
+	}
+	
+	public int getScore(){
+		return score;
 	}
 
 	/****************** Accesseurs **********************/
@@ -93,7 +118,7 @@ public class PlateauMemoiseFousFous {
 		return symetrieTour180(symetrieDiagDroite(plateau));
 	}
 
-	/********************** Verifier equivalence ******************/
+	/********************** Equivalence ******************/
 
 	/**
 	 * Permet de savoir si deux plateaux sont equivalents
@@ -106,7 +131,7 @@ public class PlateauMemoiseFousFous {
 	 * 		3 si identique quand on fait une symetrie diag gauche
 	 * 		-1 si ils ne sont pas identiques
 	 */
-	public int equivalent(PlateauMemoiseFousFous autreCompactPlateau) {
+	public int equivalent(PlateauMemoizeFousFous autreCompactPlateau) {
 
 		if (plateauSimple == autreCompactPlateau.getPlateauSimple()) {
 			return 0;
@@ -126,9 +151,17 @@ public class PlateauMemoiseFousFous {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PlateauMemoiseFousFous)) return false;
+		if (!(obj instanceof PlateauMemoizeFousFous)) return false;
 
-		return equivalent((PlateauMemoiseFousFous) obj) != -1;
+		return equivalent((PlateauMemoizeFousFous) obj) != -1;
+	}
+
+	/********************** Ordonancement ******************/
+
+	@Override
+	public int compareTo(PlateauMemoizeFousFous o) {
+		int scoreAutre = o.getScore();
+		return score - scoreAutre;
 	}
 
 
@@ -193,5 +226,4 @@ public class PlateauMemoiseFousFous {
 			}
 		}
 	}
-
 }

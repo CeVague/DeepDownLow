@@ -138,7 +138,7 @@ public class AlphaBeta implements AlgoJeu {
 	public int betaAlpha(PlateauJeu p, int Alpha, int Beta, int profondeur) {
 		if (profondeur == profMax) {
 			nbfeuilles++;
-			return h.eval(p, joueurMin);
+			return h.eval(p, joueurMax);
 		}
 
 		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurMax);

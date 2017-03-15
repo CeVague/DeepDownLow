@@ -1,8 +1,11 @@
 package fousfous;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
@@ -33,16 +36,44 @@ public class PartieFousFous {
 
 	public static void main(String[] args) throws Exception {
 
+//		PlateauMemoizeFousFous memo1 = new PlateauMemoizeFousFous();
+//		memo1.setScore(10);
+//		
+//		PlateauFousFous temp = new PlateauFousFous(randomPlateau());
+//		PlateauMemoizeFousFous memo2 = new PlateauMemoizeFousFous(temp);
+//		memo2.setScore(100);
+//
+//		PlateauMemoizeFousFous memo2Bis = new PlateauMemoizeFousFous(PlateauFousFous.symetrieTour180(temp.getPlateauBlanc()), PlateauFousFous.symetrieTour180(temp.getPlateauNoir()));
+//		memo2Bis.setScore(50);
+//
+//		
+//		HashSet<PlateauMemoizeFousFous> hashset = new HashSet<PlateauMemoizeFousFous>();
+//		hashset.add(memo1);
+//		hashset.add(memo2);
+//		hashset.add(memo2Bis);
+//		
+//		for(PlateauMemoizeFousFous truc : hashset){
+//			System.out.println(truc.toString());
+//		}
+//		
+//		PlateauMemoizeFousFous[] listeTemp = hashset.toArray(new PlateauMemoizeFousFous[0]);
+//		Arrays.sort(listeTemp);
+//		
+//
+//		for(PlateauMemoizeFousFous truc : listeTemp){
+//			System.out.println(truc.toString());
+//		}
+		
 		joue(false, true);
 
 //		lanceCombat(HeuristiquesFousFous.htest1, HeuristiquesFousFous.htest2, 7, 25);
 
-//		PlateauFFB temp = new PlateauFFB();
+//		PlateauFousFous temp = new PlateauFousFous();
 //		Joueur jb = new Joueur("blanc");
 //		Joueur jn = new Joueur("noir");
-//		PlateauFFB.setJoueurs(jb, jn);
+//		PlateauFousFous.setJoueurs(jb, jn);
 
-//		temp = new PlateauFFB(new int[][]{
+//		temp = new PlateauFousFous(new int[][]{
 //			{0,0,0,0,0,0,0,0},
 //			{0,0,0,0,0,0,0,0},
 //			{0,1,0,0,0,1,0,0},
@@ -52,7 +83,7 @@ public class PartieFousFous {
 //			{0,0,0,0,0,0,0,0},
 //			{0,0,2,0,0,0,0,0}});
 
-//		temp = new PlateauFFB(randomPlateau());
+//		temp = new PlateauFousFous(randomPlateau());
 
 //		temp.print();
 
@@ -104,7 +135,7 @@ public class PartieFousFous {
 
 		PlateauFousFous plateauCourant = new PlateauFousFous();
 
-//		plateauCourant = new PlateauFFB(new int[][]{
+//		plateauCourant = new PlateauFousFous(new int[][]{
 //			 {0,2,0,2,0,0,0,0},
 //			 {0,0,0,0,2,0,0,0},
 //			 {0,1,0,0,0,2,0,0},
