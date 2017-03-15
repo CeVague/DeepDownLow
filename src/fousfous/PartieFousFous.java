@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
 import iia.jeux.alg.Heuristique;
+import iia.jeux.alg.MinMax;
 import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.joueur.Joueur;
 
@@ -35,34 +36,8 @@ public class PartieFousFous {
 	}
 
 	public static void main(String[] args) throws Exception {
-
-//		PlateauMemoizeFousFous memo1 = new PlateauMemoizeFousFous();
-//		memo1.setScore(10);
-//		
-//		PlateauFousFous temp = new PlateauFousFous(randomPlateau());
-//		PlateauMemoizeFousFous memo2 = new PlateauMemoizeFousFous(temp);
-//		memo2.setScore(100);
-//
-//		PlateauMemoizeFousFous memo2Bis = new PlateauMemoizeFousFous(PlateauFousFous.symetrieTour180(temp.getPlateauBlanc()), PlateauFousFous.symetrieTour180(temp.getPlateauNoir()));
-//		memo2Bis.setScore(50);
-//
-//		
-//		HashSet<PlateauMemoizeFousFous> hashset = new HashSet<PlateauMemoizeFousFous>();
-//		hashset.add(memo1);
-//		hashset.add(memo2);
-//		hashset.add(memo2Bis);
-//		
-//		for(PlateauMemoizeFousFous truc : hashset){
-//			System.out.println(truc.toString());
-//		}
-//		
-//		PlateauMemoizeFousFous[] listeTemp = hashset.toArray(new PlateauMemoizeFousFous[0]);
-//		Arrays.sort(listeTemp);
-//		
-//
-//		for(PlateauMemoizeFousFous truc : listeTemp){
-//			System.out.println(truc.toString());
-//		}
+		
+//		exempleMemoize();
 		
 		joue(false, true);
 
@@ -86,6 +61,12 @@ public class PartieFousFous {
 //		temp = new PlateauFousFous(randomPlateau());
 
 //		temp.print();
+		
+
+//		AlgoJeu alphabeta = new AlphaBeta(HeuristiquesFousFous.htest1, jb, jn, 7);
+//		AlgoJeu minmax = new MinMax(HeuristiquesFousFous.htest1, jb, jn, 7);
+//
+//		System.out.println(verifIAValide(alphabeta, minmax));
 
 //		 long startTime = System.currentTimeMillis();
 //		 PionFFB pion1 = new PionFFB("B1-D3");
@@ -101,19 +82,55 @@ public class PartieFousFous {
 //		 long stopTime = System.currentTimeMillis();
 //		 long elapsedTime = stopTime - startTime;
 //		 System.out.println(elapsedTime);
+	}
 
-//		 Icon icon = new ImageIcon("DeepDownLow.gif");
-//		 icon = new ImageIcon("GnaGnaGna.gif");
-//		 //icon = new ImageIcon("Gneeeeeeee.gif");
-//		 //icon = new ImageIcon("Lol.gif");
-//		 JLabel label = new JLabel(icon);
-//		
-//		 JFrame f = new JFrame("Animation");
-//		 f.getContentPane().add(label);
-//		 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		 f.pack();
-//		 f.setLocationRelativeTo(null);
-//		 f.setVisible(true);
+	/**
+	 * Permet de vérifier que deux algo de recherche dans l'arbre
+	 * donnent le même résultat
+	 */
+	public static boolean verifIAValide(AlgoJeu Algo1, AlgoJeu Algo2) {
+		PlateauFousFous temp = new PlateauFousFous(randomPlateau());
+
+//		System.out.println("Calcul des coups :");
+		CoupFousFous coupAB = (CoupFousFous) Algo1.meilleurCoup(temp);
+//		System.out.println("Premier coup calculé");
+		CoupFousFous coupMM = (CoupFousFous) Algo2.meilleurCoup(temp);
+//		System.out.println("Deuxieme coup calculé");
+
+		return (coupAB.getApres() == coupMM.getApres() && coupAB.getAvant() == coupMM.getAvant());
+	}
+	
+	private static void exempleMemoize(){
+		PlateauMemoizeFousFous memo1 = new PlateauMemoizeFousFous();
+		memo1.setScore(10);
+		
+		PlateauFousFous temp = new PlateauFousFous(randomPlateau());
+		PlateauMemoizeFousFous memo2 = new PlateauMemoizeFousFous(temp);
+		memo2.setScore(100);
+
+		PlateauMemoizeFousFous memo2Bis = new PlateauMemoizeFousFous(
+				PlateauFousFous.symetrieDiagDroite(temp.getPlateauBlanc()), 
+				PlateauFousFous.symetrieDiagDroite(temp.getPlateauNoir()));
+		memo2Bis.setScore(50);
+
+		
+		HashSet<PlateauMemoizeFousFous> hashset = new HashSet<PlateauMemoizeFousFous>();
+		hashset.add(memo1);
+		hashset.add(memo2);
+		hashset.add(memo2Bis);
+
+		System.out.println("Contenu du Set :");
+		for(PlateauMemoizeFousFous truc : hashset){
+			System.out.println(truc + " " + truc.getScore());
+		}
+		
+		PlateauMemoizeFousFous[] listeTemp = hashset.toArray(new PlateauMemoizeFousFous[0]);
+		Arrays.sort(listeTemp);
+		
+		System.out.println("Contenu trié :");
+		for(PlateauMemoizeFousFous truc : listeTemp){
+			System.out.println(truc + " " + truc.getScore());
+		}
 	}
 
 	/**

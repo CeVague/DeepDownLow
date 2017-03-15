@@ -84,7 +84,7 @@ public class MinMax implements AlgoJeu {
 			}
 		}
 
-		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
+//		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
 		
 		if(valMax == Integer.MAX_VALUE){
 			System.out.println("Je suis gagnant à coup sur");
