@@ -87,6 +87,8 @@ public class AlphaBeta implements AlgoJeu {
 
 		if (valMax == Integer.MAX_VALUE) {
 //			System.out.println("Je suis gagnant à coup sur");
+		}else if(valMax == Integer.MIN_VALUE) {
+//			System.out.println("Je suis perdant à coup sur");
 		}
 
 		return coupMax;

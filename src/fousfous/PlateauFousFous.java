@@ -95,10 +95,32 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	 */
 	@Override
 	public ArrayList<CoupJeu> coupsPossibles(Joueur j) {
+//		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
+//
+//		for (PionFousFous pion : listerPions(j)) {
+//			listeCoups.addAll(coupsPossibles(j, pion));
+//		}
+//
+//		return listeCoups;
+		
+		
+		// 60% plus rapide
 		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
+		
+		ArrayList<PionFousFous> listePionsMenaceurs = new ArrayList<PionFousFous>();
 
 		for (PionFousFous pion : listerPions(j)) {
-			listeCoups.addAll(coupsPossibles(j, pion));
+			ArrayList<CoupFousFous> tmp = listerMangeable(j, pion);
+			
+			if(tmp.isEmpty()){
+				listePionsMenaceurs.add(pion);
+			}else{
+				listeCoups.addAll(tmp);
+			}
+		}
+		
+		for (PionFousFous pion : listePionsMenaceurs) {
+			listeCoups.addAll(listerMenacable(j, pion));
 		}
 
 		return listeCoups;
