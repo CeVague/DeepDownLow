@@ -6,7 +6,7 @@ public class PionFousFous implements CoupJeu {
 
 	/******** Attributs *********/
 
-	private byte pion;
+	private final byte pion;
 
 	/****** Clonstructeur *******/
 

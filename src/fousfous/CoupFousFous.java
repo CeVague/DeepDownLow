@@ -11,7 +11,7 @@ public class CoupFousFous implements CoupJeu {
 
 	/******** Attributs *********/
 
-	private byte avant, apres;
+	private final byte avant, apres;
 
 	/****** Clonstructeur *******/
 
@@ -21,7 +21,9 @@ public class CoupFousFous implements CoupJeu {
 	}
 
 	public CoupFousFous(String coord) {
-		setCoord(StringToCoord(coord));
+		byte[] coordByte = StringToCoord(coord);
+		avant = coordByte[0];
+		apres = coordByte[1];
 	}
 
 	public CoupFousFous(byte avant, byte apres) {
@@ -30,10 +32,6 @@ public class CoupFousFous implements CoupJeu {
 	}
 
 	public CoupFousFous(byte[] coord) {
-		setCoord(coord);
-	}
-
-	private void setCoord(byte[] coord) {
 		avant = coord[0];
 		apres = coord[1];
 	}
