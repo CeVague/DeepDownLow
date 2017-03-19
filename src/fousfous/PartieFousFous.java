@@ -11,6 +11,7 @@ import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
 import iia.jeux.alg.Heuristique;
 import iia.jeux.alg.MinMax;
+import iia.jeux.alg.NegAlphaBeta;
 import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.joueur.Joueur;
 
@@ -38,45 +39,46 @@ public class PartieFousFous {
 	public static void main(String[] args) throws Exception {
 		
 //		exempleMemoize();
-		
-		joue(false, true);
-
-//		lanceCombat(HeuristiquesFousFous.htest1, HeuristiquesFousFous.htest2, 7, 25);
-
+//		
+//		joue(false, true);
+//
+//		Thread.sleep(10000);
+//		
+//		lanceCombat(HeuristiquesFousFous.htest1, HeuristiquesFousFous.htest1, 9, 6);
+//		
 //		PlateauFousFous temp = new PlateauFousFous();
 //		Joueur jb = new Joueur("blanc");
 //		Joueur jn = new Joueur("noir");
 //		PlateauFousFous.setJoueurs(jb, jn);
-
+//
+//		verifIAValide(new AlphaBeta(HeuristiquesFousFous.htest1, jb, jn, 6), new NegAlphaBeta(HeuristiquesFousFous.htest1, jb, jn, 6), 20);
+//		verifIAValide(new AlphaBeta(HeuristiquesFousFous.htest1, jn, jb, 6), new NegAlphaBeta(HeuristiquesFousFous.htest1, jn, jb, 6), 20);
+//
+//		
 //		temp = new PlateauFousFous(new int[][]{
 //			{0,0,0,0,0,0,0,0},
 //			{0,0,0,0,0,0,0,0},
 //			{0,1,0,0,0,1,0,0},
 //			{1,0,0,0,2,0,0,0},
-//			{0,0,0,0,0,0,0,0},
+//			{0,0,0,2,0,0,0,0},
 //			{0,0,0,0,0,0,0,0},
 //			{0,0,0,0,0,0,0,0},
 //			{0,0,2,0,0,0,0,0}});
-
+//
 //		temp = new PlateauFousFous(randomPlateau());
-
+//
 //		temp.print();
-		
-
+//
 //		AlgoJeu alphabeta = new AlphaBeta(HeuristiquesFousFous.htest1, jb, jn, 7);
 //		AlgoJeu minmax = new MinMax(HeuristiquesFousFous.htest1, jb, jn, 7);
 //
 //		System.out.println(verifIAValide(alphabeta, minmax));
-
-//		 long startTime = System.currentTimeMillis();
-//		 PionFFB pion1 = new PionFFB("B1-D3");
-//		 PionFFB pion2 = new PionFFB("F7-B3");
-//		 CoupFFB coup1 = new CoupFFB("B1-D3");
-//		 CoupFFB coup2 = new CoupFFB("F7-B3");
 //
-//		 for(int i=0;i<100000000;i++){
-//			 temp.coupsPossibles(jb);
-//			 temp.coupsPossibles(jn);
+//		 long startTime = System.currentTimeMillis();
+//
+//		 for(int i=0;i<300000000;i++){
+//			 temp.listerMenacable(jb, new PionFousFous("H5"));
+//			 temp.listerMenacable(jn, new PionFousFous("F1"));
 //		 }
 //		
 //		 long stopTime = System.currentTimeMillis();
@@ -88,16 +90,22 @@ public class PartieFousFous {
 	 * Permet de vérifier que deux algo de recherche dans l'arbre
 	 * donnent le même résultat
 	 */
-	public static boolean verifIAValide(AlgoJeu Algo1, AlgoJeu Algo2) {
-		PlateauFousFous temp = new PlateauFousFous(randomPlateau());
+	public static void verifIAValide(AlgoJeu Algo1, AlgoJeu Algo2, int nb) {
+		for(int i=0;i<nb;i++){
+			PlateauFousFous temp = new PlateauFousFous(randomPlateau());
+			
+			while(temp.finDePartie()){
+				temp = new PlateauFousFous(randomPlateau());
+			}
+	
+	//		System.out.println("Calcul des coups :");
+			CoupFousFous coupAB = (CoupFousFous) Algo1.meilleurCoup(temp);
+	//		System.out.println("Premier coup calculé");
+			CoupFousFous coupMM = (CoupFousFous) Algo2.meilleurCoup(temp);
+	//		System.out.println("Deuxieme coup calculé");
 
-//		System.out.println("Calcul des coups :");
-		CoupFousFous coupAB = (CoupFousFous) Algo1.meilleurCoup(temp);
-//		System.out.println("Premier coup calculé");
-		CoupFousFous coupMM = (CoupFousFous) Algo2.meilleurCoup(temp);
-//		System.out.println("Deuxieme coup calculé");
-
-		return (coupAB.getApres() == coupMM.getApres() && coupAB.getAvant() == coupMM.getAvant());
+			System.out.println(coupAB.getApres() == coupMM.getApres() && coupAB.getAvant() == coupMM.getAvant());
+		}
 	}
 	
 	private static void exempleMemoize(){
@@ -291,7 +299,7 @@ public class PartieFousFous {
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
 			}
-			System.out.println(((i * 50) / nbtests) + "% - C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
+			System.out.println((((i+1) * 50) / nbtests) + "% - C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
 
 
 			gagnants[i] = lesJoueurs[(jnum + 1) % 2].toString();

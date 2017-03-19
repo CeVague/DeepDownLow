@@ -562,16 +562,23 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	 */
 	public ArrayList<PionFousFous> listerPions(Joueur j) {
 		long plateau = retournePlateau(j);
-		ArrayList<PionFousFous> listeCoups = new ArrayList<PionFousFous>(comptePions(plateau));
+		ArrayList<PionFousFous> listePion = new ArrayList<PionFousFous>(comptePions(plateau));
 
-		long pion = Long.lowestOneBit(plateau);
-		while (pion != 0) {
-			listeCoups.add(new PionFousFous(Long.numberOfTrailingZeros(plateau)));
+//		long pion = Long.lowestOneBit(plateau);
+//		while (pion != 0) {
+//			listeCoups.add(new PionFousFous(Long.numberOfTrailingZeros(plateau)));
+//
+//			plateau &= ~pion;
+//			pion = Long.lowestOneBit(plateau);
+//		}
+		
+		while (plateau != 0) {
+			listePion.add(new PionFousFous(Long.numberOfTrailingZeros(plateau)));
 
-			plateau &= ~pion;
-			pion = Long.lowestOneBit(plateau);
+			plateau &= plateau-1;
 		}
-		return listeCoups;
+		
+		return listePion;
 	}
 
 	/**

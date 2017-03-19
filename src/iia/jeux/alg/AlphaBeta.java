@@ -70,7 +70,6 @@ public class AlphaBeta implements AlgoJeu {
 		CoupJeu coupMax = lesCoupsPossibles.get(0);
 		int valMax = Integer.MIN_VALUE;
 
-//		System.out.print("Explore " + lesCoupsPossibles.size() + " branches");
 		for (CoupJeu coupTemp : lesCoupsPossibles) {
 			nbnoeuds++;
 
@@ -81,9 +80,7 @@ public class AlphaBeta implements AlgoJeu {
 				valMax = valTemp;
 				coupMax = coupTemp;
 			}
-//			System.out.print(".");
 		}
-//		System.out.print("\n");
 
 
 //		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
@@ -112,26 +109,25 @@ public class AlphaBeta implements AlgoJeu {
 		if (profondeur == profMax) {
 			nbfeuilles++;
 			return h.eval(p, joueurMax);
+		}else if(p.finDePartie()){
+			nbfeuilles++;
+			return Integer.MAX_VALUE;
 		}
 
 		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurMin);
 
-		if (coupsJouables.size() == 0) {
-			return Integer.MAX_VALUE;
-		} else {
-			nbnoeuds++;
+		nbnoeuds++;
 
-			for (CoupJeu coupTemp : coupsJouables) {
-				PlateauJeu pNew = p.copy();
-				pNew.joue(joueurMin, coupTemp);
-				Beta = Math.min(Beta, betaAlpha(pNew, Alpha, Beta, profondeur + 1));
+		for (CoupJeu coupTemp : coupsJouables) {
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurMin, coupTemp);
+			Beta = Math.min(Beta, betaAlpha(pNew, Alpha, Beta, profondeur + 1));
 
-				// Coupure Alpha
-				if (Alpha >= Beta) { return Alpha; }
-			}
-
-			return Beta;
+			// Coupure Alpha
+			if (Alpha >= Beta) { return Alpha; }
 		}
+
+		return Beta;
 	}
 
 	// Max
@@ -139,25 +135,24 @@ public class AlphaBeta implements AlgoJeu {
 		if (profondeur == profMax) {
 			nbfeuilles++;
 			return h.eval(p, joueurMax);
+		}else if(p.finDePartie()){
+			nbfeuilles++;
+			return Integer.MIN_VALUE;
 		}
 
 		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurMax);
 
-		if (coupsJouables.size() == 0) {
-			return Integer.MIN_VALUE;
-		} else {
-			nbnoeuds++;
+		nbnoeuds++;
 
-			for (CoupJeu coupTemp : coupsJouables) {
-				PlateauJeu pNew = p.copy();
-				pNew.joue(joueurMax, coupTemp);
-				Alpha = Math.max(Alpha, alphaBeta(pNew, Alpha, Beta, profondeur + 1));
+		for (CoupJeu coupTemp : coupsJouables) {
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurMax, coupTemp);
+			Alpha = Math.max(Alpha, alphaBeta(pNew, Alpha, Beta, profondeur + 1));
 
-				// Coupure Beta
-				if (Alpha >= Beta) { return Beta; }
-			}
-
-			return Alpha;
+			// Coupure Beta
+			if (Alpha >= Beta) { return Beta; }
 		}
+
+		return Alpha;
 	}
 }

@@ -6,11 +6,11 @@ import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.PlateauJeu;
 import iia.jeux.modele.joueur.Joueur;
 
-public class MinMax implements AlgoJeu {
+public class NegAlphaBeta implements AlgoJeu {
 
 	/** La profondeur de recherche par défaut
 	 */
-	private final static int PROFMAXDEFAUT = 4;
+	private final static int PROFMAXDEFAUT = 8;
 
 
 	// -------------------------------------------
@@ -39,54 +39,51 @@ public class MinMax implements AlgoJeu {
 
 	/** Le nombre de feuilles évaluées par l'algorithme
 	 */
-	private long nbfeuilles;
+	private int nbfeuilles;
 
 
 	// -------------------------------------------
 	// Constructeurs
 	// -------------------------------------------
-	public MinMax(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
+	public NegAlphaBeta(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
 		this(h, joueurMax, joueurMin, PROFMAXDEFAUT);
 	}
 
-	public MinMax(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
+	public NegAlphaBeta(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
 		this.h = h;
 		this.joueurMin = joueurMin;
 		this.joueurMax = joueurMax;
 		profMax = profMaxi;
-		// System.out.println("Initialisation d'un MiniMax de profondeur " +
-		// profMax);
 	}
 
 	// -------------------------------------------
 	// Méthodes de l'interface AlgoJeu
 	// -------------------------------------------
 	public CoupJeu meilleurCoup(PlateauJeu p) {
-		/* A vous de compléter le corps de ce fichier */
-
 		nbnoeuds = 0;
 		nbfeuilles = 0;
 
 
 		ArrayList<CoupJeu> lesCoupsPossibles = p.coupsPossibles(joueurMax);
 		CoupJeu coupMax = lesCoupsPossibles.get(0);
-		int valMax = Integer.MIN_VALUE;
+		int valMax = -Integer.MAX_VALUE;
 
 		for (CoupJeu coupTemp : lesCoupsPossibles) {
 			nbnoeuds++;
 
 			PlateauJeu pNew = p.copy();
 			pNew.joue(joueurMax, coupTemp);
-			int valTemp = minMax(pNew, 1);
+			int valTemp = negAlphaBeta(pNew, valMax, Integer.MAX_VALUE, 1, 1);
 			if (valTemp > valMax) {
 				valMax = valTemp;
 				coupMax = coupTemp;
 			}
 		}
 
+
 //		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
-		
-		if(valMax == Integer.MAX_VALUE){
+
+		if (valMax == Integer.MAX_VALUE) {
 //			System.out.println("Je suis gagnant à coup sur");
 		}
 
@@ -97,7 +94,7 @@ public class MinMax implements AlgoJeu {
 	// Méthodes publiques
 	// -------------------------------------------
 	public String toString() {
-		return "MiniMax(ProfMax=" + profMax + ")";
+		return "AlphaBeta(ProfMax=" + profMax + ")";
 	}
 
 
@@ -105,44 +102,35 @@ public class MinMax implements AlgoJeu {
 	// Méthodes internes
 	// -------------------------------------------
 
-	// A vous de jouer pour implanter Minimax
-	public int minMax(PlateauJeu p, int profondeur) {
+	public int negAlphaBeta(PlateauJeu p, int Alpha, int Beta, int profondeur, int parite) {
 		if (profondeur == profMax) {
 			nbfeuilles++;
-			return h.eval(p, joueurMax);
-		} else {
-			nbnoeuds++;
-
-			int valMin = Integer.MAX_VALUE;
-
-			for (CoupJeu coupTemp : p.coupsPossibles(joueurMin)) {
-				PlateauJeu pNew = p.copy();
-				pNew.joue(joueurMin, coupTemp);
-				valMin = Math.min(valMin, maxMin(pNew, profondeur + 1));
-			}
-
-			return valMin;
-		}
-	}
-
-	public int maxMin(PlateauJeu p, int profondeur) {
-		if (profondeur == profMax) {
+			return parite*h.eval(p, joueurMax);
+		}else if(p.finDePartie()){
 			nbfeuilles++;
-			return h.eval(p, joueurMax);
-		} else {
-			nbnoeuds++;
-
-			int valMax = Integer.MIN_VALUE;
-
-			for (CoupJeu coupTemp : p.coupsPossibles(joueurMax)) {
-				PlateauJeu pNew = p.copy();
-				pNew.joue(joueurMax, coupTemp);
-				valMax = Math.max(valMax, minMax(pNew, profondeur + 1));
-			}
-
-			return valMax;
+			return Integer.MAX_VALUE;
 		}
+
+		Joueur joueurActuel;
+		if(parite==1){
+			joueurActuel = joueurMin;
+		}else{
+			joueurActuel = joueurMax;
+		}
+		
+		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurActuel);
+		
+		nbnoeuds++;
+	
+		for (CoupJeu coupTemp : coupsJouables) {
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurActuel, coupTemp);
+			
+			Beta = Math.min(Beta, -negAlphaBeta(pNew, -Beta, -Alpha, profondeur + 1, -parite));
+	
+			if (Alpha >= Beta) { return Alpha; }
+		}
+	
+		return Beta;
 	}
-
-
 }
