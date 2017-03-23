@@ -35,11 +35,13 @@ public class AlphaBeta implements AlgoJeu {
 
 	/**  Le nombre de noeuds développé par l'algorithme
 	 * (intéressant pour se faire une idée du nombre de noeuds développés) */
-	private int nbnoeuds;
+	private long nbnoeuds;
 
 	/** Le nombre de feuilles évaluées par l'algorithme
 	 */
-	private int nbfeuilles;
+	private long nbfeuilles;
+	
+	private String etat;
 
 
 	// -------------------------------------------
@@ -84,11 +86,15 @@ public class AlphaBeta implements AlgoJeu {
 
 
 //		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
-
+		etat = "rien";
 		if (valMax == Integer.MAX_VALUE) {
-//			System.out.println("Je suis gagnant à coup sur");
+//			System.out.println("gagnant");
+			etat = "gagnant";
 		}else if(valMax == Integer.MIN_VALUE) {
-//			System.out.println("Je suis perdant à coup sur");
+//			System.out.println("perdant");
+			etat = "perdant";
+		}else{
+//			System.out.println("rien");
 		}
 
 		return coupMax;
@@ -99,6 +105,18 @@ public class AlphaBeta implements AlgoJeu {
 	// -------------------------------------------
 	public String toString() {
 		return "AlphaBeta(ProfMax=" + profMax + ")";
+	}
+	
+	public long getFeuilles(){
+		return nbfeuilles;
+	}
+	
+	public long getNoeuds(){
+		return nbnoeuds;
+	}
+	
+	public String getEtat(){
+		return etat;
 	}
 
 

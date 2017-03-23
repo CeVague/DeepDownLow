@@ -38,9 +38,11 @@ public class PartieFousFous {
 
 	public static void main(String[] args) throws Exception {
 		
+//		creerStats();
+		
 //		exempleMemoize();
 //		
-//		joue(false, true);
+		joue(false, true);
 //
 //		Thread.sleep(10000);
 //		
@@ -84,6 +86,110 @@ public class PartieFousFous {
 //		 long stopTime = System.currentTimeMillis();
 //		 long elapsedTime = stopTime - startTime;
 //		 System.out.println(elapsedTime);
+	}
+	
+	
+	public static void creerStats(){
+		int nbtests = 10;
+		int coupsRandom = 0;
+		int profondeur = 8;
+		
+
+		Joueur jBlanc = new Joueur("blanc");
+		Joueur jNoir = new Joueur("noir");
+		PlateauFousFous.setJoueurs(jBlanc, jNoir);
+
+		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
+
+		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
+		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.htest1, jBlanc, jNoir, profondeur);
+		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.htest1, jNoir, jBlanc, profondeur);
+
+		CoupFousFous coup;
+
+		for (int i = 0; i < nbtests; i++) {
+			int jnum = 0; // On commence par le joueur Blanc
+			
+			ArrayList<String> listeData = new ArrayList<String>();
+
+			PlateauFousFous plateauCourant = new PlateauFousFous();
+
+			for (int j = 0; j < coupsRandom; j++) {
+				ArrayList<CoupJeu> listeCoups = plateauCourant.coupsPossibles(lesJoueurs[jnum]);
+				coup = (CoupFousFous) listeCoups.get(rand.nextInt(listeCoups.size()));
+				plateauCourant.joue(lesJoueurs[jnum], coup);
+				jnum = (jnum + 1) % 2;
+			}
+
+			int coupsFait = coupsRandom;
+			
+			while (!plateauCourant.finDePartie()) {
+				
+				coupsFait++;
+				
+				long startTime = System.currentTimeMillis();
+				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
+				long stopTime = System.currentTimeMillis();
+				long elapsedTime = stopTime - startTime;
+				
+				
+//				System.out.println("Temps recherche : " + elapsedTime);
+//				
+//				System.out.println("Facteur branchement : " + plateauCourant.coupsPossibles(lesJoueurs[jnum]).size());
+//				
+//				System.out.println("NB Feuilles : " + ((AlphaBeta) AlgoJoueur[jnum]).getFeuilles());
+//				System.out.println("NB Noeuds : " + ((AlphaBeta) AlgoJoueur[jnum]).getNoeuds());
+//
+//				System.out.println("Joueur jouant : " + lesJoueurs[jnum]);
+//
+//				System.out.println("Coups random : " + coupsRandom);
+//				System.out.println("Profondeur de recherche : " + profondeur);
+//
+//				System.out.println("Numero du coup : " + coupsFait); // premier coup = 1 etc...
+//				
+//				System.out.println("Reste noir : " + Long.bitCount(plateauCourant.getPlateauNoir()));
+//				System.out.println("Reste blanc : " + Long.bitCount(plateauCourant.getPlateauBlanc()));
+//				
+//				System.out.println("Mangeur noir : " + plateauCourant.heuristiqueMangeurs(jNoir));
+//				System.out.println("Mangeur blanc : " + plateauCourant.heuristiqueMangeurs(jBlanc));
+//				
+//				System.out.println("Menaceur noir : " + plateauCourant.heuristiqueMenaceurs(jNoir));
+//				System.out.println("Menaceur blanc : " + plateauCourant.heuristiqueMenaceurs(jBlanc));
+//				
+//				
+//				System.out.println("-----------------------------------------");
+				
+				listeData.add(elapsedTime
+						+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
+						+","+((AlphaBeta) AlgoJoueur[jnum]).getFeuilles()
+						+","+((AlphaBeta) AlgoJoueur[jnum]).getNoeuds()
+						+","+((AlphaBeta) AlgoJoueur[jnum]).getEtat()
+						+","+lesJoueurs[jnum]
+						+","+coupsRandom
+						+","+profondeur
+						+","+coupsFait
+						+","+Long.bitCount(plateauCourant.getPlateauNoir())
+						+","+Long.bitCount(plateauCourant.getPlateauBlanc())
+						+","+plateauCourant.heuristiqueMangeurs(jNoir)
+						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
+						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
+						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
+				
+				plateauCourant.joue(lesJoueurs[jnum], coup);
+				jnum = (jnum + 1) % 2;
+			}
+			
+			ArrayList<String> listeDataFinal = new ArrayList<String>();
+			
+			for(int j=0;j<listeData.size();j++){
+				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandom));
+			}
+			
+			for(String s : listeDataFinal){
+				System.out.println(s);
+			}
+			
+		}
 	}
 
 	/**
