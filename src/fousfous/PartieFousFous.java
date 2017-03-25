@@ -5,13 +5,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.TreeSet;
 
 import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
 import iia.jeux.alg.Heuristique;
-import iia.jeux.alg.MinMax;
-import iia.jeux.alg.NegAlphaBeta;
 import iia.jeux.modele.CoupJeu;
 import iia.jeux.modele.joueur.Joueur;
 
@@ -35,14 +32,63 @@ public class PartieFousFous {
 
 		return temp;
 	}
+	
+	public static void afficheBas(String s, int sleep) throws InterruptedException{
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println(s);
+		System.out.flush();  
+		Thread.sleep(sleep);
+	}
 
 	public static void main(String[] args) throws Exception {
 		
-//		creerStats();
+
+
+		afficheBas("Perdu...", 1000);
+		afficheBas("Perdu...\n(☉_☉) ┬─┬﻿", 1000);
+		afficheBas("Perdu...\n(╯°Д°）╯﻿ ┻━┻", 1000);
+		afficheBas("Perdu...\n(╥_╥)   ┻━┻", 1000);
+		afficheBas("Perdu...\n(-_-)   ┻━┻", 1000);
+		afficheBas("Perdu...\n(╥_╥)   ┻━┻", 1000);
+
+		for(int i=0;i<50;i++){
+			String s = "";
+			for(int j=0;j<i;j++){
+				s += "    ";
+			}
+			s += "ヽ༼ ಠ益ಠ ༽ﾉ";
+			afficheBas("Perdu...\n" + s, 75); 
+		}
+
+		afficheBas("Gagné...\n", 1000);
+		afficheBas("Gagné...\n( •_•)", 1500);
+		afficheBas("Gagné...\n( •_•)>⌐■-■", 1000);
+		afficheBas("Gagné...", 0);
+		System.out.print("(⌐■_■) #");
+		Thread.sleep(200);
+		for(char c : "Yeeeeaaaaahhh".toCharArray()){
+			Thread.sleep(100);
+			System.out.print(c);
+		}
+		System.out.print("\n");
+		Thread.sleep(750);
+		System.out.print(".");
+		Thread.sleep(750);
+		System.out.print(".");
+		Thread.sleep(750);
+		System.out.print(".");
+		Thread.sleep(750);
+		for(int i=0;i<5;i++){
+			afficheBas("Gagné...\n     ヽ(⌐■_■)ノ♪♬", 500);
+			afficheBas("Gagné...\n♬♪ノ(⌐■_■)ヽ", 500);
+		}
 		
+//		for(int i=20; i>0;i--)
+//			creerStats(i);
+//		creerStats(12);
 //		exempleMemoize();
 //		
-		joue(false, true);
+//		joue(false, true);
 //
 //		Thread.sleep(10000);
 //		
@@ -88,11 +134,12 @@ public class PartieFousFous {
 //		 System.out.println(elapsedTime);
 	}
 	
-	
-	public static void creerStats(){
+	// En faire un à 12 Lundi !!!!!!!!!!!!!!
+	public static void creerStats(int profondeur){
 		int nbtests = 10;
-		int coupsRandom = 0;
-		int profondeur = 8;
+		double coupsRandom = (profondeur + 2.55)/1.25;
+//		int profondeur = 5;
+//		double coupsRandom = 0;
 		
 
 		Joueur jBlanc = new Joueur("blanc");
@@ -108,20 +155,24 @@ public class PartieFousFous {
 		CoupFousFous coup;
 
 		for (int i = 0; i < nbtests; i++) {
+			
+			int coupsRandomRand = (int) (coupsRandom + rand.nextFloat()*4 - 2);
+//			int coupsRandomRand = (int) (coupsRandom);
+			
 			int jnum = 0; // On commence par le joueur Blanc
 			
 			ArrayList<String> listeData = new ArrayList<String>();
 
 			PlateauFousFous plateauCourant = new PlateauFousFous();
 
-			for (int j = 0; j < coupsRandom; j++) {
+			for (int j = 0; j < coupsRandomRand; j++) {
 				ArrayList<CoupJeu> listeCoups = plateauCourant.coupsPossibles(lesJoueurs[jnum]);
 				coup = (CoupFousFous) listeCoups.get(rand.nextInt(listeCoups.size()));
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
 			}
 
-			int coupsFait = coupsRandom;
+			int coupsFait = coupsRandomRand;
 			
 			while (!plateauCourant.finDePartie()) {
 				
@@ -132,40 +183,13 @@ public class PartieFousFous {
 				long stopTime = System.currentTimeMillis();
 				long elapsedTime = stopTime - startTime;
 				
-				
-//				System.out.println("Temps recherche : " + elapsedTime);
-//				
-//				System.out.println("Facteur branchement : " + plateauCourant.coupsPossibles(lesJoueurs[jnum]).size());
-//				
-//				System.out.println("NB Feuilles : " + ((AlphaBeta) AlgoJoueur[jnum]).getFeuilles());
-//				System.out.println("NB Noeuds : " + ((AlphaBeta) AlgoJoueur[jnum]).getNoeuds());
-//
-//				System.out.println("Joueur jouant : " + lesJoueurs[jnum]);
-//
-//				System.out.println("Coups random : " + coupsRandom);
-//				System.out.println("Profondeur de recherche : " + profondeur);
-//
-//				System.out.println("Numero du coup : " + coupsFait); // premier coup = 1 etc...
-//				
-//				System.out.println("Reste noir : " + Long.bitCount(plateauCourant.getPlateauNoir()));
-//				System.out.println("Reste blanc : " + Long.bitCount(plateauCourant.getPlateauBlanc()));
-//				
-//				System.out.println("Mangeur noir : " + plateauCourant.heuristiqueMangeurs(jNoir));
-//				System.out.println("Mangeur blanc : " + plateauCourant.heuristiqueMangeurs(jBlanc));
-//				
-//				System.out.println("Menaceur noir : " + plateauCourant.heuristiqueMenaceurs(jNoir));
-//				System.out.println("Menaceur blanc : " + plateauCourant.heuristiqueMenaceurs(jBlanc));
-//				
-//				
-//				System.out.println("-----------------------------------------");
-				
 				listeData.add(elapsedTime
 						+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
 						+","+((AlphaBeta) AlgoJoueur[jnum]).getFeuilles()
 						+","+((AlphaBeta) AlgoJoueur[jnum]).getNoeuds()
 						+","+((AlphaBeta) AlgoJoueur[jnum]).getEtat()
 						+","+lesJoueurs[jnum]
-						+","+coupsRandom
+						+","+coupsRandomRand
 						+","+profondeur
 						+","+coupsFait
 						+","+Long.bitCount(plateauCourant.getPlateauNoir())
@@ -175,6 +199,22 @@ public class PartieFousFous {
 						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
 						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
 				
+//				System.out.println(elapsedTime
+//						+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
+//						+","+((AlphaBeta) AlgoJoueur[jnum]).getFeuilles()
+//						+","+((AlphaBeta) AlgoJoueur[jnum]).getNoeuds()
+//						+","+((AlphaBeta) AlgoJoueur[jnum]).getEtat()
+//						+","+lesJoueurs[jnum]
+//						+","+coupsRandomRand
+//						+","+profondeur
+//						+","+coupsFait
+//						+","+Long.bitCount(plateauCourant.getPlateauNoir())
+//						+","+Long.bitCount(plateauCourant.getPlateauBlanc())
+//						+","+plateauCourant.heuristiqueMangeurs(jNoir)
+//						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
+//						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
+//						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
+				
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
 			}
@@ -182,7 +222,7 @@ public class PartieFousFous {
 			ArrayList<String> listeDataFinal = new ArrayList<String>();
 			
 			for(int j=0;j<listeData.size();j++){
-				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandom));
+				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandomRand));
 			}
 			
 			for(String s : listeDataFinal){

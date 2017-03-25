@@ -15,8 +15,6 @@ public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous
 	private final static long masquePlateau = 0b1010101001010101101010100101010110101010010101011010101001010101L;
 	private final static long masqueDiagGauche = 0b0000000100000010000001000000100000010000001000000100000010000001L;
 	private final static long masqueVert = 0b0000000100000001000000010000000100000001000000010000000100000001L;
-	private final static long masqueHaut = 0b1111111111111111111111111111111100000000000000000000000000000000L;
-	private final static long masqueBas = 0b0000000000000000000000000000000011111111111111111111111111111111L;
 
 	/************ Attributs  ************/
 
@@ -84,13 +82,11 @@ public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous
 	}
 
 	public long getPlateauNoir() {
-		long plateauNoir = plateauSimple & masquePlateau;
-
-		long plateauNoirFinal = 0;
-		plateauNoirFinal |= (plateauNoir & masqueHaut) >>> 1;
-		plateauNoirFinal |= (plateauNoir & masqueBas) << 1;
-
-		return plateauNoirFinal;
+		return Long.reverseBytes(plateauSimple & masquePlateau);
+	}
+	
+	public PlateauFousFous getPlateau() {
+		return new PlateauFousFous(getPlateauBlanc(), getPlateauNoir());
 	}
 
 	/*************** Transformations Symétriques **************/
@@ -151,7 +147,7 @@ public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PlateauMemoizeFousFous)) return false;
+//		if (!(obj instanceof PlateauMemoizeFousFous)) return false;
 
 		return equivalent((PlateauMemoizeFousFous) obj) != -1;
 	}
@@ -168,9 +164,8 @@ public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous
 	/********************** Aides et compactage ******************/
 
 	public static long plateauToCompact(long plateauBlanc, long plateauNoir) {
-
-		plateauBlanc |= (plateauNoir & masqueHaut) << 1;
-		plateauBlanc |= (plateauNoir & masqueBas) >>> 1;
+		
+		plateauBlanc |= Long.reverseBytes(plateauNoir);
 
 		return plateauBlanc;
 	}
@@ -194,21 +189,23 @@ public class PlateauMemoizeFousFous implements Comparable<PlateauMemoizeFousFous
 	}
 
 	public String toString() {
-		String represente = "";
-
-		for (int i = 63; i >= 0; i--) {
-
-			if (((plateauSimple >>> i) & 1L) != 0) {
-				represente += "●";
-			} else {
-				represente += "○";
-			}
-
-			if (i % 8 == 0) {
-				represente += "\n";
-			}
-		}
-		return represente;
+//		String represente = "";
+//
+//		for (int i = 63; i >= 0; i--) {
+//
+//			if (((plateauSimple >>> i) & 1L) != 0) {
+//				represente += "●";
+//			} else {
+//				represente += "○";
+//			}
+//
+//			if (i % 8 == 0) {
+//				represente += "\n";
+//			}
+//		}
+//		return represente;
+		
+		return getPlateau().toString();
 	}
 
 

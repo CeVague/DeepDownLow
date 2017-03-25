@@ -96,6 +96,14 @@ public class NegAlphaBeta implements AlgoJeu {
 	public String toString() {
 		return "AlphaBeta(ProfMax=" + profMax + ")";
 	}
+	
+	public long getFeuilles(){
+		return nbfeuilles;
+	}
+	
+	public long getNoeuds(){
+		return nbnoeuds;
+	}
 
 
 	// -------------------------------------------

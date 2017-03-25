@@ -99,6 +99,14 @@ public class MinMax implements AlgoJeu {
 	public String toString() {
 		return "MiniMax(ProfMax=" + profMax + ")";
 	}
+	
+	public long getFeuilles(){
+		return nbfeuilles;
+	}
+	
+	public long getNoeuds(){
+		return nbnoeuds;
+	}
 
 
 	// -------------------------------------------
