@@ -32,60 +32,9 @@ public class PartieFousFous {
 
 		return temp;
 	}
-	
-	public static void afficheBas(String s, int sleep) throws InterruptedException{
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-		System.out.println(s);
-		System.out.flush();  
-		Thread.sleep(sleep);
-	}
 
 	public static void main(String[] args) throws Exception {
-		
 
-
-		afficheBas("Perdu...", 1000);
-		afficheBas("Perdu...\n(☉_☉) ┬─┬﻿", 1000);
-		afficheBas("Perdu...\n(╯°Д°）╯﻿ ┻━┻", 1000);
-		afficheBas("Perdu...\n(╥_╥)   ┻━┻", 1000);
-		afficheBas("Perdu...\n(-_-)   ┻━┻", 1000);
-		afficheBas("Perdu...\n(╥_╥)   ┻━┻", 1000);
-
-		for(int i=0;i<50;i++){
-			String s = "";
-			for(int j=0;j<i;j++){
-				s += "    ";
-			}
-			s += "ヽ༼ ಠ益ಠ ༽ﾉ";
-			afficheBas("Perdu...\n" + s, 75); 
-		}
-
-		afficheBas("Gagné...\n", 1000);
-		afficheBas("Gagné...\n( •_•)", 1500);
-		afficheBas("Gagné...\n( •_•)>⌐■-■", 1000);
-		afficheBas("Gagné...", 0);
-		System.out.print("(⌐■_■) #");
-		Thread.sleep(200);
-		for(char c : "Yeeeeaaaaahhh".toCharArray()){
-			Thread.sleep(100);
-			System.out.print(c);
-		}
-		System.out.print("\n");
-		Thread.sleep(750);
-		System.out.print(".");
-		Thread.sleep(750);
-		System.out.print(".");
-		Thread.sleep(750);
-		System.out.print(".");
-		Thread.sleep(750);
-		for(int i=0;i<5;i++){
-			afficheBas("Gagné...\n     ヽ(⌐■_■)ノ♪♬", 500);
-			afficheBas("Gagné...\n♬♪ノ(⌐■_■)ヽ", 500);
-		}
-		
-//		for(int i=20; i>0;i--)
-//			creerStats(i);
-//		creerStats(12);
 //		exempleMemoize();
 //		
 //		joue(false, true);

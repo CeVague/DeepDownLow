@@ -83,15 +83,19 @@ public class JoueurPro implements IJoueur{
 				Thread.sleep(750);
 				System.out.print(".");
 				Thread.sleep(750);
-				for(int i=0;i<10;i++){
+				for(int i=0;i<5;i++){
+					afficheBas("Gagné...\n/(-■_■)/", 250);
+					afficheBas("Gagné...\n-(-■_■)/", 250);
+					afficheBas("Gagné...\n-(-■_■)-", 250);
+					afficheBas("Gagné...\n\\(-■_■)-", 250);
 					afficheBas("Gagné...\n\\(-■_■)\\", 250);
 					afficheBas("Gagné...\n\\(-■_■)-", 250);
 					afficheBas("Gagné...\n-(-■_■)-", 250);
 					afficheBas("Gagné...\n-(-■_■)/", 250);
 					afficheBas("Gagné...\n/(-■_■)/", 250);
-					afficheBas("Gagné...\n-(-■_■)/", 250);
-					afficheBas("Gagné...\n-(-■_■)-", 250);
-					afficheBas("Gagné...\n\\(-■_■)-", 250);
+					afficheBas("Gagné...\n\\(-■_■)\\", 250);
+					afficheBas("Gagné...\n/(-■_■)/", 250);
+					afficheBas("Gagné...\n\\(-■_■)\\", 250);
 				}
 			}
 			catch (InterruptedException e) {
@@ -102,17 +106,17 @@ public class JoueurPro implements IJoueur{
 				afficheBas("Perdu...\n", 1000);
 				afficheBas("Perdu...\n(°_°) ┬─┬", 1000);
 				afficheBas("Perdu...\n(/°o°)/︵┴─┴", 1000);
-				afficheBas("Perdu...\n(╦_╦)    ┴─┴", 1000);
-				afficheBas("Perdu...\n(═_═)    ┴─┴", 1000);
-				afficheBas("Perdu...\n(╦_╦)    ┴─┴", 1000);
+				afficheBas("Perdu...\n(;_;)    ┴─┴", 1000);
+				afficheBas("Perdu...\n(°_°)    ┴─┴", 1000);
+				afficheBas("Perdu...\n(;_;)    ┴─┴", 1000);
 
-				afficheBas("Perdu...\n('-_-)", 1000); 
+				afficheBas("Perdu...\n( ;_;)", 1000); 
 				for(int i=0;i<40;i++){
 					String s = "";
 					for(int j=0;j<i;j++){
 						s += "    ";
 					}
-					s += "('-_-)";
+					s += "( ;_;)";
 					afficheBas("Perdu...\n" + s, 100); 
 				}
 			}
