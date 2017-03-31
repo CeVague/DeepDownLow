@@ -1,75 +1,219 @@
 package fousfous;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import iia.jeux.alg.Heuristique;
 import iia.jeux.modele.CoupJeu;
+import iia.jeux.modele.PlateauJeu;
 import iia.jeux.modele.joueur.Joueur;
 
 public class GenerationDictionnaire {
 
-	public static void main(String[] args) {
-		Joueur jBlanc = new Joueur("blanc");
-		Joueur jNoir = new Joueur("noir");
-		PlateauFousFous.setJoueurs(jBlanc, jNoir);
-		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
-		
-		
-		HashSet<PlateauMemoizeFousFous> dejaVue = new HashSet<PlateauMemoizeFousFous>();
-		
-		ArrayList<PlateauFousFous> listeAEvaluer = new ArrayList<PlateauFousFous>();
+	public static HashSet<PlateauMemoizeFousFous> memorise;
+	public static int profondeur_memorise = 3;
+	public static int profondeur_recherche = 8;
 	
-		int profondeurMax = 6;
-		int profondeurActuelle = 0;
+	public static Joueur jb, jn;
+	public static Joueur joueurMax, joueurMin;
+
+	public static Heuristique h;
+	
+	public static void main(String[] args) throws InterruptedException {
+		jb = new Joueur("blanc");
+		jn = new Joueur("noir");
+
+		joueurMax = jb;
+		joueurMin = jn;
+		if(profondeur_memorise%2==1){
+			joueurMax = jn;
+			joueurMin = jb;
+		}
 		
+		Joueur[] joueurs = new Joueur[]{jb, jn};
 		
-		listeAEvaluer.add(new PlateauFousFous());
-		dejaVue.add(new PlateauMemoizeFousFous(listeAEvaluer.get(0)));
+		h = HeuristiquesFousFous.hdebut;
 		
-		while(profondeurMax > profondeurActuelle){
-			int compte = 0;
-			System.out.println("-------------------" + profondeurActuelle + "-------------------");
-			ArrayList<PlateauFousFous> nouvelleListeAEvaluer = new ArrayList<PlateauFousFous>();
+		PlateauFousFous.setJoueurs(jb, jn);
+		
+		PlateauFousFous plateauDebut = new PlateauFousFous();
+		
+		memorise = new HashSet<PlateauMemoizeFousFous>();
+		memorise.add(new PlateauMemoizeFousFous(plateauDebut));
+
+		ArrayList<PlateauFousFous> aEvaluer = new ArrayList<PlateauFousFous>();
+		aEvaluer.add(plateauDebut);
+		
+		for(int i=0;i<=profondeur_memorise;i++){
+			ArrayList<PlateauFousFous> aEvaluerNew = new ArrayList<PlateauFousFous>();
 			
-			// Pour chaque plateau à évaluer (ils sont unique)
-			for(PlateauFousFous plateau : listeAEvaluer){
+			for(PlateauFousFous plateauTemp : aEvaluer){
 				
-				if(compte%1000==0){
-					System.out.println(compte + "/" + listeAEvaluer.size());
+				for(CoupJeu c : plateauTemp.coupsPossibles(joueurs[i%2])){
+					PlateauFousFous newPlateau = (PlateauFousFous) plateauTemp.copy();
+					newPlateau.joue(joueurs[i%2], c);
 					
-				}
-				
-				// Calcul de tous les coups possibles
-				ArrayList<CoupJeu> listeCoups = plateau.coupsPossibles(lesJoueurs[profondeurActuelle%2]);
-				
-				// Ajout de tout ces nouveaux etats à la futur liste à evaluer
-				for(CoupJeu coup : listeCoups){
-					PlateauFousFous plateauTemp = (PlateauFousFous) plateau.copy();
-					plateauTemp.joue(lesJoueurs[profondeurActuelle%2], coup);
-					
-					
-					PlateauMemoizeFousFous plateauMem = new PlateauMemoizeFousFous(plateauTemp);
-					plateauMem.setScore(profondeurActuelle+1);
-					
-					if(dejaVue.add(plateauMem)){
-						if(profondeurActuelle+1 != profondeurMax)
-							nouvelleListeAEvaluer.add(plateauTemp);
+					if(memorise.add(new PlateauMemoizeFousFous(newPlateau))){
+						aEvaluerNew.add(newPlateau);
 					}
 				}
 				
-				compte++;
 			}
 			
-			listeAEvaluer.clear();
-			listeAEvaluer.addAll(nouvelleListeAEvaluer);
+			aEvaluer = aEvaluerNew;
 			
-			profondeurActuelle++;
+		}
+		
+
+		System.out.println(memorise.size());
+		System.out.println(aEvaluer.size());
+
+		System.out.println("Joueur concerné : " + joueurMax);
+
+		int[] evaluation = new int[aEvaluer.size()];
+		
+		long startTime = System.currentTimeMillis();
+		
+		
+		for(int debut=20000;debut<aEvaluer.size();debut+=1000){
+			int fin = Math.min(aEvaluer.size(), debut + 1000);
+			
+			ExecutorService pool = Executors.newFixedThreadPool(4); 
+			
+			for(int i=debut;i<fin;i++){
+				pool.submit(new lanceAlphaBeta(profondeur_recherche, aEvaluer.get(i), h, joueurMin, joueurMax, evaluation, i));
+			}
+			
+		    pool.shutdown();
+		    
+		    pool.awaitTermination(Long.MAX_VALUE,  TimeUnit.DAYS);
+			
+			try {
+				FileWriter ffw = new FileWriter("dictionnaire_" + profondeur_memorise + "_" + profondeur_recherche + ".txt", true);
+	
+				for(int i=debut;i<fin;i++){
+					ffw.write(aEvaluer.get(i).getPlateauBlanc() + ";" + aEvaluer.get(i).getPlateauNoir() + ";" + evaluation[i] + "\n");
+				}
+	
+				ffw.close();
+			}
+			catch (Exception e) {
+				System.out.println(e.toString());
+			}
 		}
 
-		System.out.println("Taille à évaluer : " + listeAEvaluer.size());
-		System.out.println("----------------------------------------------");
+		long stopTime = System.currentTimeMillis();
+		long elapsedTime = stopTime - startTime;
+		System.out.println(elapsedTime);
+	}
+	
+	public static int negAlphaBeta(PlateauJeu p, int Alpha, int Beta, int profondeur, int parite) {
+		if (profondeur == profondeur_recherche) {
+			return parite*h.eval(p, joueurMax);
+		}else if(p.finDePartie()){
+			return Integer.MAX_VALUE;
+		}
 
-		System.out.println("Taille déjà vue : " + dejaVue.size());
+		Joueur joueurActuel;
+		if(parite==1){
+			joueurActuel = joueurMin;
+		}else{
+			joueurActuel = joueurMax;
+		}
 		
+		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurActuel);
+	
+		for (CoupJeu coupTemp : coupsJouables) {
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurActuel, coupTemp);
+			
+			Beta = Math.min(Beta, -negAlphaBeta(pNew, -Beta, -Alpha, profondeur + 1, -parite));
+	
+			if (Alpha >= Beta) { return Alpha; }
+		}
+	
+		return Beta;
+	}
+	
+}
+
+
+
+class lanceAlphaBeta implements Runnable {
+
+	private int profMax;
+	private Heuristique h;
+	private Joueur joueurMin;
+	private Joueur joueurMax;
+
+	private PlateauFousFous p;
+
+	private int[] evaluation;
+	private int i;
+
+	@Override
+	public void run() {
+		evaluation[i] = negAlphaBeta(p, -Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 1);
+
+//		System.out.println(p.getPlateauBlanc() + ";" + p.getPlateauNoir() + ";" + evaluation[i]);
+		if(i%100==0){
+			System.out.println(i + " calculés");
+		}
+	}
+
+
+	public lanceAlphaBeta(int profMax, PlateauFousFous p, Heuristique h, Joueur joueurMin, Joueur joueurMax, int[] evaluation, int i) {
+		this.profMax = profMax;
+		this.h = h;
+		this.joueurMin = joueurMin;
+		this.joueurMax = joueurMax;
+		this.p = p;
+		this.evaluation = evaluation;
+		this.i = i;
+	}
+
+	public int negAlphaBeta(PlateauJeu p, int Alpha, int Beta, int profondeur, int parite) {
+		if (profondeur == profMax) {
+			return parite*h.eval(p, joueurMax);
+		}else if(p.finDePartie()){
+			return Integer.MAX_VALUE;
+		}
+
+		Joueur joueurActuel;
+		if(parite==1){
+			joueurActuel = joueurMin;
+		}else{
+			joueurActuel = joueurMax;
+		}
+		
+		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurActuel);
+	
+		for (CoupJeu coupTemp : coupsJouables) {
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurActuel, coupTemp);
+			
+			Beta = Math.min(Beta, -negAlphaBeta(pNew, -Beta, -Alpha, profondeur + 1, -parite));
+	
+			if (Alpha >= Beta) { return Alpha; }
+		}
+	
+		return Beta;
 	}
 }
+
+
+//System.out.println(i + "/" + aEvaluer.size());
+//evaluation[i] = negAlphaBeta(aEvaluer.get(i), -Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 1);
+//
+//System.out.print(aEvaluer.get(i).getPlateauBlanc() + ";" + aEvaluer.get(i).getPlateauNoir() + ";" + evaluation[i] +"\n");
+//
+//if(i%100==0){
+//	long stopTime = System.currentTimeMillis();
+//	 long elapsedTime = stopTime - startTime;
+//	 System.out.println(elapsedTime);
+//	 System.out.println("temps restant = " + (aEvaluer.size() * elapsedTime / (i+1)));
+//}

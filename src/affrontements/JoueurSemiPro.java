@@ -7,13 +7,13 @@ import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
 import iia.jeux.modele.joueur.Joueur;
 
-public class JoueurPro implements IJoueur{
+public class JoueurSemiPro implements IJoueur{
 
     static final int BLANC = -1;
     static final int NOIR = 1;
     
-    static final Joueur jBlanc = new Joueur("blanc");
-    static final Joueur jNoir = new Joueur("noir");
+    static Joueur jBlanc;
+    static Joueur jNoir;
     
     Joueur moiJoueur;
     int moiInt;
@@ -39,7 +39,7 @@ public class JoueurPro implements IJoueur{
 		plateau = new PlateauFousFous();
 		PlateauFousFous.setJoueurs(jBlanc, jNoir);
 		
-		algo = new AlphaBeta(HeuristiquesFousFous.hmoyen, moiJoueur, luiJoueur, 8);
+		algo = new AlphaBeta(HeuristiquesFousFous.hmoyen, moiJoueur, luiJoueur, 7);
 	}
 
 	@Override
@@ -147,6 +147,11 @@ public class JoueurPro implements IJoueur{
 		return jNoir;
 	}
 	
+	public void setJoueurs(Joueur jb, Joueur jn){
+		this.jBlanc = jb;
+		this.jNoir = jn;
+	}
+	
 	public PlateauFousFous getPlateau(){
 		return plateau;
 	}
@@ -162,9 +167,9 @@ public class JoueurPro implements IJoueur{
 	}
 	
 	public static void main(String[] args) throws InterruptedException{
-		new JoueurPro().testAnimationGagne();
+		new JoueurSemiPro().testAnimationGagne();
 		Thread.sleep(1000);
-		new JoueurPro().testAnimationPerd();
+		new JoueurSemiPro().testAnimationPerd();
 	}
 
 }

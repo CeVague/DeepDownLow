@@ -347,6 +347,14 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 		return plateauNoir;
 	}
 
+	public Joueur getJoueurBlanc() {
+		return joueurBlanc;
+	}
+
+	public Joueur getJoueurNoir() {
+		return joueurNoir;
+	}
+
 	/*************** Transformations Symétriques **************/
 
 	public static long symetrieTour180(long plateau) {

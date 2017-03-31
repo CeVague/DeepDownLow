@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
+import affrontements.JoueurPro;
+import affrontements.JoueurSemiPro;
 import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.AlphaBeta;
 import iia.jeux.alg.Heuristique;
@@ -35,13 +37,20 @@ public class PartieFousFous {
 
 	public static void main(String[] args) throws Exception {
 
+//		creerStats();
+		
+//		for(int i=0;i<300000000;i++){
+//			 System.out.println((int) ((rand.nextGaussian()*5)+23));
+//			 Thread.sleep(50);
+//		}
+		
 //		exempleMemoize();
 //		
-//		joue(false, true);
+//		joue(true, false);
 //
 //		Thread.sleep(10000);
 //		
-//		lanceCombat(HeuristiquesFousFous.htest1, HeuristiquesFousFous.htest1, 9, 6);
+		lanceCombat(HeuristiquesFousFous.htest1, HeuristiquesFousFous.htest2, 4, 100);
 //		
 //		PlateauFousFous temp = new PlateauFousFous();
 //		Joueur jb = new Joueur("blanc");
@@ -83,11 +92,10 @@ public class PartieFousFous {
 //		 System.out.println(elapsedTime);
 	}
 	
-	// En faire un à 12 Lundi !!!!!!!!!!!!!!
-	public static void creerStats(int profondeur){
-		int nbtests = 10;
-		double coupsRandom = (profondeur + 2.55)/1.25;
-//		int profondeur = 5;
+	public static void creerStats(){
+		int nbtests = 100;
+		double coupsRandom;
+		int profondeur = 40;
 //		double coupsRandom = 0;
 		
 
@@ -98,15 +106,24 @@ public class PartieFousFous {
 		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
 
 		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
-		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.htest1, jBlanc, jNoir, profondeur);
-		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.htest1, jNoir, jBlanc, profondeur);
+		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.hzero, jBlanc, jNoir, profondeur);
+		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hzero, jNoir, jBlanc, profondeur);
+		
+
+
+		AlgoJeu AlgoJoueurDebut[] = new AlgoJeu[2];
+		AlgoJoueurDebut[0] = new AlphaBeta(HeuristiquesFousFous.hmoyen, jBlanc, jNoir, 6);
+		AlgoJoueurDebut[1] = new AlphaBeta(HeuristiquesFousFous.hmoyen, jNoir, jBlanc, 6);
 
 		CoupFousFous coup;
 
 		for (int i = 0; i < nbtests; i++) {
+			coupsRandom = ((rand.nextGaussian()*2)+15);
+			coupsRandom = coupsRandom<12 ? 12 : coupsRandom;
+			coupsRandom = coupsRandom>20 ? 20 : coupsRandom;
 			
-			int coupsRandomRand = (int) (coupsRandom + rand.nextFloat()*4 - 2);
-//			int coupsRandomRand = (int) (coupsRandom);
+//			int coupsRandomRand = (int) (coupsRandom + rand.nextFloat()*4 - 2);
+			int coupsRandomRand = (int) (coupsRandom);
 			
 			int jnum = 0; // On commence par le joueur Blanc
 			
@@ -115,13 +132,19 @@ public class PartieFousFous {
 			PlateauFousFous plateauCourant = new PlateauFousFous();
 
 			for (int j = 0; j < coupsRandomRand; j++) {
-				ArrayList<CoupJeu> listeCoups = plateauCourant.coupsPossibles(lesJoueurs[jnum]);
-				coup = (CoupFousFous) listeCoups.get(rand.nextInt(listeCoups.size()));
+				if(j<4){
+					ArrayList<CoupJeu> listeCoups = plateauCourant.coupsPossibles(lesJoueurs[jnum]);
+					coup = (CoupFousFous) listeCoups.get(rand.nextInt(listeCoups.size()));
+				}else{
+					coup = (CoupFousFous) AlgoJoueurDebut[jnum].meilleurCoup(plateauCourant);
+				}
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
 			}
 
 			int coupsFait = coupsRandomRand;
+
+			System.out.println(coupsRandomRand);
 			
 			while (!plateauCourant.finDePartie()) {
 				
@@ -132,23 +155,7 @@ public class PartieFousFous {
 				long stopTime = System.currentTimeMillis();
 				long elapsedTime = stopTime - startTime;
 				
-				listeData.add(elapsedTime
-						+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
-						+","+((AlphaBeta) AlgoJoueur[jnum]).getFeuilles()
-						+","+((AlphaBeta) AlgoJoueur[jnum]).getNoeuds()
-						+","+((AlphaBeta) AlgoJoueur[jnum]).getEtat()
-						+","+lesJoueurs[jnum]
-						+","+coupsRandomRand
-						+","+profondeur
-						+","+coupsFait
-						+","+Long.bitCount(plateauCourant.getPlateauNoir())
-						+","+Long.bitCount(plateauCourant.getPlateauBlanc())
-						+","+plateauCourant.heuristiqueMangeurs(jNoir)
-						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
-						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
-						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
-				
-//				System.out.println(elapsedTime
+//				listeData.add(elapsedTime
 //						+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
 //						+","+((AlphaBeta) AlgoJoueur[jnum]).getFeuilles()
 //						+","+((AlphaBeta) AlgoJoueur[jnum]).getNoeuds()
@@ -163,6 +170,22 @@ public class PartieFousFous {
 //						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
 //						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
 //						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
+
+				listeData.add(lesJoueurs[jnum]
+						+","+coupsFait
+						+","+coupsRandomRand
+						+","+plateauCourant.getPlateauNoir()
+						+","+plateauCourant.getPlateauBlanc()
+						+","+plateauCourant.heuristiqueNombrePions(jNoir)
+						+","+plateauCourant.heuristiqueNombrePions(jBlanc)
+						+","+plateauCourant.heuristiqueVoisinDirect(jNoir, false)
+						+","+plateauCourant.heuristiqueVoisinDirect(jBlanc, false)
+						+","+plateauCourant.heuristiqueVoisinDirect(jNoir, true)
+						+","+plateauCourant.heuristiqueVoisinDirect(jBlanc, true)
+						+","+plateauCourant.heuristiqueMangeurs(jNoir)
+						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
+						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
+						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
 				
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
@@ -171,7 +194,8 @@ public class PartieFousFous {
 			ArrayList<String> listeDataFinal = new ArrayList<String>();
 			
 			for(int j=0;j<listeData.size();j++){
-				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandomRand));
+				// ......gagnant;perdant
+				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandomRand) + "," + lesJoueurs[(jnum + 1) % 2] + "," + lesJoueurs[jnum]);
 			}
 			
 			for(String s : listeDataFinal){
@@ -244,30 +268,21 @@ public class PartieFousFous {
 	 */
 	public static void joue(boolean jbHumain, boolean jnHumain) throws Exception {
 
-		Joueur jBlanc = new Joueur("blanc");
-		Joueur jNoir = new Joueur("noir");
+		JoueurPro JoueurProBlanc = new JoueurPro();
+		JoueurProBlanc.initJoueur(-1);
+		
+		Joueur jBlanc = JoueurProBlanc.getJoueurBlanc();
+		Joueur jNoir = JoueurProBlanc.getJoueurNoir();
+
+		JoueurSemiPro JoueurProNoir = new JoueurSemiPro();
+		JoueurProNoir.setJoueurs(jBlanc, jNoir);
+		JoueurProNoir.initJoueur(1);
 
 		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
 
-		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
-		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.htest1, jBlanc, jNoir, 7);
-		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.htest1, jNoir, jBlanc, 7);
-
 		PlateauFousFous plateauCourant = new PlateauFousFous();
 
-//		plateauCourant = new PlateauFousFous(new int[][]{
-//			 {0,2,0,2,0,0,0,0},
-//			 {0,0,0,0,2,0,0,0},
-//			 {0,1,0,0,0,2,0,0},
-//			 {1,0,1,0,0,0,0,0},
-//			 {0,0,0,1,0,2,0,0},
-//			 {2,0,0,0,0,0,0,0},
-//			 {0,0,0,2,0,0,0,0},
-//			 {1,0,1,0,1,0,0,0}});
-
-
 		PlateauFousFous.setJoueurs(jBlanc, jNoir);
-
 
 		System.out.println("Démarage de la partie de Fous-Fous");
 		System.out.println("Etat Initial du plateau de jeu:");
@@ -283,16 +298,26 @@ public class PartieFousFous {
 			CoupFousFous coup = new CoupFousFous();
 
 			// Si c'est une IA qui joue
-			if ((jnum == 0 && !jbHumain) || (jnum == 1 && !jnHumain)) {
+			if ((jnum == 0 && !jbHumain)) {
 				long startTime = System.currentTimeMillis();
 
-				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
+				coup = new CoupFousFous(JoueurProBlanc.choixMouvement());
+				JoueurProNoir.mouvementEnnemi(coup.toString());
 
 				long elapsedTime = System.currentTimeMillis() - startTime;
 				tempIAtotal += elapsedTime;
 				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après "
 						+ elapsedTime / 1000.0 + " secondes de réflexion.");
-				// Si c'est un humain qui joue
+			} else if ((jnum == 1 && !jnHumain)) {
+				long startTime = System.currentTimeMillis();
+
+				coup = new CoupFousFous(JoueurProNoir.choixMouvement());
+				JoueurProBlanc.mouvementEnnemi(coup.toString());
+
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				tempIAtotal += elapsedTime;
+				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après "
+						+ elapsedTime / 1000.0 + " secondes de réflexion.");
 			} else {
 				System.out.println("Liste de vos pions :\n" + plateauCourant.listerPions(lesJoueurs[jnum]));
 
@@ -312,6 +337,10 @@ public class PartieFousFous {
 					}
 
 				}
+				
+
+				JoueurProNoir.mouvementEnnemi(coup.toString());
+				JoueurProBlanc.mouvementEnnemi(coup.toString());
 			}
 
 			// Vérifie que le coup est valide
@@ -338,6 +367,102 @@ public class PartieFousFous {
 		System.out.println("C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
 		System.out.println("Les IA ont passées " + (tempIAtotal / 1000.0) + " secondes à réfléchir.");
 	}
+//	public static void joue(boolean jbHumain, boolean jnHumain) throws Exception {
+//
+//		Joueur jBlanc = new Joueur("blanc");
+//		Joueur jNoir = new Joueur("noir");
+//
+//		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
+//
+//		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
+//		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.hmoyen, jBlanc, jNoir, 7);
+//		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hmoyen, jNoir, jBlanc, 7);
+//
+//		PlateauFousFous plateauCourant = new PlateauFousFous();
+//
+////		plateauCourant = new PlateauFousFous(new int[][]{
+////			 {0,2,0,2,0,0,0,0},
+////			 {0,0,0,0,2,0,0,0},
+////			 {0,1,0,0,0,2,0,0},
+////			 {1,0,1,0,0,0,0,0},
+////			 {0,0,0,1,0,2,0,0},
+////			 {2,0,0,0,0,0,0,0},
+////			 {0,0,0,2,0,0,0,0},
+////			 {1,0,1,0,1,0,0,0}});
+//
+//
+//		PlateauFousFous.setJoueurs(jBlanc, jNoir);
+//
+//
+//		System.out.println("Démarage de la partie de Fous-Fous");
+//		System.out.println("Etat Initial du plateau de jeu:");
+//		plateauCourant.print();
+//
+//		int tempIAtotal = 0;
+//
+//		int jnum = 0; // On commence par le joueur Blanc
+//
+//		while (!plateauCourant.finDePartie()) {
+//			System.out.println("C'est au joueur " + lesJoueurs[jnum] + " de jouer.");
+//
+//			CoupFousFous coup = new CoupFousFous();
+//
+//			// Si c'est une IA qui joue
+//			if ((jnum == 0 && !jbHumain) || (jnum == 1 && !jnHumain)) {
+//				long startTime = System.currentTimeMillis();
+//
+//				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
+//
+//				long elapsedTime = System.currentTimeMillis() - startTime;
+//				tempIAtotal += elapsedTime;
+//				System.out.println("L'IA " + lesJoueurs[jnum] + " a joué le coup " + coup + " après "
+//						+ elapsedTime / 1000.0 + " secondes de réflexion.");
+//				// Si c'est un humain qui joue
+//			} else {
+//				System.out.println("Liste de vos pions :\n" + plateauCourant.listerPions(lesJoueurs[jnum]));
+//
+//				while (!plateauCourant.coupValide(lesJoueurs[jnum], coup)) {
+//					sc = new Scanner(System.in);
+//
+//					System.out.println("Veuillez saisir le coup joué ou le pion à observer :");
+//
+//					String str = sc.nextLine();
+//
+//					if (str.length() <= 2) {
+//						PionFousFous pion = new PionFousFous(str);
+//						System.out
+//								.println("Coups jouables :\n" + plateauCourant.coupsPossibles(lesJoueurs[jnum], pion));
+//					} else {
+//						coup = new CoupFousFous(str);
+//					}
+//
+//				}
+//			}
+//
+//			// Vérifie que le coup est valide
+//			if (!plateauCourant.coupValide(lesJoueurs[jnum],
+//					coup)) { throw new Exception("Coups joué invalide (test approfondi)"); }
+//
+//
+//			plateauCourant.joue(lesJoueurs[jnum], coup);
+//			plateauCourant.print();
+//
+//
+//			// Vérifie que le coup n'a pas fait de bétises
+//			if ((plateauCourant.getPlateauBlanc()
+//					& 0b1010101001010101101010100101010110101010010101011010101001010101L) != 0) { throw new Exception(
+//							"Un pion blanc n'a pas bien bougé"); }
+//			if ((plateauCourant.getPlateauNoir()
+//					& 0b1010101001010101101010100101010110101010010101011010101001010101L) != 0) { throw new Exception(
+//							"Un pion noir à pas bien bougé"); }
+//			if ((plateauCourant.getPlateauNoir() & plateauCourant.getPlateauBlanc()) != 0) { throw new Exception(
+//					"Un pion blanc et un noir sont supperposés"); }
+//
+//			jnum = (jnum + 1) % 2;
+//		}
+//		System.out.println("C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
+//		System.out.println("Les IA ont passées " + (tempIAtotal / 1000.0) + " secondes à réfléchir.");
+//	}
 
 
 	/**
@@ -373,11 +498,11 @@ public class PartieFousFous {
 			PlateauFousFous plateauCourant = new PlateauFousFous();
 
 			if (i < nbtests) {
-				AlgoJoueur[0] = new AlphaBeta(h1, jBlanc, jNoir, 7);
-				AlgoJoueur[1] = new AlphaBeta(h2, jNoir, jBlanc, 7);
+				AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.hdebut, jBlanc, jNoir, 6);
+				AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hdebut, jNoir, jBlanc, 6);
 			} else {
-				AlgoJoueur[0] = new AlphaBeta(h2, jBlanc, jNoir, 7);
-				AlgoJoueur[1] = new AlphaBeta(h1, jNoir, jBlanc, 7);
+				AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.hdebut, jBlanc, jNoir, 6);
+				AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hdebut, jNoir, jBlanc, 6);
 			}
 
 
@@ -388,11 +513,33 @@ public class PartieFousFous {
 				jnum = (jnum + 1) % 2;
 			}
 
+			int duree = coupsRandom;
 
 			while (!plateauCourant.finDePartie()) {
+				
+
+				if(duree == 4){
+					if (i < nbtests) {
+						AlgoJoueur[1] = new AlphaBeta(h2, jNoir, jBlanc, 8);
+					} else {
+						AlgoJoueur[0] = new AlphaBeta(h2, jBlanc, jNoir, 8);
+					}
+				}
+				
+
+
+				if(duree == 4){
+					if (i < nbtests) {
+						AlgoJoueur[0] = new AlphaBeta(h1, jBlanc, jNoir, 7);
+					} else {
+						AlgoJoueur[1] = new AlphaBeta(h1, jNoir, jBlanc, 7);
+					}
+				}
+				
 				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
+				duree++;
 			}
 			System.out.println((((i+1) * 50) / nbtests) + "% - C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
 
@@ -412,10 +559,11 @@ public class PartieFousFous {
 		for (String mot : gagnants)
 			System.out.println(mot);
 
-		System.out.println("Score heuristique 1 : " + scoreH[0]);
-		System.out.println("Score heuristique 2 : " + scoreH[1]);
+		System.out.println("Score heuristique 1 : " + 50.0*scoreH[0]/nbtests);
+		System.out.println("Score heuristique 2 : " + 50.0*scoreH[1]/nbtests);
+		System.out.println("Différence h1 - h2 : " + (scoreH[0] - scoreH[1]));
 
-		System.out.println("Score Joueur blanc : " + scoreCoul[0]);
-		System.out.println("Score Joueur noir : " + scoreCoul[1]);
+		System.out.println("Score Joueur blanc : " + 50.0*scoreCoul[0]/nbtests);
+		System.out.println("Score Joueur noir : " + 50.0*scoreCoul[1]/nbtests);
 	}
 }

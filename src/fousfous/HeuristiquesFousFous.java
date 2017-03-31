@@ -11,6 +11,30 @@ public class HeuristiquesFousFous {
 
 	/****** Heuristiques pour tester les combinaisons *******/
 
+	public static Heuristique htestdebut1 = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+
+			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+
+			return voisSimpleMoi * 0
+					+ voisMoi * 20;
+		}
+	};
+
+	public static Heuristique htestdebut2 = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+
+			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+
+			return voisSimpleMoi;
+		}
+	};
+
 	public static Heuristique htest1 = new Heuristique() {
 
 		public int eval(PlateauJeu p, Joueur j) {
@@ -19,7 +43,6 @@ public class HeuristiquesFousFous {
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
 			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
-
 
 			Joueur jAdverse = pNew.retourneAdversaire(j);
 
@@ -34,6 +57,87 @@ public class HeuristiquesFousFous {
 	};
 
 	public static Heuristique htest2 = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+
+			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
+			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+
+			Joueur jAdverse = pNew.retourneAdversaire(j);
+
+			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
+			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
+			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+
+			return (nbPionsMoi - nbPionsAdverse) * 50
+					+ (voisSimpleMoi - voisSimpleAdverse) * 20
+					+ (voisMoi - voisAdverse) * -5;
+		}
+	};
+
+	public static Heuristique hdebut = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+
+			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+
+			return voisSimpleMoi;
+		}
+	};
+
+	public static Heuristique hlong = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+
+			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
+			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int nbMangeMoi = pNew.heuristiqueMangeurs(j);
+			int nbMenaceMoi = pNew.heuristiqueMenaceurs(j);
+
+
+			Joueur jAdverse = pNew.retourneAdversaire(j);
+
+			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
+			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
+			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int nbMangeAdverse = pNew.heuristiqueMangeurs(jAdverse);
+			int nbMenaceAdverse = pNew.heuristiqueMenaceurs(jAdverse);
+
+			return (nbPionsMoi - nbPionsAdverse) * 50
+					+ (voisSimpleMoi - voisSimpleAdverse) * 20
+					+ (voisMoi - voisAdverse) * -5
+					+ (nbMangeMoi - nbMangeAdverse) * 30
+					+ (nbMenaceMoi - nbMenaceAdverse) * -25;
+		}
+	};
+
+	public static Heuristique hmoyen = new Heuristique() {
+
+		public int eval(PlateauJeu p, Joueur j) {
+			PlateauFousFous pNew = (PlateauFousFous) p;
+
+			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
+			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+
+			Joueur jAdverse = pNew.retourneAdversaire(j);
+
+			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
+			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
+			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+
+			return (nbPionsMoi - nbPionsAdverse) * 50
+					+ (voisSimpleMoi - voisSimpleAdverse) * 20
+					+ (voisMoi - voisAdverse) * -5;
+		}
+	};
+
+	public static Heuristique hrapide = new Heuristique() {
 
 		public int eval(PlateauJeu p, Joueur j) {
 			PlateauFousFous pNew = (PlateauFousFous) p;
