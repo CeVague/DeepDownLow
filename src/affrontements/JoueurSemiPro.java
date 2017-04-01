@@ -148,8 +148,8 @@ public class JoueurSemiPro implements IJoueur{
 	}
 	
 	public void setJoueurs(Joueur jb, Joueur jn){
-		this.jBlanc = jb;
-		this.jNoir = jn;
+		jBlanc = jb;
+		jNoir = jn;
 	}
 	
 	public PlateauFousFous getPlateau(){

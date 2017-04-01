@@ -81,6 +81,10 @@ public class AlphaBeta implements AlgoJeu {
 			if (valTemp > valMax) {
 				valMax = valTemp;
 				coupMax = coupTemp;
+				
+				if(valTemp == Integer.MAX_VALUE){
+					return coupMax;
+				}
 			}
 		}
 

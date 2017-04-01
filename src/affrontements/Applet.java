@@ -31,10 +31,10 @@ public class Applet extends JApplet
     final private static int TAILLEPIONS = 40;
 
     private static final long serialVersionUID = 1L;
-    private JList brdList;
+    private JList<Board> brdList;
     private Board displayBoard;
     private JScrollPane scrollPane;
-    private DefaultListModel listModel;
+    private DefaultListModel<Board> listModel;
     private Frame myFrame;
 
     static int cpt = 0;
@@ -56,10 +56,10 @@ public class Applet extends JApplet
 
 	displayBoard = new Board("Coups", temp);
 
-	listModel = new DefaultListModel();
+	listModel = new DefaultListModel<Board>();
 	listModel.addElement(displayBoard);
 
-	brdList = new JList(listModel);
+	brdList = new JList<Board>(listModel);
 	brdList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	brdList.setSelectedIndex(0);
 	scrollPane = new JScrollPane(brdList);

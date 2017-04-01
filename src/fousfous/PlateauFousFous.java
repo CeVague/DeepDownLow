@@ -347,6 +347,10 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 		return plateauNoir;
 	}
 
+	public long getPlateauCombinees() {
+		return plateauBlanc | Long.reverseBytes(plateauNoir);
+	}
+
 	public Joueur getJoueurBlanc() {
 		return joueurBlanc;
 	}

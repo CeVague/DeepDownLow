@@ -1,0 +1,220 @@
+package iia.jeux.alg;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import fousfous.PlateauFousFous;
+import fousfous.PlateauMemoizeSimpleFousFous;
+import iia.jeux.modele.CoupJeu;
+import iia.jeux.modele.PlateauJeu;
+import iia.jeux.modele.joueur.Joueur;
+
+public class NegEchecAlphaBetaMemo implements AlgoJeu {
+
+	/** La profondeur de recherche par défaut
+	 */
+	private final static int PROFMAXDEFAUT = 8;
+
+
+	// -------------------------------------------
+	// Attributs
+	// -------------------------------------------
+
+	/**  La profondeur de recherche utilisée pour l'algorithme
+	 */
+	private int profMax = PROFMAXDEFAUT;
+
+	/**  L'heuristique utilisée par l'algorithme
+	 */
+	private Heuristique h;
+
+	/** Le joueur Min
+	 *  (l'adversaire) */
+	private Joueur joueurMin;
+
+	/** Le joueur Max
+	 * (celui dont l'algorithme de recherche adopte le point de vue) */
+	private Joueur joueurMax;
+
+	private HashMap<Long, PlateauMemoizeSimpleFousFous> memoriseTT;
+	
+	/**  Le nombre de noeuds développé par l'algorithme
+	 * (intéressant pour se faire une idée du nombre de noeuds développés) */
+	private int nbnoeuds;
+
+	/** Le nombre de feuilles évaluées par l'algorithme
+	 */
+	private int nbfeuilles;
+
+
+	// -------------------------------------------
+	// Constructeurs
+	// -------------------------------------------
+	public NegEchecAlphaBetaMemo(Heuristique h, Joueur joueurMax, Joueur joueurMin) {
+		this(h, joueurMax, joueurMin, PROFMAXDEFAUT);
+	}
+
+	public NegEchecAlphaBetaMemo(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
+		this.h = h;
+		this.joueurMin = joueurMin;
+		this.joueurMax = joueurMax;
+		profMax = profMaxi;
+	}
+
+	// -------------------------------------------
+	// Méthodes de l'interface AlgoJeu
+	// -------------------------------------------
+	public CoupJeu meilleurCoup(PlateauJeu p) {
+		nbnoeuds = 0;
+		nbfeuilles = 0;
+
+		memoriseTT = new HashMap<Long, PlateauMemoizeSimpleFousFous>();
+
+		ArrayList<CoupJeu> lesCoupsPossibles = p.coupsPossibles(joueurMax);
+		CoupJeu coupMax = lesCoupsPossibles.get(0);
+		int valMax = -Integer.MAX_VALUE;
+
+		for (CoupJeu coupTemp : lesCoupsPossibles) {
+			nbnoeuds++;
+
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurMax, coupTemp);
+			int valTemp = negEchecAlphaBetaMem(pNew, valMax, Integer.MAX_VALUE, profMax-1, 1);
+			if (valTemp > valMax) {
+				valMax = valTemp;
+				coupMax = coupTemp;
+				
+				if(valTemp == Integer.MAX_VALUE){
+					return coupMax;
+				}
+			}
+		}
+
+
+//		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
+
+		if (valMax == Integer.MAX_VALUE) {
+//			System.out.println("Je suis gagnant à coup sur");
+		}
+
+		return coupMax;
+	}
+
+	// -------------------------------------------
+	// Méthodes publiques
+	// -------------------------------------------
+	public String toString() {
+		return "AlphaBeta(ProfMax=" + profMax + ")";
+	}
+	
+	public long getFeuilles(){
+		return nbfeuilles;
+	}
+	
+	public long getNoeuds(){
+		return nbnoeuds;
+	}
+
+
+	// -------------------------------------------
+	// Méthodes internes
+	// -------------------------------------------
+
+	public Long plateauToCompact(PlateauFousFous p) {
+		long plateauBlanc = p.getPlateauBlanc();
+		
+		plateauBlanc |= Long.reverseBytes(p.getPlateauNoir());
+
+		return plateauBlanc;
+	}
+	
+	public int negEchecAlphaBetaMem(PlateauJeu p, int Alpha, int Beta, int profondeur, int parite) {
+		int AlphaInit = Alpha;
+		
+		PlateauMemoizeSimpleFousFous EntreT = memoriseTT.get(plateauToCompact((PlateauFousFous) p));
+		
+		
+		if(EntreT != null && EntreT.Prof>=profondeur){
+			if(EntreT.Flag == PlateauMemoizeSimpleFousFous.EXACT){
+				return EntreT.Val;
+			}else if(EntreT.Flag == PlateauMemoizeSimpleFousFous.BINF){
+				Alpha = Math.max(Alpha, EntreT.Val);
+			}else if(EntreT.Flag == PlateauMemoizeSimpleFousFous.BSUP){
+				Beta = Math.min(Beta, EntreT.Val);
+			}
+			
+			if(Alpha>=Beta){
+				return EntreT.Val;
+			}
+		}
+		
+		
+		
+		if (profondeur == 0) {
+			nbfeuilles++;
+			return parite*h.eval(p, joueurMax);
+		}else if(p.finDePartie()){
+			nbfeuilles++;
+			return Integer.MAX_VALUE;
+		}
+
+		
+		
+		Joueur joueurActuel;
+		if(parite==1){
+			joueurActuel = joueurMin;
+		}else{
+			joueurActuel = joueurMax;
+		}
+		
+		
+		
+		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurActuel);
+		
+		nbnoeuds++;
+	
+		int Min = Integer.MAX_VALUE;
+
+		CoupJeu MeilleurCoup = coupsJouables.get(0);
+		if(EntreT != null){
+			MeilleurCoup = EntreT.MeilleurCoup;
+		}
+		
+		for (CoupJeu coupTemp : coupsJouables) {
+			PlateauJeu pNew = p.copy();
+			pNew.joue(joueurActuel, coupTemp);
+			
+			Min = Math.min(Min, -negEchecAlphaBetaMem(pNew, -Beta, -Alpha, profondeur - 1, -parite));
+
+			if(Min<Beta){
+				Beta = Min;
+				MeilleurCoup = coupTemp;
+			}
+	
+			if (Alpha >= Beta) {
+				break;
+			}
+		}
+	
+		
+		if(EntreT == null){
+			EntreT = new PlateauMemoizeSimpleFousFous();
+			memoriseTT.put(plateauToCompact((PlateauFousFous) p), EntreT);
+		}
+		
+		
+		EntreT.Val = Min;
+		EntreT.MeilleurCoup = MeilleurCoup;
+		if(Min<=AlphaInit){
+			EntreT.Flag = PlateauMemoizeSimpleFousFous.BSUP;
+		}else if(Min>=Beta){
+			EntreT.Flag = PlateauMemoizeSimpleFousFous.BINF;
+		}else{
+			EntreT.Flag = PlateauMemoizeSimpleFousFous.EXACT;
+		}
+		EntreT.Prof = profondeur;
+		
+		
+		return Min;
+	}
+}
