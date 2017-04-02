@@ -415,6 +415,50 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 		return voisins;
 	}
 
+	public int heuristiqueVoisinLoins(Joueur j, boolean ennemiBloquant) {
+		long plateauJoueur = retournePlateau(j);
+		long plateauBloque = ~(retournePlateauAdverse(j) | masquePlateau);
+		
+		// Si on considère que l'on peut passer à travers les annemis
+		if(!ennemiBloquant){
+			plateauBloque = ~masquePlateau;
+		}
+		
+		long plateauEtaleFinal = 0L;
+		
+		long plateauEtale = (plateauJoueur<<7) & plateauBloque;
+		
+		for(int i=0;i<6;i++){
+			plateauEtale |= (plateauEtale<<7) & plateauBloque;
+		}
+		
+		plateauEtaleFinal |= plateauEtale;
+		
+		plateauEtale = (plateauJoueur>>>7) & plateauBloque;
+		
+		for(int i=0;i<6;i++){
+			plateauEtale |= (plateauEtale>>>7) & plateauBloque;
+		}
+		
+		plateauEtaleFinal |= plateauEtale;
+
+		plateauEtale = (plateauJoueur<<9) & plateauBloque;
+		
+		for(int i=0;i<6;i++){
+			plateauEtale |= (plateauEtale<<9) & plateauBloque;
+		}
+		
+		plateauEtaleFinal |= plateauEtale;
+		
+		plateauEtale = (plateauJoueur>>>9) & plateauBloque;
+		
+		for(int i=0;i<6;i++){
+			plateauEtale |= (plateauEtale>>>9) & plateauBloque;
+		}
+
+		return Long.bitCount(plateauJoueur & plateauEtaleFinal);
+	}
+
 	public int heuristiqueNombrePions(Joueur j) {
 		return comptePions(retournePlateau(j));
 	}

@@ -11,44 +11,30 @@ public class HeuristiquesFousFous {
 
 	/****** Heuristiques pour tester les combinaisons *******/
 
-	public static Heuristique htestdebut1 = new Heuristique() {
-
-		public int eval(PlateauJeu p, Joueur j) {
-			PlateauFousFous pNew = (PlateauFousFous) p;
-
-			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
-
-			Joueur jAdverse = pNew.retourneAdversaire(j);
-
-			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
-
-			return (voisSimpleMoi * 1) - (voisSimpleAdverse * 1);
-		}
-	};
-
-	public static Heuristique htestdebut2 = new Heuristique() {
-
-		public int eval(PlateauJeu p, Joueur j) {
-			PlateauFousFous pNew = (PlateauFousFous) p;
-
-			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
-
-			return voisSimpleMoi;
-		}
-	};
-
 	public static Heuristique htest1 = new Heuristique() {
 
 		public int eval(PlateauJeu p, Joueur j) {
 			PlateauFousFous pNew = (PlateauFousFous) p;
 
+			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
+			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int alligneBloguantMoi = pNew.heuristiqueVoisinLoins(j, true);
+			int alligneMoi = pNew.heuristiqueVoisinLoins(j, false);
 
 			Joueur jAdverse = pNew.retourneAdversaire(j);
 
+			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
+			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int alligneBloguantAdverse = pNew.heuristiqueVoisinLoins(jAdverse, true);
+			int alligneAdverse = pNew.heuristiqueVoisinLoins(jAdverse, false);
 
-			return (voisSimpleMoi * 1) - (voisSimpleAdverse * 1);
+			return (nbPionsMoi - nbPionsAdverse) * 50
+					+ (voisSimpleMoi - voisSimpleAdverse) * 20
+					+ (voisMoi - voisAdverse) * -5
+					+ (alligneBloguantMoi - alligneBloguantAdverse) * 15
+					+ (alligneMoi - alligneAdverse) * 20;
 		}
 	};
 
@@ -60,16 +46,22 @@ public class HeuristiquesFousFous {
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
 			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int alligneBloguantMoi = pNew.heuristiqueVoisinLoins(j, true);
+			int alligneMoi = pNew.heuristiqueVoisinLoins(j, false);
 
 			Joueur jAdverse = pNew.retourneAdversaire(j);
 
 			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int alligneBloguantAdverse = pNew.heuristiqueVoisinLoins(jAdverse, true);
+			int alligneAdverse = pNew.heuristiqueVoisinLoins(jAdverse, false);
 
 			return (nbPionsMoi - nbPionsAdverse) * 50
 					+ (voisSimpleMoi - voisSimpleAdverse) * 20
-					+ (voisMoi - voisAdverse) * -5;
+					+ (voisMoi - voisAdverse) * -5
+					+ (alligneBloguantMoi - alligneBloguantAdverse) * 15
+					+ (alligneMoi - alligneAdverse) * 20;
 		}
 	};
 
@@ -84,7 +76,7 @@ public class HeuristiquesFousFous {
 		}
 	};
 
-	public static Heuristique hlong = new Heuristique() {
+	public static Heuristique hlent = new Heuristique() {
 
 		public int eval(PlateauJeu p, Joueur j) {
 			PlateauFousFous pNew = (PlateauFousFous) p;
@@ -92,26 +84,25 @@ public class HeuristiquesFousFous {
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
 			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
-			int nbMangeMoi = pNew.heuristiqueMangeurs(j);
-			int nbMenaceMoi = pNew.heuristiqueMenaceurs(j);
-
+			int alligneBloguantMoi = pNew.heuristiqueVoisinLoins(j, true);
+			int alligneMoi = pNew.heuristiqueVoisinLoins(j, false);
 
 			Joueur jAdverse = pNew.retourneAdversaire(j);
 
 			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
-			int nbMangeAdverse = pNew.heuristiqueMangeurs(jAdverse);
-			int nbMenaceAdverse = pNew.heuristiqueMenaceurs(jAdverse);
+			int alligneBloguantAdverse = pNew.heuristiqueVoisinLoins(jAdverse, true);
+			int alligneAdverse = pNew.heuristiqueVoisinLoins(jAdverse, false);
 
 			return (nbPionsMoi - nbPionsAdverse) * 50
 					+ (voisSimpleMoi - voisSimpleAdverse) * 20
 					+ (voisMoi - voisAdverse) * -5
-					+ (nbMangeMoi - nbMangeAdverse) * 30
-					+ (nbMenaceMoi - nbMenaceAdverse) * -25;
+					+ (alligneBloguantMoi - alligneBloguantAdverse) * 15
+					+ (alligneMoi - alligneAdverse) * 20;
 		}
 	};
-
+	
 	public static Heuristique hmoyen = new Heuristique() {
 
 		public int eval(PlateauJeu p, Joueur j) {
@@ -119,17 +110,17 @@ public class HeuristiquesFousFous {
 
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
-			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int alligneMoi = pNew.heuristiqueVoisinLoins(j, false);
 
 			Joueur jAdverse = pNew.retourneAdversaire(j);
 
 			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
-			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int alligneAdverse = pNew.heuristiqueVoisinLoins(jAdverse, false);
 
 			return (nbPionsMoi - nbPionsAdverse) * 50
 					+ (voisSimpleMoi - voisSimpleAdverse) * 20
-					+ (voisMoi - voisAdverse) * -5;
+					+ (alligneMoi - alligneAdverse) * 20;
 		}
 	};
 
@@ -169,6 +160,8 @@ public class HeuristiquesFousFous {
 			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
 			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
+			int alligneBloguantMoi = pNew.heuristiqueVoisinLoins(j, true);
+			int alligneMoi = pNew.heuristiqueVoisinLoins(j, false);
 			int nbMangeMoi = pNew.heuristiqueMangeurs(j);
 			int nbMenaceMoi = pNew.heuristiqueMenaceurs(j);
 
@@ -178,12 +171,16 @@ public class HeuristiquesFousFous {
 			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
 			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
+			int alligneBloguantAdverse = pNew.heuristiqueVoisinLoins(jAdverse, true);
+			int alligneAdverse = pNew.heuristiqueVoisinLoins(jAdverse, false);
 			int nbMangeAdverse = pNew.heuristiqueMangeurs(jAdverse);
 			int nbMenaceAdverse = pNew.heuristiqueMenaceurs(jAdverse);
 
 			return (nbPionsMoi - nbPionsAdverse) * 5
 					+ (voisSimpleMoi - voisSimpleAdverse) * 4
 					+ (voisMoi - voisAdverse) * 3
+					+ (alligneBloguantMoi - alligneBloguantAdverse) * 15
+					+ (alligneMoi - alligneAdverse) * 20
 					+ (nbMangeMoi - nbMangeAdverse) * 2
 					+ (nbMenaceMoi - nbMenaceAdverse) * -2;
 		}

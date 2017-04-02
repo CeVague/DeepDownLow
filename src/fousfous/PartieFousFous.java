@@ -174,11 +174,11 @@ public class PartieFousFous {
 //
 //		Thread.sleep(10000);
 //		
-//		long startTime = System.currentTimeMillis();
-//		lanceCombat(HeuristiquesFousFous.hmoyen, HeuristiquesFousFous.hmoyen, 6, 100);
-//		long stopTime = System.currentTimeMillis();
-//		long elapsedTime = stopTime - startTime;
-//		System.out.println(elapsedTime);
+		long startTime = System.currentTimeMillis();
+		lanceCombat(HeuristiquesFousFous.hmoyen, HeuristiquesFousFous.hmoyen, 8, 300);
+		long stopTime = System.currentTimeMillis();
+		long elapsedTime = stopTime - startTime;
+		System.out.println(elapsedTime);
 //		
 //		PlateauFousFous temp = new PlateauFousFous();
 //		Joueur jb = new Joueur("blanc");
@@ -635,11 +635,11 @@ public class PartieFousFous {
 //			}
 
 			if (i < nbtests) {
-				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut1, jBlanc, jNoir, 8);
-				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut2, jNoir, jBlanc, 8);
+				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htest1, jBlanc, jNoir, 7);
+				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htest2, jNoir, jBlanc, 8);
 			} else {
-				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut2, jBlanc, jNoir, 8);
-				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut1, jNoir, jBlanc, 8);
+				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htest2, jBlanc, jNoir, 7);
+				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htest1, jNoir, jBlanc, 8);
 			}
 
 
@@ -655,23 +655,23 @@ public class PartieFousFous {
 			while (!plateauCourant.finDePartie()) {
 				
 
-				if(duree == 6){
-					if (i < nbtests) {
-						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 7);
-					} else {
-						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 7);
-					}
-				}
-				
-
-
-				if(duree == 6){
-					if (i < nbtests) {
-						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 7);
-					} else {
-						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 7);
-					}
-				}
+//				if(duree == 6){
+//					if (i < nbtests) {
+//						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 7);
+//					} else {
+//						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 7);
+//					}
+//				}
+//				
+//
+//
+//				if(duree == 6){
+//					if (i < nbtests) {
+//						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 7);
+//					} else {
+//						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 7);
+//					}
+//				}
 				
 				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 				plateauCourant.joue(lesJoueurs[jnum], coup);
