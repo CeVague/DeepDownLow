@@ -115,12 +115,12 @@ public class NegEchecAlphaBeta implements AlgoJeu {
 	// -------------------------------------------
 
 	public int negEchecAlphaBeta(PlateauJeu p, int Alpha, int Beta, int profondeur, int parite) {
-		if (profondeur == profMax) {
-			nbfeuilles++;
-			return parite*h.eval(p, joueurMax);
-		}else if(p.finDePartie()){
+		if(p.finDePartie()){
 			nbfeuilles++;
 			return Integer.MAX_VALUE;
+		}else if (profondeur == profMax) {
+			nbfeuilles++;
+			return parite*h.eval(p, joueurMax);
 		}
 
 		Joueur joueurActuel;

@@ -32,43 +32,43 @@ public class PartieFousFous {
 
 	public static void main(String[] args) throws Exception {
 
-		HashMap<PlateauMemoizeSymetriesFousFous, Integer> hmap = new HashMap<PlateauMemoizeSymetriesFousFous, Integer>();
-		
-		
-		for(String fichier : new String[]{"dictionnaire_3_8.txt"}){
-//		for(String fichier : new String[]{"dictionnaire_3_68.txt"}){
-			try {
-				InputStream ips = new FileInputStream(fichier);
-				InputStreamReader ipsr = new InputStreamReader(ips);
-				BufferedReader br = new BufferedReader(ipsr);
-				String ligne;
-				while ((ligne = br.readLine()) != null) {
-//					System.out.println(ligne);
-					String[] temp = ligne.split(";");
-					
-					long blanc = Long.valueOf(temp[0]);
-					long noir = Long.valueOf(temp[1]);
-					Integer score = Integer.valueOf(temp[2]);
-					
-					
-					hmap.put(new PlateauMemoizeSymetriesFousFous(blanc, noir), score);
-				}
-				br.close();
-			}
-			catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-        try {
-               FileOutputStream fos = new FileOutputStream("hashmap_8_noir.ser");
-               ObjectOutputStream oos = new ObjectOutputStream(fos);
-               oos.writeObject(hmap);
-               oos.close();
-               fos.close();
-               System.out.printf("Serialized HashMap data is saved in hashmap.ser");
-        }catch(IOException ioe) {
-               ioe.printStackTrace();
-        }
+//		HashMap<PlateauMemoizeSymetriesFousFous, Integer> hmap = new HashMap<PlateauMemoizeSymetriesFousFous, Integer>();
+//		
+//		
+//		for(String fichier : new String[]{"dictionnaire_3_8.txt"}){
+////		for(String fichier : new String[]{"dictionnaire_3_68.txt"}){
+//			try {
+//				InputStream ips = new FileInputStream(fichier);
+//				InputStreamReader ipsr = new InputStreamReader(ips);
+//				BufferedReader br = new BufferedReader(ipsr);
+//				String ligne;
+//				while ((ligne = br.readLine()) != null) {
+////					System.out.println(ligne);
+//					String[] temp = ligne.split(";");
+//					
+//					long blanc = Long.valueOf(temp[0]);
+//					long noir = Long.valueOf(temp[1]);
+//					Integer score = Integer.valueOf(temp[2]);
+//					
+//					
+//					hmap.put(new PlateauMemoizeSymetriesFousFous(blanc, noir), score);
+//				}
+//				br.close();
+//			}
+//			catch (Exception e) {
+//				System.out.println(e.toString());
+//			}
+//		}
+//        try {
+//               FileOutputStream fos = new FileOutputStream("hashmap_8_noir.ser");
+//               ObjectOutputStream oos = new ObjectOutputStream(fos);
+//               oos.writeObject(hmap);
+//               oos.close();
+//               fos.close();
+//               System.out.printf("Serialized HashMap data is saved in hashmap.ser");
+//        }catch(IOException ioe) {
+//               ioe.printStackTrace();
+//        }
 		
 		
         
@@ -175,18 +175,18 @@ public class PartieFousFous {
 //		Thread.sleep(10000);
 //		
 //		long startTime = System.currentTimeMillis();
-//		lanceCombat(HeuristiquesFousFous.htest1, HeuristiquesFousFous.htest2, 5, 20);
-//		 long stopTime = System.currentTimeMillis();
-//		 long elapsedTime = stopTime - startTime;
-//		 System.out.println(elapsedTime);
+//		lanceCombat(HeuristiquesFousFous.hmoyen, HeuristiquesFousFous.hmoyen, 6, 100);
+//		long stopTime = System.currentTimeMillis();
+//		long elapsedTime = stopTime - startTime;
+//		System.out.println(elapsedTime);
 //		
 //		PlateauFousFous temp = new PlateauFousFous();
 //		Joueur jb = new Joueur("blanc");
 //		Joueur jn = new Joueur("noir");
 //		PlateauFousFous.setJoueurs(jb, jn);
 //
-//		verifIAValide(new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hmoyen, jb, jn, 6), new NegAlphaBeta(HeuristiquesFousFous.hmoyen, jb, jn, 6), 20);
-//		verifIAValide(new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hmoyen, jn, jb, 6), new NegAlphaBeta(HeuristiquesFousFous.hmoyen, jn, jb, 6), 20);
+//		verifIAValide(new MemoID(HeuristiquesFousFous.hmoyen, jb, jn, 6000), new NegAlphaBeta(HeuristiquesFousFous.hmoyen, jb, jn, 6), 20);
+//		verifIAValide(new MemoID(HeuristiquesFousFous.hmoyen, jn, jb, 6000), new NegAlphaBeta(HeuristiquesFousFous.hmoyen, jn, jb, 6), 20);
 //
 //		
 //		temp = new PlateauFousFous(new int[][]{
@@ -345,11 +345,11 @@ public class PartieFousFous {
 				temp = new PlateauFousFous(randomPlateau());
 			}
 	
-	//		System.out.println("Calcul des coups :");
+//			System.out.println("Calcul des coups :");
 			CoupFousFous coupAB = (CoupFousFous) Algo1.meilleurCoup(temp);
-	//		System.out.println("Premier coup calculé");
+//			System.out.println("Premier coup calculé");
 			CoupFousFous coupMM = (CoupFousFous) Algo2.meilleurCoup(temp);
-	//		System.out.println("Deuxieme coup calculé");
+//			System.out.println("Deuxieme coup calculé");
 
 			System.out.println(coupAB.getApres() == coupMM.getApres() && coupAB.getAvant() == coupMM.getAvant());
 		}
@@ -635,11 +635,11 @@ public class PartieFousFous {
 //			}
 
 			if (i < nbtests) {
-				AlgoJoueur[0] = new NegEchecAlphaBeta(HeuristiquesFousFous.hmoyen, jBlanc, jNoir, 6);
-				AlgoJoueur[1] = new NegEchecAlphaBeta(HeuristiquesFousFous.hmoyen, jNoir, jBlanc, 6);
+				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut1, jBlanc, jNoir, 8);
+				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut2, jNoir, jBlanc, 8);
 			} else {
-				AlgoJoueur[0] = new NegEchecAlphaBeta(HeuristiquesFousFous.hmoyen, jBlanc, jNoir, 6);
-				AlgoJoueur[1] = new NegEchecAlphaBeta(HeuristiquesFousFous.hmoyen, jNoir, jBlanc, 6);
+				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut2, jBlanc, jNoir, 8);
+				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htestdebut1, jNoir, jBlanc, 8);
 			}
 
 
@@ -650,33 +650,33 @@ public class PartieFousFous {
 				jnum = (jnum + 1) % 2;
 			}
 
-//			int duree = coupsRandom;
+			int duree = coupsRandom;
 
 			while (!plateauCourant.finDePartie()) {
 				
 
-//				if(duree == 4){
-//					if (i < nbtests) {
-//						AlgoJoueur[1] = new AlphaBeta(h2, jNoir, jBlanc, 8);
-//					} else {
-//						AlgoJoueur[0] = new AlphaBeta(h2, jBlanc, jNoir, 8);
-//					}
-//				}
-//				
-//
-//
-//				if(duree == 4){
-//					if (i < nbtests) {
-//						AlgoJoueur[0] = new AlphaBeta(h1, jBlanc, jNoir, 7);
-//					} else {
-//						AlgoJoueur[1] = new AlphaBeta(h1, jNoir, jBlanc, 7);
-//					}
-//				}
+				if(duree == 6){
+					if (i < nbtests) {
+						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 7);
+					} else {
+						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 7);
+					}
+				}
+				
+
+
+				if(duree == 6){
+					if (i < nbtests) {
+						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 7);
+					} else {
+						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 7);
+					}
+				}
 				
 				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
-//				duree++;
+				duree++;
 			}
 			System.out.println((((i+1) * 50) / nbtests) + "% - C'est le joueur " + lesJoueurs[(jnum + 1) % 2] + " qui a gagné.");
 

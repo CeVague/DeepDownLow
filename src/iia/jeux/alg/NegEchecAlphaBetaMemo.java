@@ -150,12 +150,12 @@ public class NegEchecAlphaBetaMemo implements AlgoJeu {
 		
 		
 		
-		if (profondeur == 0) {
-			nbfeuilles++;
-			return parite*h.eval(p, joueurMax);
-		}else if(p.finDePartie()){
+		if(p.finDePartie()){
 			nbfeuilles++;
 			return Integer.MAX_VALUE;
+		}else if (profondeur == 0) {
+			nbfeuilles++;
+			return parite*h.eval(p, joueurMax);
 		}
 
 		

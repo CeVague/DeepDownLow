@@ -130,12 +130,12 @@ public class AlphaBeta implements AlgoJeu {
 
 	// Min
 	public int alphaBeta(PlateauJeu p, int Alpha, int Beta, int profondeur) {
-		if (profondeur == profMax) {
-			nbfeuilles++;
-			return h.eval(p, joueurMax);
-		}else if(p.finDePartie()){
+		if(p.finDePartie()){
 			nbfeuilles++;
 			return Integer.MAX_VALUE;
+		}else if (profondeur == profMax) {
+			nbfeuilles++;
+			return h.eval(p, joueurMax);
 		}
 
 		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurMin);
@@ -156,12 +156,12 @@ public class AlphaBeta implements AlgoJeu {
 
 	// Max
 	public int betaAlpha(PlateauJeu p, int Alpha, int Beta, int profondeur) {
-		if (profondeur == profMax) {
-			nbfeuilles++;
-			return h.eval(p, joueurMax);
-		}else if(p.finDePartie()){
+		if(p.finDePartie()){
 			nbfeuilles++;
 			return Integer.MIN_VALUE;
+		}else if (profondeur == profMax) {
+			nbfeuilles++;
+			return h.eval(p, joueurMax);
 		}
 
 		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurMax);

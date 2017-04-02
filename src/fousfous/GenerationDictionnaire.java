@@ -141,7 +141,7 @@ public class GenerationDictionnaire {
 		long startTime = System.currentTimeMillis();
 		
 		
-		int realStart = 156000;
+		int realStart = 200000;
 		
 		if(args.length != 0){
 			realStart = Integer.valueOf(args[0]);

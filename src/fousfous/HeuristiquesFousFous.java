@@ -17,10 +17,12 @@ public class HeuristiquesFousFous {
 			PlateauFousFous pNew = (PlateauFousFous) p;
 
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
-			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
 
-			return voisSimpleMoi * 0
-					+ voisMoi * 20;
+			Joueur jAdverse = pNew.retourneAdversaire(j);
+
+			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
+
+			return (voisSimpleMoi * 1) - (voisSimpleAdverse * 1);
 		}
 	};
 
@@ -40,19 +42,13 @@ public class HeuristiquesFousFous {
 		public int eval(PlateauJeu p, Joueur j) {
 			PlateauFousFous pNew = (PlateauFousFous) p;
 
-			int nbPionsMoi = pNew.heuristiqueNombrePions(j);
 			int voisSimpleMoi = pNew.heuristiqueVoisinDirect(j, true);
-			int voisMoi = pNew.heuristiqueVoisinDirect(j, false);
 
 			Joueur jAdverse = pNew.retourneAdversaire(j);
 
-			int nbPionsAdverse = pNew.heuristiqueNombrePions(jAdverse);
 			int voisSimpleAdverse = pNew.heuristiqueVoisinDirect(jAdverse, true);
-			int voisAdverse = pNew.heuristiqueVoisinDirect(jAdverse, false);
 
-			return (nbPionsMoi - nbPionsAdverse) * 50
-					+ (voisSimpleMoi - voisSimpleAdverse) * 20
-					+ (voisMoi - voisAdverse) * -5;
+			return (voisSimpleMoi * 1) - (voisSimpleAdverse * 1);
 		}
 	};
 
