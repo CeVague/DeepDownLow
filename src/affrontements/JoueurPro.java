@@ -1,10 +1,7 @@
 package affrontements;
 
-import fousfous.CoupFousFous;
-import fousfous.HeuristiquesFousFous;
-import fousfous.PlateauFousFous;
-import iia.jeux.alg.AlgoJeu;
-import iia.jeux.alg.AlphaBeta;
+import fousfous.*;
+import iia.jeux.alg.*;
 import iia.jeux.modele.joueur.Joueur;
 
 public class JoueurPro implements IJoueur{
@@ -23,6 +20,8 @@ public class JoueurPro implements IJoueur{
     PlateauFousFous plateau;
     
     AlgoJeu algo;
+    
+    int coupJoues;
 	
 	@Override
 	public void initJoueur(int mycolour) {
@@ -39,7 +38,9 @@ public class JoueurPro implements IJoueur{
 		plateau = new PlateauFousFous();
 		PlateauFousFous.setJoueurs(jBlanc, jNoir);
 		
-		algo = new AlphaBeta(HeuristiquesFousFous.hmoyen, moiJoueur, luiJoueur, 8);
+		coupJoues = 0;
+		
+		algo = new NegAlphaBeta(HeuristiquesFousFous.hlent, moiJoueur, luiJoueur, 8);
 	}
 
 	@Override
@@ -49,8 +50,20 @@ public class JoueurPro implements IJoueur{
 
 	@Override
 	public String choixMouvement() {
+		if(coupJoues==8 || coupJoues==9){
+			algo = new NegAlphaBeta(HeuristiquesFousFous.hlent, moiJoueur, luiJoueur, 10);
+			System.out.println("Changement d'IA");
+		}
+
+		if(coupJoues==15 || coupJoues==16){
+			algo = new NegAlphaBeta(HeuristiquesFousFous.hlent, moiJoueur, luiJoueur, 17);
+			System.out.println("Changement d'IA");
+		}
+		
+		
 		CoupFousFous coup = (CoupFousFous) algo.meilleurCoup(plateau);
 		plateau.joue(moiJoueur, coup);
+		coupJoues++;
 		return coup.toString();
 	}
 
@@ -132,6 +145,7 @@ public class JoueurPro implements IJoueur{
 	@Override
 	public void mouvementEnnemi(String coup) {
 		plateau.play(coup, luiJoueur.toString());
+		coupJoues++;
 	}
 
 	@Override
