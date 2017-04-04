@@ -49,6 +49,10 @@ public class DictionnaireDouverture implements AlgoJeu {
         }
 	}
 	
+	public boolean estCharge(){
+		return dictionnaire != null;
+	}
+	
 
 
 	@Override
@@ -76,7 +80,7 @@ public class DictionnaireDouverture implements AlgoJeu {
 			if (valTemp > valMax) {
 				valMax = valTemp;
 				coupMax = coupTemp;
-			}else if(valTemp == valMax && Math.random()<0.5){
+			}else if(valTemp == valMax && Math.random()<0.2){
 				coupMax = coupTemp;
 			}
 		}

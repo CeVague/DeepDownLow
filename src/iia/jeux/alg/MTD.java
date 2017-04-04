@@ -148,12 +148,10 @@ public class MTD implements AlgoJeu {
 			joueurActuel = joueurMax;
 		}
 		
-		ArrayList<CoupJeu> coupsJouables = p.coupsPossibles(joueurActuel);
-		
 		nbnoeuds++;
 	
 		int Min = Integer.MAX_VALUE;
-		for (CoupJeu coupTemp : coupsJouables) {
+		for (CoupJeu coupTemp : p.coupsPossibles(joueurActuel)) {
 			PlateauJeu pNew = p.copy();
 			pNew.joue(joueurActuel, coupTemp);
 			
