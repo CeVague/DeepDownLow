@@ -14,34 +14,39 @@ public class DictionnaireDouverture implements AlgoJeu {
 	private Joueur joueur;
 	
 	@SuppressWarnings("unchecked")
-	public DictionnaireDouverture(Joueur joueur){
+	public DictionnaireDouverture(String fichier, Joueur joueur){
 		this.joueur = joueur;
 		
+	    System.out.println("Chargement du dictionnaire d'ouverture de " + joueur + "...");
+		
         try{
-        	InputStream fis = new FileInputStream("hashmap_6_" + joueur + ".ser");
-//           InputStream fis = getClass().getResourceAsStream("/file.txt"); 
+        	InputStream fis = new FileInputStream(fichier + joueur + ".ser");
            ObjectInputStream ois = new ObjectInputStream(fis);
            dictionnaire = (HashMap<PlateauMemoizeSymetriesFousFous, Integer>) ois.readObject();
            ois.close();
            fis.close();
         }catch(IOException | ClassNotFoundException ioe){
-           ioe.printStackTrace();
         }
         
         
         if(dictionnaire == null){
+    		
+    	    System.out.println("Recherche dans le .jar ...");
+    	    
             try{
-               InputStream fis = getClass().getResourceAsStream("/hashmap_6_" + joueur + ".ser"); 
+               InputStream fis = getClass().getResourceAsStream(fichier + joueur + ".ser"); 
                ObjectInputStream ois = new ObjectInputStream(fis);
                dictionnaire = (HashMap<PlateauMemoizeSymetriesFousFous, Integer>) ois.readObject();
                ois.close();
                fis.close();
             }catch(IOException | ClassNotFoundException ioe){
-               ioe.printStackTrace();
+        	    System.out.println("Echec lors du chargement du dictionnaire.");
             }
         }
         
-        System.out.println("Deserialized HashMap.." + dictionnaire.size());
+        if(dictionnaire != null){
+            System.out.println("Dictionnaire chargé. " + dictionnaire.size() + " plateaux pré-calculés.");
+        }
 	}
 	
 

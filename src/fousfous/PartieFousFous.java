@@ -161,7 +161,7 @@ public class PartieFousFous {
 		
 		
 		
-//		creerStats();
+		creerStats();
 		
 //		for(int i=0;i<300000000;i++){
 //			 System.out.println((int) ((rand.nextGaussian()*5)+23));
@@ -174,11 +174,11 @@ public class PartieFousFous {
 //
 //		Thread.sleep(10000);
 //		
-		long startTime = System.currentTimeMillis();
-		lanceCombat(HeuristiquesFousFous.hmoyen, HeuristiquesFousFous.hmoyen, 8, 300);
-		long stopTime = System.currentTimeMillis();
-		long elapsedTime = stopTime - startTime;
-		System.out.println(elapsedTime);
+//		long startTime = System.currentTimeMillis();
+//		lanceCombat(HeuristiquesFousFous.hmoyen, HeuristiquesFousFous.hmoyen, 2, 750);
+//		long stopTime = System.currentTimeMillis();
+//		long elapsedTime = stopTime - startTime;
+//		System.out.println(elapsedTime);
 //		
 //		PlateauFousFous temp = new PlateauFousFous();
 //		Joueur jb = new Joueur("blanc");
@@ -222,8 +222,8 @@ public class PartieFousFous {
 	
 	public static void creerStats(){
 		int nbtests = 100;
-		double coupsRandom;
-		int profondeur = 40;
+		double coupsRandom = 4;
+//		int profondeur = 40;
 //		double coupsRandom = 0;
 		
 
@@ -234,21 +234,13 @@ public class PartieFousFous {
 		Joueur[] lesJoueurs = new Joueur[]{jBlanc, jNoir};
 
 		AlgoJeu AlgoJoueur[] = new AlgoJeu[2];
-		AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.hzero, jBlanc, jNoir, profondeur);
-		AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hzero, jNoir, jBlanc, profondeur);
-		
 
-
-		AlgoJeu AlgoJoueurDebut[] = new AlgoJeu[2];
-		AlgoJoueurDebut[0] = new AlphaBeta(HeuristiquesFousFous.hmoyen, jBlanc, jNoir, 6);
-		AlgoJoueurDebut[1] = new AlphaBeta(HeuristiquesFousFous.hmoyen, jNoir, jBlanc, 6);
-
-		CoupFousFous coup;
+		CoupFousFous coup = null;
 
 		for (int i = 0; i < nbtests; i++) {
-			coupsRandom = ((rand.nextGaussian()*2)+15);
-			coupsRandom = coupsRandom<12 ? 12 : coupsRandom;
-			coupsRandom = coupsRandom>20 ? 20 : coupsRandom;
+//			coupsRandom = ((rand.nextGaussian()*2)+15);
+//			coupsRandom = coupsRandom<12 ? 12 : coupsRandom;
+//			coupsRandom = coupsRandom>20 ? 20 : coupsRandom;
 			
 //			int coupsRandomRand = (int) (coupsRandom + rand.nextFloat()*4 - 2);
 			int coupsRandomRand = (int) (coupsRandom);
@@ -260,75 +252,81 @@ public class PartieFousFous {
 			PlateauFousFous plateauCourant = new PlateauFousFous();
 
 			for (int j = 0; j < coupsRandomRand; j++) {
-				if(j<4){
-					ArrayList<CoupJeu> listeCoups = plateauCourant.coupsPossibles(lesJoueurs[jnum]);
-					coup = (CoupFousFous) listeCoups.get(rand.nextInt(listeCoups.size()));
-				}else{
-					coup = (CoupFousFous) AlgoJoueurDebut[jnum].meilleurCoup(plateauCourant);
-				}
+				ArrayList<CoupJeu> listeCoups = plateauCourant.coupsPossibles(lesJoueurs[jnum]);
+				coup = (CoupFousFous) listeCoups.get(rand.nextInt(listeCoups.size()));
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
 			}
 
 			int coupsFait = coupsRandomRand;
 
-			System.out.println(coupsRandomRand);
+//			System.out.println(coupsRandomRand);
 			
 			while (!plateauCourant.finDePartie()) {
 				
 				coupsFait++;
 				
-//				long startTime = System.currentTimeMillis();
-				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
-//				long stopTime = System.currentTimeMillis();
-//				long elapsedTime = stopTime - startTime;
+				long precedent  = 0L;
+				long sommePrecedent = 0L;
 				
-//				listeData.add(elapsedTime
-//						+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
-//						+","+((AlphaBeta) AlgoJoueur[jnum]).getFeuilles()
-//						+","+((AlphaBeta) AlgoJoueur[jnum]).getNoeuds()
-//						+","+((AlphaBeta) AlgoJoueur[jnum]).getEtat()
-//						+","+lesJoueurs[jnum]
-//						+","+coupsRandomRand
-//						+","+profondeur
+				int profondeur = 5;
+				
+				while(precedent < 120000 && profondeur+coupsFait<42){
+					AlgoJoueur[0] = new AlphaBeta(HeuristiquesFousFous.hlent, jBlanc, jNoir, profondeur);
+					AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hlent, jNoir, jBlanc, profondeur);
+					
+					long startTime = System.currentTimeMillis();
+					coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
+					long stopTime = System.currentTimeMillis();
+					long elapsedTime = stopTime - startTime;
+					
+					System.out.println(elapsedTime
+							+","+plateauCourant.coupsPossibles(lesJoueurs[jnum]).size()
+							+","+((double)elapsedTime/(precedent + elapsedTime))
+							+","+((double)elapsedTime/precedent)
+							+","+(elapsedTime - precedent)
+							+","+((double)elapsedTime/(sommePrecedent + elapsedTime))
+							+","+((double)elapsedTime/sommePrecedent)
+							+","+(elapsedTime - sommePrecedent)
+							+","+profondeur
+							+","+coupsFait
+							+","+Long.bitCount(plateauCourant.getPlateauNoir())
+							+","+Long.bitCount(plateauCourant.getPlateauBlanc()));
+					
+					precedent = elapsedTime;
+					sommePrecedent += elapsedTime;
+					profondeur++;
+				}
+//				listeData.add(lesJoueurs[jnum]
 //						+","+coupsFait
-//						+","+Long.bitCount(plateauCourant.getPlateauNoir())
-//						+","+Long.bitCount(plateauCourant.getPlateauBlanc())
+//						+","+coupsRandomRand
+//						+","+plateauCourant.getPlateauNoir()
+//						+","+plateauCourant.getPlateauBlanc()
+//						+","+plateauCourant.heuristiqueNombrePions(jNoir)
+//						+","+plateauCourant.heuristiqueNombrePions(jBlanc)
+//						+","+plateauCourant.heuristiqueVoisinDirect(jNoir, false)
+//						+","+plateauCourant.heuristiqueVoisinDirect(jBlanc, false)
+//						+","+plateauCourant.heuristiqueVoisinDirect(jNoir, true)
+//						+","+plateauCourant.heuristiqueVoisinDirect(jBlanc, true)
 //						+","+plateauCourant.heuristiqueMangeurs(jNoir)
 //						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
 //						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
 //						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
-
-				listeData.add(lesJoueurs[jnum]
-						+","+coupsFait
-						+","+coupsRandomRand
-						+","+plateauCourant.getPlateauNoir()
-						+","+plateauCourant.getPlateauBlanc()
-						+","+plateauCourant.heuristiqueNombrePions(jNoir)
-						+","+plateauCourant.heuristiqueNombrePions(jBlanc)
-						+","+plateauCourant.heuristiqueVoisinDirect(jNoir, false)
-						+","+plateauCourant.heuristiqueVoisinDirect(jBlanc, false)
-						+","+plateauCourant.heuristiqueVoisinDirect(jNoir, true)
-						+","+plateauCourant.heuristiqueVoisinDirect(jBlanc, true)
-						+","+plateauCourant.heuristiqueMangeurs(jNoir)
-						+","+plateauCourant.heuristiqueMangeurs(jBlanc)
-						+","+plateauCourant.heuristiqueMenaceurs(jNoir)
-						+","+plateauCourant.heuristiqueMenaceurs(jBlanc));
 				
 				plateauCourant.joue(lesJoueurs[jnum], coup);
 				jnum = (jnum + 1) % 2;
 			}
 			
-			ArrayList<String> listeDataFinal = new ArrayList<String>();
-			
-			for(int j=0;j<listeData.size();j++){
-				// ......gagnant;perdant
-				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandomRand) + "," + lesJoueurs[(jnum + 1) % 2] + "," + lesJoueurs[jnum]);
-			}
-			
-			for(String s : listeDataFinal){
-				System.out.println(s);
-			}
+//			ArrayList<String> listeDataFinal = new ArrayList<String>();
+//			
+//			for(int j=0;j<listeData.size();j++){
+//				// ......gagnant;perdant
+//				listeDataFinal.add(listeData.get(j) + "," + (coupsFait-j-1-coupsRandomRand) + "," + lesJoueurs[(jnum + 1) % 2] + "," + lesJoueurs[jnum]);
+//			}
+//			
+//			for(String s : listeDataFinal){
+//				System.out.println(s);
+//			}
 			
 		}
 	}
@@ -634,12 +632,12 @@ public class PartieFousFous {
 //				AlgoJoueur[1] = new AlphaBeta(HeuristiquesFousFous.hdebut, jNoir, jBlanc, 6);
 //			}
 
-			if (i < nbtests) {
-				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htest1, jBlanc, jNoir, 7);
-				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htest2, jNoir, jBlanc, 8);
-			} else {
-				AlgoJoueur[0] = new NegAlphaBeta(HeuristiquesFousFous.htest2, jBlanc, jNoir, 7);
-				AlgoJoueur[1] = new NegAlphaBeta(HeuristiquesFousFous.htest1, jNoir, jBlanc, 8);
+			if (i == 0) {
+				AlgoJoueur[0] = new DictionnaireDouverture("./dictionnaires/hashmap_final_8_", jBlanc);
+				AlgoJoueur[1] = new DictionnaireDouverture("./dictionnaires/hashmap_final_6_", jNoir);
+			} else if(i == nbtests) {
+				AlgoJoueur[0] = new DictionnaireDouverture("./dictionnaires/hashmap_final_6_", jBlanc);
+				AlgoJoueur[1] = new DictionnaireDouverture("./dictionnaires/hashmap_final_8_", jNoir);
 			}
 
 
@@ -655,23 +653,23 @@ public class PartieFousFous {
 			while (!plateauCourant.finDePartie()) {
 				
 
-//				if(duree == 6){
-//					if (i < nbtests) {
-//						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 7);
-//					} else {
-//						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 7);
-//					}
-//				}
-//				
-//
-//
-//				if(duree == 6){
-//					if (i < nbtests) {
-//						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 7);
-//					} else {
-//						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 7);
-//					}
-//				}
+				if(duree == 4){
+					if (i < nbtests) {
+						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 8);
+					} else {
+						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 8);
+					}
+				}
+				
+
+
+				if(duree == 4){
+					if (i < nbtests) {
+						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 8);
+					} else {
+						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 8);
+					}
+				}
 				
 				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 				plateauCourant.joue(lesJoueurs[jnum], coup);
