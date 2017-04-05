@@ -3,6 +3,7 @@ package iia.jeux.alg;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import fousfous.CoupFousFous;
 import fousfous.PlateauFousFous;
 import fousfous.PlateauMemoizeSimpleFousFous;
 import iia.jeux.modele.CoupJeu;
@@ -85,6 +86,9 @@ public class NegEchecAlphaBetaMemo implements AlgoJeu {
 				coupMax = coupTemp;
 				
 				if(valTemp == Integer.MAX_VALUE){
+					if(coupMax instanceof CoupFousFous){
+						((CoupFousFous) coupMax).etat = CoupFousFous.GAGNANT;
+					}
 					return coupMax;
 				}
 			}
@@ -93,8 +97,16 @@ public class NegEchecAlphaBetaMemo implements AlgoJeu {
 
 //		System.out.println(nbfeuilles + " feuilles ont été visitées, ainsi que " + nbnoeuds + " noeuds.");
 
-		if (valMax == Integer.MAX_VALUE) {
-//			System.out.println("Je suis gagnant à coup sur");
+		if(coupMax instanceof CoupFousFous){
+			
+			if (valMax == Integer.MAX_VALUE) {
+				((CoupFousFous) coupMax).etat = CoupFousFous.GAGNANT;
+			}else if(valMax == -Integer.MAX_VALUE) {
+				((CoupFousFous) coupMax).etat = CoupFousFous.PERDANT;
+			}else{
+				((CoupFousFous) coupMax).etat = CoupFousFous.RIEN;
+			}
+			
 		}
 
 		return coupMax;

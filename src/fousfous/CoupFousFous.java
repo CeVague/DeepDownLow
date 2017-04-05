@@ -9,9 +9,15 @@ import iia.jeux.modele.CoupJeu;
  */
 public class CoupFousFous implements CoupJeu {
 
+	public static final byte RIEN = 0;
+	public static final byte GAGNANT = 1;
+	public static final byte PERDANT = -1;
+
 	/******** Attributs *********/
 
 	private final byte avant, apres;
+	
+	public byte etat = RIEN;
 
 	/****** Clonstructeur *******/
 

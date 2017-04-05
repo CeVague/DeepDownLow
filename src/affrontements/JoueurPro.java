@@ -26,10 +26,12 @@ public class JoueurPro implements IJoueur{
     int coupJoues;
     long tempsRestant;
     
+    int gagnant; // coups maximums avant de gagner (0 si on ne sait pas, -1 si on perd)
+    
     // Infos fixes
     int nbCPU;
     int archi;
-    long meMax;
+    float meMax;
 	
 	@Override
 	public void initJoueur(int mycolour) {
@@ -46,23 +48,27 @@ public class JoueurPro implements IJoueur{
 		plateau = new PlateauFousFous();
 		PlateauFousFous.setJoueurs(jBlanc, jNoir);
 		
-		algo = new DictionnaireDouverture("/dictionnaires/hashmap_final_8_", moiJoueur);
+		algo = new DictionnaireDouverture("/dictionnaires/hashmap_final_6_", moiJoueur);
 		if(!((DictionnaireDouverture) algo).estCharge()){
 			System.out.println("Le dictionnaire n'a pas été chargé, on utilisera un AlphaBeta clasique.");
 			algo = new NegAlphaBeta(HeuristiquesFousFous.hdebut, moiJoueur, luiJoueur, 8);
 		}
-//		algo = new NegAlphaBeta(HeuristiquesFousFous.hrandom, moiJoueur, luiJoueur, 2);
 		
 		coupJoues = 0;
 		tempsRestant = 600000;
 		
+		gagnant = 0;
 		
 		nbCPU = Runtime.getRuntime().availableProcessors();
 		archi = Integer.valueOf(System.getProperty("sun.arch.data.model"));
-		meMax = Runtime.getRuntime().maxMemory();
+		meMax = ((int)((Runtime.getRuntime().maxMemory()/1073741824f)*1000))/1000f;
 		
 		System.out.println("Système " + archi + "bit, avec " + nbCPU + " CPU (ou coeurs) et "
-							+ ((int)((meMax/1073741824f)*1000))/1000f + "Go de RAM dispo.\n\n\n\n");
+							+ meMax + "Go de RAM dispo.\n\n\n\n");
+		
+		if(meMax<3){
+			System.out.println("Pas assez de mémoire, on utilisera NegAlphaBeta plutot que NegEchecAlphaBetaMemo");
+		}
 	}
 
 	@Override
@@ -71,7 +77,11 @@ public class JoueurPro implements IJoueur{
 	}
 	
 	private AlgoJeu choisiAlgo(Heuristique h, Joueur joueurMax, Joueur joueurMin, int profMaxi) {
-		if(meMax<3){
+		if(meMax<2){
+			return new NegAlphaBeta(h, joueurMax, joueurMin, profMaxi);
+		}
+		
+		if(coupJoues<9){
 			return new NegAlphaBeta(h, joueurMax, joueurMin, profMaxi);
 		}
 		
@@ -93,6 +103,7 @@ public class JoueurPro implements IJoueur{
 	 * @param forceArret permet (si false) de s'autoriser un petit dépassement du temps si on est juste au dessus
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	private CoupFousFous lanceAlphaBeta(Heuristique h, int profRapide, long tempsMax, int estimation){
 		System.out.println("On a " + (tempsMax/1000) + "s pour trouver un bon coup");
 		long heureDebut = System.currentTimeMillis();
@@ -100,6 +111,7 @@ public class JoueurPro implements IJoueur{
 		// Calcul du coup rapide
 		algo = choisiAlgo(h, moiJoueur, luiJoueur, profRapide);
 		CoupFousFous coup = (CoupFousFous) algo.meilleurCoup(plateau);
+		
 		
 		long tempsPasseTotal = System.currentTimeMillis() - heureDebut;
 		System.out.println("Coup rapide calculé en " + tempsPasseTotal + "ms pour un horizon de " + profRapide);
@@ -114,8 +126,9 @@ public class JoueurPro implements IJoueur{
 			
 			// Tant qu'on doit avoir le temps on regarde le coup suivant
 			long tempActuel = tempsPasseTotal;
-			while(tempActuel<=(tempsMax - tempsPasseTotal - 10) && profIdeal+coupJoues<42){
+			while(tempActuel<=(tempsMax - tempsPasseTotal) && profIdeal+coupJoues<42){
 				profIdeal++;
+				
 				tempActuel = (long) (-(tempActuel * 0.76)/(0.76-1));
 			}
 			
@@ -131,7 +144,8 @@ public class JoueurPro implements IJoueur{
 		
 		
 		// Tant qu'on a le temps on tente d'aller plus loins
-		while(tempsPasseTotal<tempsMax && profIdeal+coupJoues<42){
+		// et qu'on a pas touché le fond
+		while(tempsPasseTotal<tempsMax && profIdeal+coupJoues<42 && coup.etat == CoupFousFous.RIEN){
 			System.out.println("Recherche à profondeur " + profIdeal);
 			
 			int profRecherche = profIdeal;
@@ -152,7 +166,7 @@ public class JoueurPro implements IJoueur{
 			Thread thread = new Thread(recherche);
 			thread.start();
 			try {
-				thread.join(tempsMax-tempsPasseTotal-10);
+				thread.join(Math.max(0, tempsMax-tempsPasseTotal+1000));
 			}catch (InterruptedException e) {}
 			thread.interrupt();
 			thread.stop();
@@ -173,17 +187,24 @@ public class JoueurPro implements IJoueur{
 			
 			// On regarde si on a le temps d'aller plus loins
 			// Vérifie si le temps minimum qu'il nous faudra est plus faible que temps restant
-			if( (-(tempsPasseAB * 0.7)/(0.7-1)) < (tempsMax-tempsPasseTotal-50) ){
+			if( (-(tempsPasseAB * 0.7)/(0.7-1)) < (tempsMax-tempsPasseTotal) ){
 				// Si oui on va plus profond au prochain coup
 				profIdeal++;
 				tempsPasseTotal = System.currentTimeMillis() - heureDebut;
 				System.out.println("On avance.");
-				
 			}else{
 				// Si on a pas le temps on sort
 				tempsPasseTotal = tempsMax;
 				System.out.println("Pas le temps d'aller plus loins");
 			}
+		}
+		
+		if(coup.etat == CoupFousFous.GAGNANT){
+			System.out.println("On a touché le fond, apparement on est sûr de gagner.");
+			gagnant = profIdeal;
+		}else if(coup.etat == CoupFousFous.PERDANT){
+			System.out.println("On a touché le fond, apparement on est sûr de perdre.");
+			gagnant = -1;
 		}
 		
 		System.out.println("On est allé jusqu'à profondeur " + profIdeal);
@@ -198,36 +219,40 @@ public class JoueurPro implements IJoueur{
 		System.out.println("\n\n\nChoix du mouvement pour mon " + (coupJoues+1) + "ème coup.");
 		System.out.println("Il me reste " + tempsRestant + "ms à jouer.");
 		
+		int coupsRestantEstime = (int) (1.445*plateau.heuristiqueNombrePions(jNoir)
+										+ 0.6907*plateau.heuristiqueNombrePions(jBlanc)
+										- 1.2358);
+		System.out.println("On a encore environ " + coupsRestantEstime + " coups à jouer.\n");
+		coupsRestantEstime = (coupsRestantEstime + (33-coupJoues))/2;
+		System.out.println("On a encore environ " + coupsRestantEstime + " coups à jouer.\n");
+		
 		CoupFousFous coup;
-		if(coupJoues<4){
+		if(gagnant>0){
+			gagnant = Math.max(gagnant-2, 1);
+			System.out.println("On est sûr de gagner, on avance vite");
+			
+			coup = lanceAlphaBeta( HeuristiquesFousFous.hzero, gagnant, 2*tempsRestant/Math.max(4, gagnant-10), -1);
+		}else if(coupJoues<4){
 			System.out.println("On utilisera notre dictionnaire\n");
 			coup = (CoupFousFous) algo.meilleurCoup(plateau);
-		}else if(coupJoues<17){
+			
+		}else if(coupJoues<10){
+			System.out.println("On utilisera ID spécial début (pour aller plus vite)");
+			
+			coup = lanceAlphaBeta(
+					HeuristiquesFousFous.hdebut
+					, profRapide(coupJoues, plateau.listerPions(moiJoueur).size())
+					, tempsRestant/Math.max(2, coupsRestantEstime - 10)
+					, -2);
+			
+		}else if(coupJoues<25){
 			System.out.println("On utilisera ID perso");
-			int coupsRestantEstime = (int) (1.445*plateau.heuristiqueNombrePions(jNoir)
-									+ 0.6907*plateau.heuristiqueNombrePions(jBlanc)
-									- 1.2358 + 0.5);
-//			coupsRestantEstime = Math.max(1, 32 - coupJoues);
-			System.out.println("On a encore environ " + coupsRestantEstime + " coups à jouer.\n");
 			
 			coup = lanceAlphaBeta(
 					HeuristiquesFousFous.hlent
 					, profRapide(coupJoues, plateau.listerPions(moiJoueur).size())
-					, 2*tempsRestant/Math.max(8, coupsRestantEstime - 7)
+					, 2*tempsRestant/Math.max(2, coupsRestantEstime - 14)
 					, -2);
-		}else if(coupJoues<25){
-			System.out.println("On fonce pour toucher le fond\n");
-			
-			int coupsRestantEstime = (int) (1.445*plateau.heuristiqueNombrePions(jNoir)
-					+ 0.6907*plateau.heuristiqueNombrePions(jBlanc)
-					- 1.2358 + 0.5);
-			System.out.println("On a encore environ " + coupsRestantEstime + " coups à jouer.\n");
-			
-			coup = lanceAlphaBeta(
-					HeuristiquesFousFous.hrapide
-					, 14
-					, 2*tempsRestant/Math.max(4, coupsRestantEstime - 7)
-					, -1);
 		}else{
 			System.out.println("On touche forcément le fond\n");
 			algo = choisiAlgo(HeuristiquesFousFous.hzero, moiJoueur, luiJoueur, 15);
@@ -254,6 +279,7 @@ public class JoueurPro implements IJoueur{
 	 * selon le nombre de coups joués et le facteur de branchement.
 	 */
 	private int profRapide(int coupJoues, int facteurBranche){
+
 		int estimation = 0;
 		
 		if(coupJoues<8){
@@ -288,8 +314,8 @@ public class JoueurPro implements IJoueur{
 			estimation += 15;
 		}
 		
-		if(archi<64){
-			estimation--;
+		if(archi<64 && coupJoues>12){
+			estimation -= 2;
 		}
 		
 		return estimation/2;

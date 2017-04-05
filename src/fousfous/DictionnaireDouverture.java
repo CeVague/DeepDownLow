@@ -25,7 +25,7 @@ public class DictionnaireDouverture implements AlgoJeu {
            dictionnaire = (HashMap<PlateauMemoizeSymetriesFousFous, Integer>) ois.readObject();
            ois.close();
            fis.close();
-        }catch(IOException | ClassNotFoundException ioe){
+        }catch(Exception e){
         }
         
         
@@ -39,7 +39,7 @@ public class DictionnaireDouverture implements AlgoJeu {
                dictionnaire = (HashMap<PlateauMemoizeSymetriesFousFous, Integer>) ois.readObject();
                ois.close();
                fis.close();
-            }catch(IOException | ClassNotFoundException ioe){
+            }catch(Exception e){
         	    System.out.println("Echec lors du chargement du dictionnaire.");
             }
         }

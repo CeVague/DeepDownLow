@@ -1,6 +1,6 @@
 package fousfous;
 
-import java.io.*;
+//import java.io.*;
 import java.util.*;
 
 import iia.jeux.alg.*;
@@ -175,7 +175,7 @@ public class PartieFousFous {
 //		Thread.sleep(10000);
 //		
 		long startTime = System.currentTimeMillis();
-		lanceCombat(HeuristiquesFousFous.hmoyen, HeuristiquesFousFous.hmoyen, 20, 200);
+		lanceCombat(HeuristiquesFousFous.hrapide, HeuristiquesFousFous.hrapide, 2, 500);
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;
 		System.out.println(elapsedTime);
@@ -247,7 +247,7 @@ public class PartieFousFous {
 			
 			int jnum = 0; // On commence par le joueur Blanc
 			
-			ArrayList<String> listeData = new ArrayList<String>();
+//			ArrayList<String> listeData = new ArrayList<String>();
 
 			PlateauFousFous plateauCourant = new PlateauFousFous();
 
@@ -624,21 +624,21 @@ public class PartieFousFous {
 
 			PlateauFousFous plateauCourant = new PlateauFousFous();
 
-			if (i == 0) {
-				AlgoJoueur[0] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jBlanc, jNoir, 15);
-				AlgoJoueur[1] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jNoir, jBlanc, 15);
-			} else if(i == nbtests) {
-				AlgoJoueur[0] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jBlanc, jNoir, 15);
-				AlgoJoueur[1] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jNoir, jBlanc, 15);
-			}
-
 //			if (i == 0) {
-//				AlgoJoueur[0] = new DictionnaireDouverture("./dictionnaires/hashmap_final_8_", jBlanc);
-//				AlgoJoueur[1] = new DictionnaireDouverture("./dictionnaires/hashmap_final_6_", jNoir);
+//				AlgoJoueur[0] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jBlanc, jNoir, 15);
+//				AlgoJoueur[1] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jNoir, jBlanc, 15);
 //			} else if(i == nbtests) {
-//				AlgoJoueur[0] = new DictionnaireDouverture("./dictionnaires/hashmap_final_6_", jBlanc);
-//				AlgoJoueur[1] = new DictionnaireDouverture("./dictionnaires/hashmap_final_8_", jNoir);
+//				AlgoJoueur[0] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jBlanc, jNoir, 15);
+//				AlgoJoueur[1] = new NegEchecAlphaBetaMemo(HeuristiquesFousFous.hzero, jNoir, jBlanc, 15);
 //			}
+
+			if (i == 0) {
+				AlgoJoueur[0] = new DictionnaireDouverture("./dictionnaires/hashmap_final_6_", jBlanc);
+				AlgoJoueur[1] = new DictionnaireDouverture("./dictionnaires/hashmap_final_8_", jNoir);
+			} else if(i == nbtests) {
+				AlgoJoueur[0] = new DictionnaireDouverture("./dictionnaires/hashmap_final_8_", jBlanc);
+				AlgoJoueur[1] = new DictionnaireDouverture("./dictionnaires/hashmap_final_6_", jNoir);
+			}
 
 
 			for (int j = 0; j < coupsRandom; j++) {
@@ -653,23 +653,23 @@ public class PartieFousFous {
 			while (!plateauCourant.finDePartie()) {
 				
 
-//				if(duree == 4){
-//					if (i < nbtests) {
-//						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 8);
-//					} else {
-//						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 8);
-//					}
-//				}
-//				
-//
-//
-//				if(duree == 4){
-//					if (i < nbtests) {
-//						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 8);
-//					} else {
-//						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 8);
-//					}
-//				}
+				if(duree == 4){
+					if (i < nbtests) {
+						AlgoJoueur[1] = new NegAlphaBeta(h2, jNoir, jBlanc, 6);
+					} else {
+						AlgoJoueur[0] = new NegAlphaBeta(h2, jBlanc, jNoir, 6);
+					}
+				}
+				
+
+
+				if(duree == 4){
+					if (i < nbtests) {
+						AlgoJoueur[0] = new NegAlphaBeta(h1, jBlanc, jNoir, 6);
+					} else {
+						AlgoJoueur[1] = new NegAlphaBeta(h1, jNoir, jBlanc, 6);
+					}
+				}
 				
 				coup = (CoupFousFous) AlgoJoueur[jnum].meilleurCoup(plateauCourant);
 				plateauCourant.joue(lesJoueurs[jnum], coup);
