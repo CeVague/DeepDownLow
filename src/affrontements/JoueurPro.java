@@ -330,70 +330,70 @@ public class JoueurPro implements IJoueur{
 	
 	@Override
 	public void declareLeVainqueur(int colour) {
-//		if(colour == moiInt){
-//			try {
-//				afficheBas("Gagné...\n", 1000);
-//				afficheBas("Gagné...\n( °_°)", 1500);
-//				afficheBas("Gagné...\n( °_°)>-■-■", 1000);
-//				afficheBas("Gagné...", 0);
-//				System.out.print("(-■_■)");
-//				Thread.sleep(1000);
-//				for(char c : " #Yeeeeaaaaahhh".toCharArray()){
-//					Thread.sleep(100);
-//					System.out.print(c);
-//				}
-//				Thread.sleep(750);
-//				System.out.print("\n");
-//				Thread.sleep(750);
-//				System.out.print(".");
-//				Thread.sleep(750);
-//				System.out.print(".");
-//				Thread.sleep(750);
-//				System.out.print(".");
-//				Thread.sleep(750);
-//				for(int i=0;i<4;i++){
-//					afficheBas("Gagné...\n/(-■_■)/", 250);
-//					afficheBas("Gagné...\n-(-■_■)/", 250);
-//					afficheBas("Gagné...\n-(-■_■)-", 250);
-//					afficheBas("Gagné...\n\\(-■_■)-", 250);
-//					afficheBas("Gagné...\n\\(-■_■)\\", 250);
-//					afficheBas("Gagné...\n\\(-■_■)-", 250);
-//					afficheBas("Gagné...\n-(-■_■)-", 250);
-//					afficheBas("Gagné...\n-(-■_■)/", 250);
-//					afficheBas("Gagné...\n/(-■_■)/", 250);
-//					afficheBas("Gagné...\n\\(-■_■)\\", 250);
-//					afficheBas("Gagné...\n/(-■_■)/", 250);
-//					afficheBas("Gagné...\n\\(-■_■)\\", 250);
-//				}
-//				afficheBas("Easy peasy lemon squeezy\n\\(-■_■)/", 250);
-//			}
-//			catch (InterruptedException e) {
-//				System.out.println("\\(-■_■)/");
-//			}
-//		}else{
-//			try {
-//				afficheBas("Perdu...\n", 1000);
-//				afficheBas("Perdu...\n(°_°) ┬─┬", 1000);
-//				afficheBas("Perdu...\n(/°o°)/︵┴─┴", 1000);
-//				afficheBas("Perdu...\n(;_;)    ┴─┴", 1000);
-//				afficheBas("Perdu...\n(°_°)    ┴─┴", 1000);
-//				afficheBas("Perdu...\n(;_;)    ┴─┴", 1000);
-//
-//				afficheBas("Perdu...\n( ;_;)", 1000); 
-//				for(int i=0;i<40;i++){
-//					String s = "";
-//					for(int j=0;j<i;j++){
-//						s += "    ";
-//					}
-//					s += "( ;_;)";
-//					afficheBas("Perdu...\n" + s, 100); 
-//				}
-//				afficheBas("J'ai échoué\n('-_-)", 1000); 
-//			}
-//			catch (InterruptedException e) {
-//				System.out.println("J'ai échoué ('-_-)");
-//			}
-//		}
+		if(colour == moiInt){
+			try {
+				afficheBas("Gagné...\n", 1000);
+				afficheBas("Gagné...\n( °_°)", 1500);
+				afficheBas("Gagné...\n( °_°)>-■-■", 1000);
+				afficheBas("Gagné...", 0);
+				System.out.print("(-■_■)");
+				Thread.sleep(1000);
+				for(char c : " #Yeeeeaaaaahhh".toCharArray()){
+					Thread.sleep(100);
+					System.out.print(c);
+				}
+				Thread.sleep(750);
+				System.out.print("\n");
+				Thread.sleep(750);
+				System.out.print(".");
+				Thread.sleep(750);
+				System.out.print(".");
+				Thread.sleep(750);
+				System.out.print(".");
+				Thread.sleep(750);
+				for(int i=0;i<4;i++){
+					afficheBas("Gagné...\n/(-■_■)/", 250);
+					afficheBas("Gagné...\n-(-■_■)/", 250);
+					afficheBas("Gagné...\n-(-■_■)-", 250);
+					afficheBas("Gagné...\n\\(-■_■)-", 250);
+					afficheBas("Gagné...\n\\(-■_■)\\", 250);
+					afficheBas("Gagné...\n\\(-■_■)-", 250);
+					afficheBas("Gagné...\n-(-■_■)-", 250);
+					afficheBas("Gagné...\n-(-■_■)/", 250);
+					afficheBas("Gagné...\n/(-■_■)/", 250);
+					afficheBas("Gagné...\n\\(-■_■)\\", 250);
+					afficheBas("Gagné...\n/(-■_■)/", 250);
+					afficheBas("Gagné...\n\\(-■_■)\\", 250);
+				}
+				afficheBas("Easy peasy lemon squeezy\n\\(-■_■)/", 250);
+			}
+			catch (InterruptedException e) {
+				System.out.println("Yes we did it, c'est gagné \\(-■_■)/");
+			}
+		}else{
+			try {
+				afficheBas("Perdu...\n", 1000);
+				afficheBas("Perdu...\n(°_°) ┬─┬", 1000);
+				afficheBas("Perdu...\n(/°o°)/︵┴─┴", 1000);
+				afficheBas("Perdu...\n(;_;)    ┴─┴", 1000);
+				afficheBas("Perdu...\n(°_°)    ┴─┴", 1000);
+				afficheBas("Perdu...\n(;_;)    ┴─┴", 1000);
+
+				afficheBas("Perdu...\n( ;_;)", 1000); 
+				for(int i=0;i<40;i++){
+					String s = "";
+					for(int j=0;j<i;j++){
+						s += "    ";
+					}
+					s += "( ;_;)";
+					afficheBas("Perdu...\n" + s, 100); 
+				}
+				afficheBas("J'ai échoué\n('-_-)", 1000); 
+			}
+			catch (InterruptedException e) {
+				System.out.println("J'ai échoué ('-_-)");
+			}
+		}
 	}
 
 	@Override
