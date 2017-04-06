@@ -49,11 +49,12 @@ public class DictionnaireDouverture implements AlgoJeu {
         }
 	}
 	
+	/**
+	 * Pour savoir si le dictionnaire s'est bien chargé
+	 */
 	public boolean estCharge(){
 		return dictionnaire != null;
 	}
-	
-
 
 	@Override
 	public CoupJeu meilleurCoup(PlateauJeu p) {

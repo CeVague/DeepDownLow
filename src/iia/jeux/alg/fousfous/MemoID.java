@@ -1,9 +1,11 @@
-package fousfous;
+package iia.jeux.alg.fousfous;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import fousfous.CouplePlateauScore;
+import fousfous.PlateauFousFous;
 import iia.jeux.alg.AlgoJeu;
 import iia.jeux.alg.Heuristique;
 import iia.jeux.modele.CoupJeu;

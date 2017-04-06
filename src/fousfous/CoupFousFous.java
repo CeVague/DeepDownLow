@@ -102,5 +102,10 @@ public class CoupFousFous implements CoupJeu {
 	public boolean coupValide() {
 		return (Math.abs(avant % 8 - apres % 8) == Math.abs(avant / 8 - apres / 8)) && (avant != apres);
 	}
+	
+	public boolean equals(Object obj) {
+		CoupFousFous o = (CoupFousFous) obj;
+		return (avant == o.getAvant()) && (apres == o.getApres());
+	}
 }
 
