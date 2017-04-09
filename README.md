@@ -24,9 +24,18 @@ Chaque oppération est donc bien plus rapide à executer comparé à la manipula
 
 ### IA en début de partie ###
 
+En début de partie c'est un dictionnaire d'ouverture qui est utilisé (pour les deux premiers coups), puis une recherche AlphaBeta à faible profondeur avec une heuristique simple cherchant à regrouper le plus possible des pions d'une couleur.
+
 ### IA en milieux de partie ###
 
+En milieux de partie c'est un AlphaBeta incrémental qui est utilisé, exploitant le dernier coup trouvé pour élaguer un peu plus.
+L'heuristique quant à elle est un mélange du nombre de pions, de leur alignement et leur regroupement.
+
 ### IA en fin de partie ###
+
+À partir du moment où on sait que l'on va gagner, l'heuristique ne renvoie que 0, sauf si on est sur une feuille gagnante ou perdante (dans le but d'élaguer le plus possible).
+
+Si on est perdant, on cherchera à chaque coup pour voir si on est toujours perdant. Si ce n'est pas le cas on joue le coup gagnant, sinon on se contente de jouer un bon coup à une profondeur assez faible pour éviter de voir qu'on est perdant.
 
 ## Auteurs ##
 - **Mark Steere** - Créateur du Mad Bishops
