@@ -5,33 +5,33 @@ import java.util.Scanner;
 import fousfous.*;
 import iia.jeux.modele.joueur.Joueur;
 
-public class JoueurHumain implements IJoueur{
+public class JoueurHumain implements IJoueur {
 
-    static final int BLANC = -1;
-    static final int NOIR = 1;
-    
-    static final Joueur jBlanc = new Joueur("blanc");
-    static final Joueur jNoir = new Joueur("noir");
+	static final int BLANC = -1;
+	static final int NOIR = 1;
 
-    int moiInt;
-    Joueur moiJoueur;
+	static final Joueur jBlanc = new Joueur("blanc");
+	static final Joueur jNoir = new Joueur("noir");
 
-    Joueur luiJoueur;
-    
-    PlateauFousFous plateau;
-	
+	int moiInt;
+	Joueur moiJoueur;
+
+	Joueur luiJoueur;
+
+	PlateauFousFous plateau;
+
 	@Override
 	public void initJoueur(int mycolour) {
 		moiInt = mycolour;
-		
-		if(mycolour == BLANC){
+
+		if (mycolour == BLANC) {
 			moiJoueur = jBlanc;
 			luiJoueur = jNoir;
-		}else{
+		} else {
 			moiJoueur = jNoir;
 			luiJoueur = jBlanc;
 		}
-		
+
 		plateau = new PlateauFousFous();
 		PlateauFousFous.setJoueurs(jBlanc, jNoir);
 	}
@@ -45,9 +45,9 @@ public class JoueurHumain implements IJoueur{
 	public String choixMouvement() {
 		CoupFousFous coup = new CoupFousFous("-----");
 		Scanner sc = null;
-		
+
 		System.out.println("Coups jouables :\n" + plateau.coupsPossibles(moiJoueur));
-		
+
 		while (!plateau.coupValide(moiJoueur, coup)) {
 			sc = new Scanner(System.in);
 
@@ -62,17 +62,17 @@ public class JoueurHumain implements IJoueur{
 				coup = new CoupFousFous(str);
 			}
 		}
-		
+
 		plateau.joue(moiJoueur, coup);
-		
+
 		return coup.toString();
 	}
-	
+
 	@Override
 	public void declareLeVainqueur(int colour) {
-		if(colour == moiInt){
+		if (colour == moiInt) {
 			System.out.println("Easy peasy lemon squeezy\n\\(-■_■)/");
-		}else{
+		} else {
 			System.out.println("J'ai échoué\n('-_-)");
 		}
 	}

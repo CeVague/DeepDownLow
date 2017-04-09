@@ -193,22 +193,6 @@ public class PlateauMemoizeSymetriesFousFous implements Comparable<PlateauMemoiz
 	}
 
 	public String toString() {
-//		String represente = "";
-//
-//		for (int i = 63; i >= 0; i--) {
-//
-//			if (((plateauSimple >>> i) & 1L) != 0) {
-//				represente += "●";
-//			} else {
-//				represente += "○";
-//			}
-//
-//			if (i % 8 == 0) {
-//				represente += "\n";
-//			}
-//		}
-//		return represente;
-		
 		return getPlateau().toString();
 	}
 

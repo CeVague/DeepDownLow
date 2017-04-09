@@ -95,16 +95,6 @@ public class PlateauFousFous implements PlateauJeu, Partie1 {
 	 */
 	@Override
 	public ArrayList<CoupJeu> coupsPossibles(Joueur j) {
-//		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
-//
-//		for (PionFousFous pion : listerPions(j)) {
-//			listeCoups.addAll(coupsPossibles(j, pion));
-//		}
-//
-//		return listeCoups;
-		
-		
-		// 60% plus rapide
 		ArrayList<CoupJeu> listeCoups = new ArrayList<CoupJeu>();
 		
 		ArrayList<PionFousFous> listePionsMenaceurs = new ArrayList<PionFousFous>();
